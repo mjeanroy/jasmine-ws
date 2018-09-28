@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {FakeWebSocket} from './core/ws.js';
+import {FakeWebSocket} from './core/fake-web-socket.js';
 
 const _global = window || global;
 const _WebSocket = _global.WebSocket;

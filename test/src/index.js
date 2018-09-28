@@ -22,9 +22,4 @@
  * THE SOFTWARE.
  */
 
-/**
- * A Fake WebSocket implementation.
- * @class
- */
-export class FakeWebSocket {
-}
+import './fake-web-socket.test.js';

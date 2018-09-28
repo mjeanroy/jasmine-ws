@@ -22,5 +22,13 @@
  * THE SOFTWARE.
  */
 
-import './src/index.js';
-import './jasmine-ws.test.js';
+import {FakeWebSocket} from 'src/core/fake-web-socket.js';
+
+describe('FakeWebSocket', () => {
+  it('should define state as static constant', () => {
+    expect(FakeWebSocket.CONNECTING).toBe(0);
+    expect(FakeWebSocket.OPEN).toBe(1);
+    expect(FakeWebSocket.CLOSING).toBe(2);
+    expect(FakeWebSocket.CLOSED).toBe(3);
+  });
+});
