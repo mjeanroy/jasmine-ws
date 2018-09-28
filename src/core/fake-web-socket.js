@@ -22,6 +22,9 @@
  * THE SOFTWARE.
  */
 
+import {isString} from './common/is-string.js';
+import {parseUrl} from './common/parse-url.js';
+
 /**
  * The connection has not yet been established.
  * @type {number}
@@ -71,8 +74,50 @@ export class FakeWebSocket {
    * @param {string|Array<string>} protocols The subprotocol names
    */
   constructor(url, protocols = []) {
-    this._url = url;
+    // 1- Let urlRecord be the result of applying the URL parser to url.
+    const urlRecord = parseUrl(url);
+
+    // 2- If urlRecord is failure, then throw a "SyntaxError" DOMException.
+    if (urlRecord == null) {
+      throw new SyntaxError(`Failed to construct 'WebSocket': The URL '${url}' is invalid.`);
+    }
+
+    // 3- If urlRecord's scheme is not "ws" or "wss", then throw a "SyntaxError" DOMException.
+    const protocol = urlRecord.protocol;
+    const scheme = protocol.slice(0, protocol.length - 1);
+    if (scheme !== 'ws' && scheme !== 'wss') {
+      throw new SyntaxError(
+          `Failed to construct 'WebSocket': The URL's scheme must be either 'ws' or 'wss'. '${scheme}' is not allowed.`
+      );
+    }
+
+    // 4- If urlRecord's fragment is non-null, then throw a "SyntaxError" DOMException.
+    const fragment = urlRecord.hash;
+    if (fragment) {
+      throw new SyntaxError(
+          `Failed to construct 'WebSocket': The URL contains a fragment identifier ('${fragment}'). ` +
+          `Fragment identifiers are not allowed in WebSocket URLs.`
+      );
+    }
+
+    // 5- If protocols is a string, set protocols to a sequence consisting of just that string.
+    if (isString(protocols)) {
+      protocols = [protocols];
+    }
+
+    // 6- If any of the values in protocols occur more than once or otherwise fail to match the requirements fo
+    // elements that comprise the value of `Sec-WebSocket-Protocol` fields as defined by the WebSocket protocol
+    // specification, then throw a "SyntaxError" DOMException.
+
+    // 7- Run this step in parallel:
+
+    // 7-1 Establish a WebSocket connection given urlRecord, protocols, and the entry settings object.
+    this._binaryType = 'blob';
+    this._url = urlRecord;
     this._protocols = protocols;
+    this._establishConnection();
+
+    // 8- Return a new WebSocket object whose url is urlRecord.
   }
 
   /**
@@ -82,6 +127,56 @@ export class FakeWebSocket {
    */
   get url() {
     return this._url;
+  }
+
+  /**
+   * Get the ready state value, i.e the state of the WebSocket object's connection.
+   *
+   * @return {number} The state value.
+   */
+  get readyState() {
+    return this._readyState;
+  }
+
+  /**
+   * Returns the subprotocol selected by the server, if any.
+   * It can be used in conjunction with the array form of the constructor's second argument to perform
+   * subprotocol negotiation.
+   *
+   * @return {string} The selected subprotocol.
+   */
+  get protocol() {
+    return this._protocol;
+  }
+
+  /**
+   * Returns the extensions selected by the server, if any.
+   *
+   * @return {string} The selected extensions.
+   */
+  get extensions() {
+    return this._extensions;
+  }
+
+  /**
+   * Returns a string that indicates how binary data from the WebSocket object is exposed to scripts:
+   * - `"blob"`: Binary data is returned in Blob form.
+   * - `"arraybuffer"`: Binary data is returned in ArrayBuffer form.
+   *
+   * @return {string} The binary type.
+   */
+  get binaryType() {
+    return this._binaryType;
+  }
+
+  /**
+   * Update the binary type value.
+   *
+   * @param {string} binaryType New binary type value.
+   * @return {void}
+   */
+  set binaryType(binaryType) {
+    this._binaryType = this.binaryType;
   }
 
   /**
@@ -102,6 +197,17 @@ export class FakeWebSocket {
    */
   close() {
     // TODO
+  }
+
+  /**
+   * Establish connection by triggering a fake handshake.
+   *
+   * @return {void}
+   */
+  _establishConnection() {
+    this._readyState = CONNECTING;
+    this._protocol = '';
+    this._extensions = '';
   }
 }
 

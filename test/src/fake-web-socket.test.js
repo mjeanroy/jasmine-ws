@@ -31,4 +31,34 @@ describe('FakeWebSocket', () => {
     expect(FakeWebSocket.CLOSING).toBe(2);
     expect(FakeWebSocket.CLOSED).toBe(3);
   });
+
+  it('should fail to create WebSocket with invalid URL', () => {
+    expect(() => new FakeWebSocket('')).toThrow(new SyntaxError(
+        'Failed to construct \'WebSocket\': The URL \'\' is invalid.'
+    ));
+  });
+
+  it('should fail to create WebSocket if connection URL scheme is not ws nor wss', () => {
+    expect(() => new FakeWebSocket('http://localhost')).toThrow(new SyntaxError(
+        'Failed to construct \'WebSocket\': The URL\'s scheme must be either \'ws\' or \'wss\'. ' +
+        '\'http\' is not allowed.'
+    ));
+  });
+
+  it('should fail to create WebSocket if connection URL contains a fragment', () => {
+    expect(() => new FakeWebSocket('wss://localhost#test')).toThrow(new SyntaxError(
+        'Failed to construct \'WebSocket\': The URL contains a fragment identifier (\'#test\'). ' +
+        'Fragment identifiers are not allowed in WebSocket URLs.'
+    ));
+  });
+
+  it('should initialize Fake WebSocket', () => {
+    const ws = new FakeWebSocket('ws://localhost');
+
+    expect(ws.readyState).toBe(0);
+    expect(ws.url).toBeDefined();
+    expect(ws.protocol).toBe('');
+    expect(ws.extensions).toBe('');
+    expect(ws.binaryType).toBe('blob');
+  });
 });

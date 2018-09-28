@@ -23,17 +23,15 @@
  */
 
 /**
- * Karma Configuration, mainly used on CI environement.
+ * Parse given URL to a new `URL` instance, returns `null` if URL parsing fails.
+ *
+ * @param {string} url The URL.
+ * @return {URL} The parsed URL.
  */
-
-const _ = require('lodash');
-const karmaConf = require('./karma.common.conf.js');
-
-module.exports = (config) => {
-  config.set(_.extend(karmaConf(config), {
-    autoWatch: false,
-    singleRun: true,
-    browsers: ['Chrome'],
-    reporters: ['progress'],
-  }));
-};
+export function parseUrl(url) {
+  try {
+    return new URL(url);
+  } catch (e) {
+    return null;
+  }
+}

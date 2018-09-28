@@ -23,17 +23,11 @@
  */
 
 /**
- * Karma Configuration, mainly used on CI environement.
+ * Check if a given value is a `string` value.
+ *
+ * @param {*} value The value to check.
+ * @return {boolean} `true` if `value` is a `string`, `false`otherwise.
  */
-
-const _ = require('lodash');
-const karmaConf = require('./karma.common.conf.js');
-
-module.exports = (config) => {
-  config.set(_.extend(karmaConf(config), {
-    autoWatch: false,
-    singleRun: true,
-    browsers: ['Chrome'],
-    reporters: ['progress'],
-  }));
-};
+export function isString(value) {
+  return Object.prototype.toString.call(value) === '[object String]';
+}
