@@ -23,50 +23,10 @@
  */
 
 const path = require('path');
-const gulp = require('gulp');
-const eslint = require('gulp-eslint');
-const log = require('fancy-log');
-const colors = require('ansi-colors');
-const KarmaServer = require('karma').Server;
-const conf = require('./conf');
+const ROOT = __dirname;
 
-gulp.task('lint', () => {
-  const inputs = [
-    path.join(conf.root, '*.js'),
-    path.join(conf.src, '**', '*.js'),
-    path.join(conf.test, '**', '*.js'),
-  ];
-
-  return gulp.src(inputs)
-      .pipe(eslint())
-      .pipe(eslint.format())
-      .pipe(eslint.failAfterError());
-});
-
-gulp.task('test', ['lint'], (done) => {
-  startKarma('test', done);
-});
-
-gulp.task('tdd', (done) => {
-  startKarma('tdd', done);
-});
-
-/**
- * Start Karma Server and run unit tests.
- *
- * @param {string} mode The test mode (test or tdd).
- * @param {function} done The done callback.
- * @return {void}
- */
-function startKarma(mode, done) {
-  const fileName = `karma.${mode}.conf.js`;
-  const configFile = path.join(conf.root, fileName);
-
-  const karma = new KarmaServer({configFile}, () => {
-    log(colors.grey('Calling done callback of Karma'));
-    done();
-  });
-
-  log(colors.grey(`Running karma with configuration: ${fileName}`));
-  karma.start();
-}
+module.exports = {
+  root: ROOT,
+  src: path.join(ROOT, 'src'),
+  test: path.join(ROOT, 'test'),
+};
