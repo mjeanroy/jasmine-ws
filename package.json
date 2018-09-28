@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "Jasmine plugin to fake WebSocket connections",
   "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mjeanroy/jasmine-ws.git"
+  },
   "scripts": {
     "lint": "gulp lint",
     "tdd": "gulp tdd",
