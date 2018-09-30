@@ -36,6 +36,21 @@ const browsers = {
     platform: 'Windows 10',
   },
 
+  SL_Win10_ie_11: {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    platform: 'Windows 10',
+    version: '11',
+  },
+
+  SL_ie_10: {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    platform: 'Windows 8',
+    version: '10',
+  },
+
+
   SL_chrome: {
     base: 'SauceLabs',
     browserName: 'chrome',
@@ -44,6 +59,24 @@ const browsers = {
   SL_firefox: {
     base: 'SauceLabs',
     browserName: 'firefox',
+  },
+
+  SL_safari_8: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: '8.0',
+  },
+
+  SL_safari_9: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: '9.0',
+  },
+
+  SL_safari_10: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: '10.0',
   },
 
   SL_safari_11: {

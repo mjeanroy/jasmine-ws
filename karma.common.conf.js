@@ -27,6 +27,8 @@
  */
 
 const path = require('path');
+const nodeResolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
 const conf = require('./conf');
 
 module.exports = (config) => ({
@@ -109,6 +111,8 @@ module.exports = (config) => ({
     },
 
     plugins: [
+      nodeResolve(),
+      commonjs(),
     ],
   },
 });

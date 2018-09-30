@@ -49,10 +49,16 @@ describe('parseUrl', () => {
     expect(url.hash).toBe('#test');
   });
 
-  it('should return null with invalid URL', () => {
+  it('should return null with empty URL', () => {
     const input = '';
     const url = parseUrl(input);
     expect(url).toBeNull();
   });
-});
 
+  // Does not work when parseUrl use the polyfill, needs a better one.
+  xit('should return null with invalid URL', () => {
+    const input = '==://invalid==URL';
+    const url = parseUrl(input);
+    expect(url).toBeNull();
+  });
+});

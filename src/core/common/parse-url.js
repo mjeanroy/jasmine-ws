@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 
+import 'url-polyfill';
+
 /**
  * Parse given URL to a new `URL` instance, returns `null` if URL parsing fails.
  *
@@ -29,6 +31,10 @@
  * @return {URL} The parsed URL.
  */
 export function parseUrl(url) {
+  if (!url) {
+    return null;
+  }
+
   try {
     return new URL(url);
   } catch (e) {

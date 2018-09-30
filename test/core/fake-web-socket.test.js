@@ -32,9 +32,16 @@ describe('FakeWebSocket', () => {
     expect(FakeWebSocket.CLOSED).toBe(3);
   });
 
-  it('should fail to create WebSocket with invalid URL', () => {
+  it('should fail to create WebSocket with empty URL', () => {
     expect(() => new FakeWebSocket('')).toThrow(new SyntaxError(
         'Failed to construct \'WebSocket\': The URL \'\' is invalid.'
+    ));
+  });
+
+  // Does not work when parseUrl use the polyfill, needs a better one.
+  xit('should fail to create WebSocket with invalid URL', () => {
+    expect(() => new FakeWebSocket('==://invalid==URL')).toThrow(new SyntaxError(
+        'Failed to construct \'WebSocket\': The URL \'==://invalid==URL\' is invalid.'
     ));
   });
 
