@@ -22,5 +22,37 @@
  * THE SOFTWARE.
  */
 
-import './common/index.js';
-import './fake-web-socket.test.js';
+import {parseUrl} from 'src/core/common/parse-url.js';
+
+describe('parseUrl', () => {
+  it('should parse given URL', () => {
+    const input = 'ws://localhost:9200';
+    const url = parseUrl(input);
+    expect(url).not.toBeNull();
+    expect(url.host).toBe('localhost:9200');
+    expect(url.hostname).toBe('localhost');
+    expect(url.protocol).toBe('ws:');
+    expect(url.port).toBe('9200');
+    expect(url.search).toBe('');
+    expect(url.hash).toBe('');
+  });
+
+  it('should parse given URL with fragment', () => {
+    const input = 'http://localhost:9200#test';
+    const url = parseUrl(input);
+    expect(url).not.toBeNull();
+    expect(url.host).toBe('localhost:9200');
+    expect(url.hostname).toBe('localhost');
+    expect(url.protocol).toBe('http:');
+    expect(url.port).toBe('9200');
+    expect(url.search).toBe('');
+    expect(url.hash).toBe('#test');
+  });
+
+  it('should return null with invalid URL', () => {
+    const input = '';
+    const url = parseUrl(input);
+    expect(url).toBeNull();
+  });
+});
+

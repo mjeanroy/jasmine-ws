@@ -22,5 +22,5 @@
  * THE SOFTWARE.
  */
 
-import './common/index.js';
-import './fake-web-socket.test.js';
+import './is-string.test.js';
+import './parse-url.test.js';

@@ -22,5 +22,21 @@
  * THE SOFTWARE.
  */
 
-import './common/index.js';
-import './fake-web-socket.test.js';
+import {isString} from 'src/core/common/is-string.js';
+
+describe('isString', () => {
+  it('should return true with a string', () => {
+    expect(isString('')).toBe(true);
+    expect(isString(String(''))).toBe(true);
+
+    // eslint-disable-next-line no-new-wrappers
+    expect(isString(new String(''))).toBe(true);
+
+    expect(isString(null)).toBe(false);
+    expect(isString(undefined)).toBe(false);
+    expect(isString(0)).toBe(false);
+    expect(isString(true)).toBe(false);
+    expect(isString([])).toBe(false);
+  });
+});
+
