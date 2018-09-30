@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {countBy} from 'src/core/common/count-by.js';
+import {countBy} from '../../../src/core/common/count-by.js';
 
 describe('countBy', () => {
   it('should count elements in array', () => {

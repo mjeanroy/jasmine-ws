@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {FakeWebSocket} from 'src/core/fake-web-socket.js';
+import {FakeWebSocket} from '../../src/core/fake-web-socket.js';
 
 describe('FakeWebSocket', () => {
   it('should define state as static constant', () => {

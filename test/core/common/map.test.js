@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {map} from 'src/core/common/map.js';
+import {map} from '../../../src/core/common/map.js';
 
 describe('map', () => {
   it('should map elements of array', () => {

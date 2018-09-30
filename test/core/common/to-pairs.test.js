@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {toPairs} from 'src/core/common/to-pairs.js';
+import {toPairs} from '../../../src/core/common/to-pairs.js';
 
 describe('toPairs', () => {
   it('should get all pairs of object', () => {

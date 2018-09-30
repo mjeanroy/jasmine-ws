@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {has} from 'src/core/common/has.js';
+import {has} from '../../../src/core/common/has.js';
 
 describe('has', () => {
   it('should returns true if object has own key', () => {

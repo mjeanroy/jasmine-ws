@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {find} from 'src/core/common/find.js';
+import {find} from '../../../src/core/common/find.js';
 
 describe('find', () => {
   it('should find elements in array', () => {

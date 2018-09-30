@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {keys} from 'src/core/common/keys.js';
+import {keys} from '../../../src/core/common/keys.js';
 
 describe('keys', () => {
   it('should get all keys of object', () => {

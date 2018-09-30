@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {track, reset, wsTracker} from 'src/core/ws-tracker.js';
+import {track, reset, wsTracker} from '../../src/core/ws-tracker.js';
 
 describe('wsTracker', () => {
   it('should get mostRecent connection', () => {

@@ -27,7 +27,6 @@
  */
 
 const path = require('path');
-const includePaths = require('rollup-plugin-includepaths');
 const conf = require('./conf');
 
 module.exports = (config) => ({
@@ -110,9 +109,6 @@ module.exports = (config) => ({
     },
 
     plugins: [
-      includePaths({
-        paths: [conf.root],
-      }),
     ],
   },
 });

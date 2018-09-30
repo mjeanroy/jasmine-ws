@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {filter} from 'src/core/common/filter.js';
+import {filter} from '../../../src/core/common/filter.js';
 
 describe('filter', () => {
   it('should filter elements of array', () => {

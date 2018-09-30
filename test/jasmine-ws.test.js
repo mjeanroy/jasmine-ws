@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import 'src/jasmine-ws';
+import '../src/jasmine-ws';
 
 describe('jasmine-ws', () => {
   let WebSocket;
