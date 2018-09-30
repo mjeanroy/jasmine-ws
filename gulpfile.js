@@ -51,6 +51,19 @@ gulp.task('tdd', (done) => {
   startKarma('tdd', done);
 });
 
+gulp.task('saucelab', (done) => {
+  startKarma('saucelab', done);
+});
+
+gulp.task('travis', ['clean'], (done) => {
+  if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
+    log(colors.grey('SauceLab environment not set, running classic test suite'));
+    startKarma('test', done);
+  } else {
+    startKarma('saucelab', done);
+  }
+});
+
 /**
  * Start Karma Server and run unit tests.
  *

@@ -28,4 +28,6 @@ node_js:
 dist: trusty
 sudo: required
 addons:
-  chrome: stable
+  - chrome: stable
+  - sauce_connect: true
+script: npm run test
