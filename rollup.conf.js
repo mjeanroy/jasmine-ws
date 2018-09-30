@@ -23,11 +23,30 @@
  */
 
 const path = require('path');
-const ROOT = __dirname;
+const babel = require('rollup-plugin-babel');
+const stripBanner = require('rollup-plugin-strip-banner');
+const license = require('rollup-plugin-license');
+const esformatter = require('rollup-plugin-esformatter');
+const conf = require('./conf');
 
 module.exports = {
-  root: ROOT,
-  src: path.join(ROOT, 'src'),
-  test: path.join(ROOT, 'test'),
-  dist: path.join(ROOT, 'dist'),
+  input: path.join(conf.src, 'jasmine-ws.js'),
+
+  output: {
+    file: path.join(conf.dist, 'jasmine-ws.js'),
+    format: 'iife',
+    name: 'JasmineWS',
+    sourcemap: false,
+  },
+
+  plugins: [
+    babel(),
+    stripBanner(),
+    esformatter(),
+    license({
+      banner: {
+        file: path.join(conf.root, 'LICENSE'),
+      },
+    }),
+  ],
 };

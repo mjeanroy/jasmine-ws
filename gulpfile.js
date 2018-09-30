@@ -23,12 +23,20 @@
  */
 
 const path = require('path');
+const del = require('del');
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 const log = require('fancy-log');
 const colors = require('ansi-colors');
 const KarmaServer = require('karma').Server;
+const rollup = require('rollup');
+
 const conf = require('./conf');
+const rollupConf = require('./rollup.conf');
+
+gulp.task('clean', () => {
+  return del(conf.dist);
+});
 
 gulp.task('lint', () => {
   const inputs = [
@@ -62,6 +70,10 @@ gulp.task('travis', ['lint'], (done) => {
   } else {
     startKarma('saucelab', done);
   }
+});
+
+gulp.task('build', ['clean', 'lint'], () => {
+  return rollup.rollup(rollupConf).then((bundle) => bundle.write(rollupConf.output));
 });
 
 /**
