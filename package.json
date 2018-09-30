@@ -10,7 +10,8 @@
   "scripts": {
     "lint": "gulp lint",
     "tdd": "gulp tdd",
-    "test": "gulp test"
+    "test": "gulp test",
+    "travis": "gulp travis"
   },
   "keywords": [
     "Jasmine",
