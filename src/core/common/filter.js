@@ -22,12 +22,21 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+/**
+ * Returns elements in given array for wich predicate returns a truthy value.
+ *
+ * @param {Array<*>} array The given array.
+ * @param {function} iteratee The given predicate.
+ * @return {Array<*>} Filtered results.
+ */
+export function filter(array, iteratee) {
+  const results = [];
+
+  for (let i = 0, size = array.length; i < size; ++i) {
+    if (iteratee.call(null, array[i], i, array)) {
+      results.push(array[i]);
+    }
+  }
+
+  return results;
+}

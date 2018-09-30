@@ -22,8 +22,12 @@
  * THE SOFTWARE.
  */
 
+import {countBy} from './common/count-by.js';
+import {filter} from './common/filter.js';
+import {find} from './common/find.js';
 import {isString} from './common/is-string.js';
 import {parseUrl} from './common/parse-url.js';
+import {toPairs} from './common/to-pairs.js';
 
 /**
  * The connection has not yet been established.
@@ -108,6 +112,15 @@ export class FakeWebSocket {
     // 6- If any of the values in protocols occur more than once or otherwise fail to match the requirements fo
     // elements that comprise the value of `Sec-WebSocket-Protocol` fields as defined by the WebSocket protocol
     // specification, then throw a "SyntaxError" DOMException.
+    const subProtocols = filter(protocols, (protocol) => isString(protocol));
+    const counters = countBy(subProtocols, (subProtocol) => subProtocol);
+    const pairs = toPairs(counters);
+    const firstDuplicate = find(pairs, (pair) => pair[1] > 1);
+    if (firstDuplicate) {
+      throw new SyntaxError(
+          `Failed to construct 'WebSocket': The subprotocol '${firstDuplicate[0]}' is duplicated.`
+      );
+    }
 
     // 7- Run this step in parallel:
 

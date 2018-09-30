@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+/**
+ * Get all own enumerable keys of given `object`.
+ *
+ * @param {Object} object The object.
+ * @return {Array<string>} The own enumerable keys of given `object`.
+ */
+export function keys(object) {
+  return Object.keys(object);
+}

@@ -22,12 +22,15 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {ObjectProto} from './object-proto.js';
+
+/**
+ * Check if a given object has given key as own property.
+ *
+ * @param {Object} object The given object.
+ * @param {string} key The given key.
+ * @return {boolean} `true` if `objecct` has given `key`, `false`otherwise.
+ */
+export function has(object, key) {
+  return ObjectProto.hasOwnProperty.call(object, key);
+}

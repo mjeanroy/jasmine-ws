@@ -22,12 +22,13 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {has} from 'src/core/common/has.js';
+
+describe('has', () => {
+  it('should returns true if object has own key', () => {
+    const o = {id: 1, name: 'John Doe'};
+    expect(has(o, 'id')).toBe(true);
+    expect(has(o, 'name')).toBe(true);
+    expect(has(o, 'toString')).toBe(false);
+  });
+});

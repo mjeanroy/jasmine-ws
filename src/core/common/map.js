@@ -22,12 +22,20 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+/**
+ * Map each elements of given array to an array of new elements, each one
+ * being the results of the `iteratee` function.
+ *
+ * @param {Array<*>} array The given array.
+ * @param {function} iteratee The given predicate.
+ * @return {Array<*>} The new results.
+ */
+export function map(array, iteratee) {
+  const results = [];
+
+  for (let i = 0, size = array.length; i < size; ++i) {
+    results.push(iteratee.call(null, array[i], i, array));
+  }
+
+  return results;
+}

@@ -22,12 +22,24 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {has} from './has.js';
+
+/**
+ * Check that a given predicate returns a truthy value for each elements in the
+ * given array (if array is empty, this function will returns `true`).
+ *
+ * @param {Array<*>} array The given array.
+ * @param {function} iteratee The given predicate.
+ * @return {boolean} `true` if `predicate` returns a truthy values for all elements in array, `false` otherwise.
+ */
+export function countBy(array, iteratee) {
+  const counters = {};
+
+  for (let i = 0, size = array.length; i < size; ++i) {
+    const key = iteratee.call(null, array[i], i, array);
+    const count = has(counters, key) ? counters[key] : 0;
+    counters[key] = count + 1;
+  }
+
+  return counters;
+}

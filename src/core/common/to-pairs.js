@@ -22,12 +22,17 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {keys} from './keys.js';
+import {map} from './map.js';
+
+/**
+ * Creates an array of own enumerable string keyed-value pairs for object.
+ *
+ * @param {Object} object The given object.
+ * @return {Array<Object>} The array of pairs.
+ */
+export function toPairs(object) {
+  return map(keys(object), (k) => (
+    [k, object[k]]
+  ));
+}

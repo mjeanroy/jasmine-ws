@@ -22,12 +22,26 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {countBy} from 'src/core/common/count-by.js';
+
+describe('countBy', () => {
+  it('should count elements in array', () => {
+    const array = [2, 4, 6, 4];
+    const iteratee = jasmine.createSpy().and.callFake((x) =>
+      x.toString()
+    );
+
+    const counters = countBy(array, iteratee);
+
+    expect(counters).toEqual({
+      2: 1,
+      4: 2,
+      6: 1,
+    });
+
+    expect(iteratee).toHaveBeenCalledWith(2, 0, array);
+    expect(iteratee).toHaveBeenCalledWith(4, 1, array);
+    expect(iteratee).toHaveBeenCalledWith(6, 2, array);
+    expect(iteratee).toHaveBeenCalledWith(4, 3, array);
+  });
+});

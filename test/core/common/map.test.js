@@ -22,12 +22,20 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {map} from 'src/core/common/map.js';
+
+describe('map', () => {
+  it('should map elements of array', () => {
+    const array = [2, 4, 6];
+    const iteratee = jasmine.createSpy().and.callFake((x) =>
+      x * x
+    );
+
+    const results = map(array, iteratee);
+
+    expect(results).toEqual([4, 16, 36]);
+    expect(iteratee).toHaveBeenCalledWith(2, 0, array);
+    expect(iteratee).toHaveBeenCalledWith(4, 1, array);
+    expect(iteratee).toHaveBeenCalledWith(6, 2, array);
+  });
+});

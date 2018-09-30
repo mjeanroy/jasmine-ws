@@ -22,12 +22,15 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {toPairs} from 'src/core/common/to-pairs.js';
+
+describe('toPairs', () => {
+  it('should get all pairs of object', () => {
+    const object = {id: 1, name: 'John Doe'};
+    const pairs = toPairs(object);
+    expect(pairs).toEqual([
+      ['id', 1],
+      ['name', 'John Doe'],
+    ]);
+  });
+});

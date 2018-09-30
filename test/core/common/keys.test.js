@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {keys} from 'src/core/common/keys.js';
+
+describe('keys', () => {
+  it('should get all keys of object', () => {
+    const object = {id: 1, name: 'John Doe'};
+    const result = keys(object);
+    expect(result).toEqual(['id', 'name']);
+  });
+});

@@ -22,12 +22,23 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {filter} from 'src/core/common/filter.js';
+
+describe('filter', () => {
+  it('should filter elements of array', () => {
+    const array = [1, 2, 3, 4, 5, 6];
+    const iteratee = jasmine.createSpy().and.callFake((x) =>
+      x % 2 === 0
+    );
+
+    const results = filter(array, iteratee);
+
+    expect(results).toEqual([2, 4, 6]);
+    expect(iteratee).toHaveBeenCalledWith(1, 0, array);
+    expect(iteratee).toHaveBeenCalledWith(2, 1, array);
+    expect(iteratee).toHaveBeenCalledWith(3, 2, array);
+    expect(iteratee).toHaveBeenCalledWith(4, 3, array);
+    expect(iteratee).toHaveBeenCalledWith(5, 4, array);
+    expect(iteratee).toHaveBeenCalledWith(6, 5, array);
+  });
+});

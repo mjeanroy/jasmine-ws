@@ -22,12 +22,8 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+/**
+ * The `Object` prototype.
+ * @type {Object}
+ */
+export const ObjectProto = Object.prototype;

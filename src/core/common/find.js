@@ -22,12 +22,19 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+/**
+ * Iterates over elements of collection, returning the first element predicate returns truthy for.
+ *
+ * @param {Array<*>} array The given array.
+ * @param {function} predicate The given predicate.
+ * @return {*} The first result.
+ */
+export function find(array, predicate) {
+  for (let i = 0, size = array.length; i < size; ++i) {
+    if (predicate.call(null, array[i], i, array)) {
+      return array[i];
+    }
+  }
+
+  return undefined;
+}

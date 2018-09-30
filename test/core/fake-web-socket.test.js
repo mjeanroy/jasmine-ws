@@ -52,6 +52,12 @@ describe('FakeWebSocket', () => {
     ));
   });
 
+  it('should fail to create WebSocket with duplicated protocols', () => {
+    expect(() => new FakeWebSocket('ws://localhost', ['foo', 'foo'])).toThrow(new SyntaxError(
+        'Failed to construct \'WebSocket\': The subprotocol \'foo\' is duplicated.'
+    ));
+  });
+
   it('should initialize Fake WebSocket', () => {
     const ws = new FakeWebSocket('ws://localhost');
 

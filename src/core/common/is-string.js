@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 
+import {ObjectProto} from './object-proto.js';
+
 /**
  * Check if a given value is a `string` value.
  *
@@ -29,5 +31,5 @@
  * @return {boolean} `true` if `value` is a `string`, `false`otherwise.
  */
 export function isString(value) {
-  return Object.prototype.toString.call(value) === '[object String]';
+  return ObjectProto.toString.call(value) === '[object String]';
 }
