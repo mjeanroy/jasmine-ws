@@ -22,5 +22,5 @@
  * THE SOFTWARE.
  */
 
-import './src/index.js';
+import './core/index.js';
 import './jasmine-ws.test.js';

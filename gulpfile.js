@@ -55,7 +55,7 @@ gulp.task('saucelab', (done) => {
   startKarma('saucelab', done);
 });
 
-gulp.task('travis', ['clean'], (done) => {
+gulp.task('travis', ['lint'], (done) => {
   if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
     log(colors.grey('SauceLab environment not set, running classic test suite'));
     startKarma('test', done);
