@@ -23,6 +23,7 @@
  */
 
 import {FakeWebSocket} from './core/fake-web-socket.js';
+import {wsTracker, reset} from './core/ws-tracker.js';
 
 const _global = window || global;
 const _WebSocket = _global.WebSocket;
@@ -36,7 +37,11 @@ jasmine.ws = {
    */
   install() {
     if (_WebSocket) {
+      // Override the default `WebSocket` API.
       _global.WebSocket = FakeWebSocket;
+
+      // Ensure the tracker is resetted.
+      reset();
     }
   },
 
@@ -47,7 +52,20 @@ jasmine.ws = {
    */
   uninstall() {
     if (_WebSocket && _global.WebSocket == FakeWebSocket) {
+      // Restore the default `WebSocket` API.
       _global.WebSocket = _WebSocket;
+
+      // Ensure the tracker is resetted.
+      reset();
     }
+  },
+
+  /**
+   * Get the store of opened `WebSocket` connections.
+   *
+   * @return {Object} The store.
+   */
+  connections() {
+    return wsTracker;
   },
 };

@@ -28,6 +28,7 @@ import {find} from './common/find.js';
 import {isString} from './common/is-string.js';
 import {parseUrl} from './common/parse-url.js';
 import {toPairs} from './common/to-pairs.js';
+import {track} from './ws-tracker.js';
 
 /**
  * The connection has not yet been established.
@@ -131,6 +132,9 @@ export class FakeWebSocket {
     this._establishConnection();
 
     // 8- Return a new WebSocket object whose url is urlRecord.
+
+    // Track this `WebSocket``
+    track(this);
   }
 
   /**

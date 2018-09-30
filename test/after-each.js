@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 
-import './common/index.js';
-import './fake-web-socket.test.js';
-import './ws-tracker.test.js';
+import {reset} from 'src/core/ws-tracker.js';
+
+afterEach(() => {
+  reset();
+});

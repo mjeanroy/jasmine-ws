@@ -22,6 +22,56 @@
  * THE SOFTWARE.
  */
 
-import './common/index.js';
-import './fake-web-socket.test.js';
-import './ws-tracker.test.js';
+/**
+ * The queue of opened WebSocket.
+ * @type {Array<FakeWebSocket}
+ */
+const _queue = [];
+
+/**
+ * Add `WebSocket` to the internal tracker.
+ * @param {FakeWebSocket} ws The `WebSocket` to track.
+ * @return {void}
+ */
+export function track(ws) {
+  _queue.push(ws);
+}
+
+/**
+ * Reset all tracked `WebSocket`.
+ *
+ * @return {void}
+ */
+export function reset() {
+  _queue.splice(0, _queue.length);
+}
+
+export const wsTracker = {
+  /**
+   * Get the most recent tracked `WebSocket`.
+   *
+   * @return {void}
+   */
+  mostRecent() {
+    return _queue[_queue.length - 1];
+  },
+
+  /**
+   * Get the first tracked `WebSocket`.
+   *
+   * @return {void}
+   */
+  first() {
+    return _queue[0];
+  },
+
+  /**
+   * Get the tracked `WebSocket` at given index.
+   *
+   * @param {number} idx The tracked index.
+   * @return {void}
+   */
+  at(idx) {
+    return _queue[idx];
+  },
+};
