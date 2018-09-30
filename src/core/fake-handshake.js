@@ -22,7 +22,48 @@
  * THE SOFTWARE.
  */
 
-import './common/index.js';
-import './fake-handshake.test.js';
-import './fake-web-socket.test.js';
-import './ws-tracker.test.js';
+/**
+ * A fake Handshake request.
+ */
+export class FakeHandshake {
+  /**
+   * Create the fake handshake request.
+   *
+   * @param {FakeWebSocket} ws The WebSocket.
+   * @constructor
+   */
+  constructor(ws) {
+    this._ws = ws;
+
+    const scheme = ws._url.protocol === 'ws:' ? 'http' : 'https';
+    const host = ws._url.host;
+    const path = ws._url.pathname;
+    const search = ws._url.search;
+
+    this._method = 'GET';
+    this._url = `${scheme}://${host}${path}${search}`;
+    this._headers = {
+      'Upgrade': 'websocket',
+      'Sec-WebSocket-Key': '',
+      'Sec-WebSocket-Version': '13',
+    };
+
+    const protocols = ws._protocols.join(',');
+    if (protocols) {
+      this._headers['Sec-WebSocket-Protocol'] = protocols;
+    }
+  }
+
+  /**
+   * Get the handhake request.
+   *
+   * @return {Object} The request.
+   */
+  getRequest() {
+    return {
+      method: this._method,
+      url: this._url,
+      headers: this._headers,
+    };
+  }
+}

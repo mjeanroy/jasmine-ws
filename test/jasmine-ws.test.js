@@ -22,28 +22,60 @@
  * THE SOFTWARE.
  */
 
-import '../src/jasmine-ws';
+import '../src/jasmine-ws.js';
 
 describe('jasmine-ws', () => {
-  let WebSocket;
+  let _WebSocket;
 
   beforeEach(() => {
-    WebSocket = window.WebSocket;
+    _WebSocket = window.WebSocket;
   });
 
   afterEach(() => {
-    window.WebSocket = WebSocket;
+    window.WebSocket = _WebSocket;
   });
 
   it('should install/uninstall jasmine-ws', () => {
     jasmine.ws.install();
 
     expect(window.WebSocket).toBeDefined();
-    expect(window.WebSocket).not.toBe(WebSocket);
+    expect(window.WebSocket).not.toBe(_WebSocket);
 
     jasmine.ws.uninstall();
 
     expect(window.WebSocket).toBeDefined();
-    expect(window.WebSocket).toBe(WebSocket);
+    expect(window.WebSocket).toBe(_WebSocket);
+  });
+
+  describe('once initialized', () => {
+    beforeEach(() => {
+      jasmine.ws.install();
+    });
+
+    it('should verify handshake', () => {
+      const protocolName = 'customProtocol';
+      const ws = new WebSocket('ws://localhost:9200', protocolName);
+
+      ws.onopen = jasmine.createSpy('onopen');
+      ws.onmessage = jasmine.createSpy('onmessage');
+
+      expect(ws.readyState).toBe(0);
+      expect(ws.protocol).toBe('');
+      expect(ws.extensions).toBe('');
+      expect(ws.onopen).not.toHaveBeenCalled();
+      expect(ws.onmessage).not.toHaveBeenCalled();
+      expect(jasmine.ws.connections().mostRecent()).toBe(ws);
+
+      expect(ws.handshake()).toEqual({
+        method: 'GET',
+        url: 'http://localhost:9200/',
+        headers: {
+          'Upgrade': 'websocket',
+          'Sec-WebSocket-Key': jasmine.any(String),
+          'Sec-WebSocket-Version': '13',
+          'Sec-WebSocket-Protocol': protocolName,
+        },
+      });
+    });
   });
 });

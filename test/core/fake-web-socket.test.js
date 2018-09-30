@@ -74,4 +74,24 @@ describe('FakeWebSocket', () => {
     expect(ws.extensions).toBe('');
     expect(ws.binaryType).toBe('blob');
   });
+
+  describe('once initializes', () => {
+    let ws;
+
+    beforeEach(() => {
+      ws = new FakeWebSocket('ws://localhost');
+    });
+
+    it('should get handshake request', () => {
+      expect(ws.handshake()).toEqual({
+        method: 'GET',
+        url: 'http://localhost/',
+        headers: {
+          'Upgrade': 'websocket',
+          'Sec-WebSocket-Key': jasmine.any(String),
+          'Sec-WebSocket-Version': '13',
+        },
+      });
+    });
+  });
 });

@@ -28,6 +28,7 @@ import {find} from './common/find.js';
 import {isString} from './common/is-string.js';
 import {parseUrl} from './common/parse-url.js';
 import {toPairs} from './common/to-pairs.js';
+import {FakeHandshake} from './fake-handshake.js';
 import {track} from './ws-tracker.js';
 
 /**
@@ -225,6 +226,18 @@ export class FakeWebSocket {
     this._readyState = CONNECTING;
     this._protocol = '';
     this._extensions = '';
+    this._handshake = new FakeHandshake(this);
+  }
+
+  // The Fake WebSocket API
+
+  /**
+   * The handshake request.
+   *
+   * @return {Object} The handshake request.
+   */
+  handshake() {
+    return this._handshake.getRequest();
   }
 }
 
