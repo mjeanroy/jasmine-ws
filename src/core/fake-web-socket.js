@@ -270,9 +270,13 @@ export class FakeWebSocket {
     const type = event.type;
     const listeners = has(this._listeners, type) ? this._listeners[type] : [];
 
-    forEach(listeners, (listener) => (
-      listener.call(this, event)
-    ));
+    forEach(listeners, (listener) => {
+      if (isFunction(listener)) {
+        listener.call(this, event);
+      } else if (isFunction(listener.handleEvent)) {
+        listener.handleEvent(event);
+      }
+    });
 
     if (isFunction(this.onopen)) {
       this.onopen(event);

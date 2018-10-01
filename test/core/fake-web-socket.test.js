@@ -156,6 +156,28 @@ describe('FakeWebSocket', () => {
       expect(onmessage).not.toHaveBeenCalledWith();
     });
 
+    it('should dispatch event on objects implemeting the handleEvent method', () => {
+      const onopen = {
+        handleEvent: jasmine.createSpy('onopen'),
+      };
+
+      const onmessage = {
+        handleEvent: jasmine.createSpy('onopen'),
+      };
+
+      const event = {
+        type: 'open',
+      };
+
+      ws.addEventListener('open', onopen);
+      ws.addEventListener('message', onmessage);
+      ws.dispatchEvent(event);
+
+      expect(onopen.handleEvent).toHaveBeenCalledWith(event);
+      expect(onopen.handleEvent.calls.mostRecent().object).toBe(onopen);
+      expect(onmessage.handleEvent).not.toHaveBeenCalledWith();
+    });
+
     it('should call direct method listeners', () => {
       const onopen = jasmine.createSpy('onopen');
       const onmessage = jasmine.createSpy('onopen');
