@@ -25,6 +25,7 @@
 import {countBy} from './common/count-by.js';
 import {filter} from './common/filter.js';
 import {find} from './common/find.js';
+import {has} from './common/has.js';
 import {isString} from './common/is-string.js';
 import {parseUrl} from './common/parse-url.js';
 import {toPairs} from './common/to-pairs.js';
@@ -130,6 +131,7 @@ export class FakeWebSocket {
     this._binaryType = 'blob';
     this._url = urlRecord;
     this._protocols = protocols;
+    this._listeners = {};
     this._establishConnection();
 
     // 8- Return a new WebSocket object whose url is urlRecord.
@@ -198,6 +200,50 @@ export class FakeWebSocket {
   }
 
   /**
+   * Sets up a function that will be called whenever the specified event is delivered to the target.
+   *
+   * @param {string} event The event identifier.
+   * @param {function} listener The listener function.
+   * @return {void}
+   */
+  addEventListener(event, listener) {
+    const nbArguments = arguments.length;
+    if (nbArguments !== 2) {
+      throw new TypeError(
+          `Failed to execute 'addEventListener' on 'EventTarget': 2 arguments required, ` +
+          `but only ${nbArguments} present.`
+      );
+    }
+
+    if (!has(this._listeners, event)) {
+      this._listeners[event] = [];
+    }
+
+    this._listeners.push(listener);
+  }
+
+  /**
+   * The default `onopen` method, a no-op.
+   * @return {void}
+   */
+  onopen() {
+  }
+
+  /**
+   * The default `onmessage` method, a no-op.
+   * @return {void}
+   */
+  onmessage() {
+  }
+
+  /**
+   * The default `onclose` method, a no-op.
+   * @return {void}
+   */
+  onclose() {
+  }
+
+  /**
    * Transmits data using the `WebSocket` connection. data can be a `string`,
    * a `Blob`, an `ArrayBuffer`, or an `ArrayBufferView`.
    *
@@ -237,7 +283,7 @@ export class FakeWebSocket {
    * @return {Object} The handshake request.
    */
   handshake() {
-    return this._handshake.getRequest();
+    return this._handshake;
   }
 }
 

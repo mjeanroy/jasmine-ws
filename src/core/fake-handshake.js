@@ -55,6 +55,33 @@ export class FakeHandshake {
   }
 
   /**
+   * Get the request handshake URL.
+   *
+   * @return {string} The request URL.
+   */
+  get url() {
+    return this._url;
+  }
+
+  /**
+   * Get the request handshake method (for now, always returns `'GET'`).
+   *
+   * @return {string} The request method.
+   */
+  get method() {
+    return this._method;
+  }
+
+  /**
+   * Get the request handshake headers (containing for example the `Sec-WebSocket-Protocol` header).
+   *
+   * @return {Object} The headers dictionary.
+   */
+  get headers() {
+    return this._headers;
+  }
+
+  /**
    * Get the handhake request.
    *
    * @return {Object} The request.

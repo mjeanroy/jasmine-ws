@@ -83,7 +83,17 @@ describe('FakeWebSocket', () => {
     });
 
     it('should get handshake request', () => {
-      expect(ws.handshake()).toEqual({
+      const handshake = ws.handshake();
+
+      expect(handshake.url).toBe('http://localhost/');
+      expect(handshake.method).toBe('GET');
+      expect(handshake.headers).toEqual({
+        'Upgrade': 'websocket',
+        'Sec-WebSocket-Key': jasmine.any(String),
+        'Sec-WebSocket-Version': '13',
+      });
+
+      expect(handshake.getRequest()).toEqual({
         method: 'GET',
         url: 'http://localhost/',
         headers: {
