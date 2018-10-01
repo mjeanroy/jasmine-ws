@@ -141,5 +141,33 @@ describe('FakeWebSocket', () => {
         'open': [],
       });
     });
+
+    it('should dispatch event to event listeners', () => {
+      const onopen = jasmine.createSpy('onopen');
+      const onmessage = jasmine.createSpy('onopen');
+      const event = {type: 'open'};
+
+      ws.addEventListener('open', onopen);
+      ws.addEventListener('message', onmessage);
+      ws.dispatchEvent(event);
+
+      expect(onopen).toHaveBeenCalledWith(event);
+      expect(onopen.calls.mostRecent().object).toBe(ws);
+      expect(onmessage).not.toHaveBeenCalledWith();
+    });
+
+    it('should call direct method listeners', () => {
+      const onopen = jasmine.createSpy('onopen');
+      const onmessage = jasmine.createSpy('onopen');
+      const event = {type: 'open'};
+
+      ws.onopen = onopen;
+      ws.onmessage = onmessage;
+      ws.dispatchEvent(event);
+
+      expect(onopen).toHaveBeenCalledWith(event);
+      expect(onopen.calls.mostRecent().object).toBe(ws);
+      expect(onmessage).not.toHaveBeenCalledWith();
+    });
   });
 });

@@ -22,20 +22,17 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
+import {isUndefined} from '../../../src/core/common/is-undefined.js';
+
+describe('isUndefined', () => {
+  it('should return true with undefined', () => {
+    expect(isUndefined(undefined)).toBe(true);
+    expect(isUndefined(void 0)).toBe(true);
+
+    expect(isUndefined(null)).toBe(false);
+    expect(isUndefined(0)).toBe(false);
+    expect(isUndefined(true)).toBe(false);
+    expect(isUndefined([])).toBe(false);
+  });
+});
+

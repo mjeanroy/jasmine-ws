@@ -27,7 +27,9 @@ import {includes} from './common/includes.js';
 import {indexOf} from './common/index-of.js';
 import {filter} from './common/filter.js';
 import {find} from './common/find.js';
+import {forEach} from './common/for-each.js';
 import {has} from './common/has.js';
+import {isFunction} from './common/is-function.js';
 import {isString} from './common/is-string.js';
 import {parseUrl} from './common/parse-url.js';
 import {toPairs} from './common/to-pairs.js';
@@ -254,6 +256,26 @@ export class FakeWebSocket {
     const idx = indexOf(listeners, listener);
     if (idx >= 0) {
       listeners.splice(idx, 1);
+    }
+  }
+
+  /**
+   * Dispatches an Event at the specified EventTarget, (synchronously) invoking
+   * the affected EventListeners in the appropriate order.
+   *
+   * @param {Event} event The event to dispatch.
+   * @return {void}
+   */
+  dispatchEvent(event) {
+    const type = event.type;
+    const listeners = has(this._listeners, type) ? this._listeners[type] : [];
+
+    forEach(listeners, (listener) => (
+      listener.call(this, event)
+    ));
+
+    if (isFunction(this.onopen)) {
+      this.onopen(event);
     }
   }
 
