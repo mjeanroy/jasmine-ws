@@ -103,5 +103,43 @@ describe('FakeWebSocket', () => {
         },
       });
     });
+
+    it('should add event listener', () => {
+      const listener = jasmine.createSpy('listener');
+
+      ws.addEventListener('open', listener);
+
+      expect(ws._listeners).toEqual({
+        'open': [listener],
+      });
+    });
+
+    it('should not add duplicated event listener', () => {
+      const listener = jasmine.createSpy('listener');
+
+      ws.addEventListener('open', listener);
+      ws.addEventListener('open', listener);
+
+      expect(ws._listeners).toEqual({
+        'open': [listener],
+      });
+    });
+
+    it('should not try to remove unregistered event listener', () => {
+      const listener = jasmine.createSpy('listener');
+      ws.removeEventListener('open', listener);
+      expect(ws._listeners).toEqual({});
+    });
+
+    it('should remove event listener', () => {
+      const listener = jasmine.createSpy('listener');
+
+      ws.addEventListener('open', listener);
+      ws.removeEventListener('open', listener);
+
+      expect(ws._listeners).toEqual({
+        'open': [],
+      });
+    });
   });
 });

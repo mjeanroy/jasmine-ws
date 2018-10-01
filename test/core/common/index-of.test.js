@@ -22,14 +22,16 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './has.test.js';
-import './is-string.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './to-pairs.test.js';
+import {indexOf} from '../../../src/core/common/index-of.js';
+
+describe('indexOf', () => {
+  it('should get index of elements in array', () => {
+    const array = [1, 2, 3];
+    expect(indexOf(array, 1)).toBe(0);
+    expect(indexOf(array, 2)).toBe(1);
+    expect(indexOf(array, 3)).toBe(2);
+
+    expect(indexOf(array, 0)).toBe(-1);
+    expect(indexOf(array, 4)).toBe(-1);
+  });
+});

@@ -23,6 +23,8 @@
  */
 
 import {countBy} from './common/count-by.js';
+import {includes} from './common/includes.js';
+import {indexOf} from './common/index-of.js';
 import {filter} from './common/filter.js';
 import {find} from './common/find.js';
 import {has} from './common/has.js';
@@ -208,6 +210,7 @@ export class FakeWebSocket {
    */
   addEventListener(event, listener) {
     const nbArguments = arguments.length;
+
     if (nbArguments !== 2) {
       throw new TypeError(
           `Failed to execute 'addEventListener' on 'EventTarget': 2 arguments required, ` +
@@ -219,7 +222,39 @@ export class FakeWebSocket {
       this._listeners[event] = [];
     }
 
-    this._listeners.push(listener);
+    const listeners = this._listeners[event];
+
+    if (!includes(listeners, listener)) {
+      listeners.push(listener);
+    }
+  }
+
+  /**
+   * Removes from the  event listener previously registered with `addEventListener()`.
+   *
+   * @param {string} event The event name.
+   * @param {function} listener The listener function.
+   * @return {void}
+   */
+  removeEventListener(event, listener) {
+    const nbArguments = arguments.length;
+
+    if (nbArguments !== 2) {
+      throw new TypeError(
+          `Failed to execute 'removeEventListener' on 'EventTarget': 2 arguments required, ` +
+          `but only ${nbArguments} present.`
+      );
+    }
+
+    if (!has(this._listeners, event)) {
+      return;
+    }
+
+    const listeners = this._listeners[event];
+    const idx = indexOf(listeners, listener);
+    if (idx >= 0) {
+      listeners.splice(idx, 1);
+    }
   }
 
   /**
