@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WebSocket Test</title>
+  </head>
+  <body>
+    <h1>WebSocket API</h1>
+
+    <div>
+      <div>
+        <div id="output" style="border: 1px solid #eee;"></div>
+      </div>
+    </div>
+  </body>
+
+  <script type="text/javascript">
+    var $output = document.getElementById('output');
+    var wsUri = "wss://echo.websocket.org/";
+    var ws = new WebSocket(wsUri);
+
+    ws.onopen = function (e) {
+      console.log('Method `onopen` called:', this, e);
+      appendToOutput('WebSocket connected, `onpen` callback executed');
+    };
+
+    ws.onmessage = function (e) {
+      console.log('Method `onmessage` called:', e);
+    };
+
+    ws.addEventListener('open', function (e) {
+      console.log('Event listener `open` called:', this, e);
+      appendToOutput('WebSocket connected, `open` listener executed');
+    });
+
+    ws.addEventListener('message', function (e) {
+      console.log('Event listener `message` called:', e);
+    });
+
+    function appendToOutput(message) {
+      $output.innerHTML += message + '<br />';
+    }
+  </script>
+</html>

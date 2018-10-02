@@ -30,108 +30,8 @@ describe('FakeHandshake', () => {
     const ws = new FakeWebSocket('ws://localhost');
     const handshake = new FakeHandshake(ws);
 
-    expect(handshake._ws).toBe(ws);
-    expect(handshake._method).toBe('GET');
-    expect(handshake._url).toBe('http://localhost/');
-    expect(handshake._headers).toEqual({
-      'Upgrade': 'websocket',
-      'Sec-WebSocket-Key': jasmine.any(String),
-      'Sec-WebSocket-Version': '13',
-    });
-  });
-
-  it('should create fake handshake request with wss', () => {
-    const ws = new FakeWebSocket('wss://localhost');
-    const handshake = new FakeHandshake(ws);
-
-    expect(handshake._ws).toBe(ws);
-    expect(handshake._method).toBe('GET');
-    expect(handshake._url).toBe('https://localhost/');
-    expect(handshake._headers).toEqual({
-      'Upgrade': 'websocket',
-      'Sec-WebSocket-Key': jasmine.any(String),
-      'Sec-WebSocket-Version': '13',
-    });
-  });
-
-  it('should create fake handshake request with a port', () => {
-    const ws = new FakeWebSocket('ws://localhost:9200');
-    const handshake = new FakeHandshake(ws);
-
-    expect(handshake._ws).toBe(ws);
-    expect(handshake._method).toBe('GET');
-    expect(handshake._url).toBe('http://localhost:9200/');
-    expect(handshake._headers).toEqual({
-      'Upgrade': 'websocket',
-      'Sec-WebSocket-Key': jasmine.any(String),
-      'Sec-WebSocket-Version': '13',
-    });
-  });
-
-  it('should create fake handshake request with a query string', () => {
-    const ws = new FakeWebSocket('ws://localhost?test=true');
-    const handshake = new FakeHandshake(ws);
-
-    expect(handshake._ws).toBe(ws);
-    expect(handshake._method).toBe('GET');
-    expect(handshake._url).toBe('http://localhost/?test=true');
-    expect(handshake._headers).toEqual({
-      'Upgrade': 'websocket',
-      'Sec-WebSocket-Key': jasmine.any(String),
-      'Sec-WebSocket-Version': '13',
-    });
-  });
-
-  it('should create fake handshake request with a path', () => {
-    const ws = new FakeWebSocket('ws://localhost/test');
-    const handshake = new FakeHandshake(ws);
-
-    expect(handshake._ws).toBe(ws);
-    expect(handshake._method).toBe('GET');
-    expect(handshake._url).toBe('http://localhost/test');
-    expect(handshake._headers).toEqual({
-      'Upgrade': 'websocket',
-      'Sec-WebSocket-Key': jasmine.any(String),
-      'Sec-WebSocket-Version': '13',
-    });
-  });
-
-  it('should create fake handshake request with a single protocol', () => {
-    const ws = new FakeWebSocket('ws://localhost/test', 'protocol');
-    const handshake = new FakeHandshake(ws);
-
-    expect(handshake._ws).toBe(ws);
-    expect(handshake._method).toBe('GET');
-    expect(handshake._url).toBe('http://localhost/test');
-    expect(handshake._headers).toEqual({
-      'Upgrade': 'websocket',
-      'Sec-WebSocket-Key': jasmine.any(String),
-      'Sec-WebSocket-Version': '13',
-      'Sec-WebSocket-Protocol': 'protocol',
-    });
-  });
-
-  it('should create fake handshake request with a list of protocol', () => {
-    const ws = new FakeWebSocket('ws://localhost/test', ['protocol1', 'protocol2']);
-    const handshake = new FakeHandshake(ws);
-
-    expect(handshake._ws).toBe(ws);
-    expect(handshake._method).toBe('GET');
-    expect(handshake._url).toBe('http://localhost/test');
-    expect(handshake._headers).toEqual({
-      'Upgrade': 'websocket',
-      'Sec-WebSocket-Key': jasmine.any(String),
-      'Sec-WebSocket-Version': '13',
-      'Sec-WebSocket-Protocol': 'protocol1,protocol2',
-    });
-  });
-
-  it('should get handshake request', () => {
-    const ws = new FakeWebSocket('ws://localhost/');
-    const handshake = new FakeHandshake(ws);
-    const rq = handshake.getRequest();
-
-    expect(rq).toEqual({
+    expect(handshake.getResponse()).toBeNull();
+    expect(handshake.getRequest()).toEqual({
       method: 'GET',
       url: 'http://localhost/',
       headers: {
@@ -139,6 +39,135 @@ describe('FakeHandshake', () => {
         'Sec-WebSocket-Key': jasmine.any(String),
         'Sec-WebSocket-Version': '13',
       },
+    });
+  });
+
+  it('should create fake handshake request with wss', () => {
+    const ws = new FakeWebSocket('wss://localhost');
+    const handshake = new FakeHandshake(ws);
+
+    expect(handshake.getRequest()).toEqual({
+      method: 'GET',
+      url: 'https://localhost/',
+      headers: {
+        'Upgrade': 'websocket',
+        'Sec-WebSocket-Key': jasmine.any(String),
+        'Sec-WebSocket-Version': '13',
+      },
+    });
+  });
+
+  it('should create fake handshake request with a port', () => {
+    const ws = new FakeWebSocket('ws://localhost:9200');
+    const handshake = new FakeHandshake(ws);
+
+    expect(handshake.getRequest()).toEqual({
+      method: 'GET',
+      url: 'http://localhost:9200/',
+      headers: {
+        'Upgrade': 'websocket',
+        'Sec-WebSocket-Key': jasmine.any(String),
+        'Sec-WebSocket-Version': '13',
+      },
+    });
+  });
+
+  it('should create fake handshake request with a query string', () => {
+    const ws = new FakeWebSocket('ws://localhost?test=true');
+    const handshake = new FakeHandshake(ws);
+
+    expect(handshake.getRequest()).toEqual({
+      method: 'GET',
+      url: 'http://localhost/?test=true',
+      headers: {
+        'Upgrade': 'websocket',
+        'Sec-WebSocket-Key': jasmine.any(String),
+        'Sec-WebSocket-Version': '13',
+      },
+    });
+  });
+
+  it('should create fake handshake request with a path', () => {
+    const ws = new FakeWebSocket('ws://localhost/test');
+    const handshake = new FakeHandshake(ws);
+
+    expect(handshake.getRequest()).toEqual({
+      method: 'GET',
+      url: 'http://localhost/test',
+      headers: {
+        'Upgrade': 'websocket',
+        'Sec-WebSocket-Key': jasmine.any(String),
+        'Sec-WebSocket-Version': '13',
+      },
+    });
+  });
+
+  it('should create fake handshake request with a single protocol', () => {
+    const ws = new FakeWebSocket('ws://localhost/test', 'protocol');
+    const handshake = new FakeHandshake(ws);
+
+    expect(handshake.getRequest()).toEqual({
+      method: 'GET',
+      url: 'http://localhost/test',
+      headers: {
+        'Upgrade': 'websocket',
+        'Sec-WebSocket-Key': jasmine.any(String),
+        'Sec-WebSocket-Version': '13',
+        'Sec-WebSocket-Protocol': 'protocol',
+      },
+    });
+  });
+
+  it('should create fake handshake request with a list of protocol', () => {
+    const ws = new FakeWebSocket('ws://localhost/test', ['protocol1', 'protocol2']);
+    const handshake = new FakeHandshake(ws);
+
+    expect(handshake.getRequest()).toEqual({
+      method: 'GET',
+      url: 'http://localhost/test',
+      headers: {
+        'Upgrade': 'websocket',
+        'Sec-WebSocket-Key': jasmine.any(String),
+        'Sec-WebSocket-Version': '13',
+        'Sec-WebSocket-Protocol': 'protocol1,protocol2',
+      },
+    });
+  });
+
+  describe('once created', () => {
+    let ws;
+    let handshake;
+
+    beforeEach(() => {
+      ws = new FakeWebSocket('ws://localhost/test', ['protocol1', 'protocol2']);
+      handshake = new FakeHandshake(ws);
+    });
+
+    it('should trigger response', () => {
+      spyOn(ws, '_openConnection').and.callThrough();
+
+      handshake.respond();
+
+      expect(handshake.getResponse()).toEqual({
+        status: 101,
+        headers: {
+          'Upgrade': 'websocket',
+          'Connection': 'Upgrade',
+          'Sec-WebSocket-Accept': jasmine.any(String),
+        },
+      });
+
+      expect(ws.readyState).toBe(1);
+      expect(ws.protocol).toBeNull();
+      expect(ws.extensions).toBeNull();
+      expect(ws._openConnection).toHaveBeenCalledWith({
+        status: 101,
+        headers: {
+          'Upgrade': 'websocket',
+          'Connection': 'Upgrade',
+          'Sec-WebSocket-Accept': jasmine.any(String),
+        },
+      });
     });
   });
 });

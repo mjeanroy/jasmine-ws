@@ -40,17 +40,20 @@ export class FakeHandshake {
     const path = ws._url.pathname;
     const search = ws._url.search;
 
-    this._method = 'GET';
-    this._url = `${scheme}://${host}${path}${search}`;
-    this._headers = {
-      'Upgrade': 'websocket',
-      'Sec-WebSocket-Key': '',
-      'Sec-WebSocket-Version': '13',
+    this._response = null;
+    this._request = {
+      method: 'GET',
+      url: `${scheme}://${host}${path}${search}`,
+      headers: {
+        'Upgrade': 'websocket',
+        'Sec-WebSocket-Key': '',
+        'Sec-WebSocket-Version': '13',
+      },
     };
 
     const protocols = ws._protocols.join(',');
     if (protocols) {
-      this._headers['Sec-WebSocket-Protocol'] = protocols;
+      this._request.headers['Sec-WebSocket-Protocol'] = protocols;
     }
   }
 
@@ -60,7 +63,7 @@ export class FakeHandshake {
    * @return {string} The request URL.
    */
   get url() {
-    return this._url;
+    return this._request.url;
   }
 
   /**
@@ -69,7 +72,7 @@ export class FakeHandshake {
    * @return {string} The request method.
    */
   get method() {
-    return this._method;
+    return this._request.method;
   }
 
   /**
@@ -78,7 +81,7 @@ export class FakeHandshake {
    * @return {Object} The headers dictionary.
    */
   get headers() {
-    return this._headers;
+    return this._request.headers;
   }
 
   /**
@@ -87,10 +90,34 @@ export class FakeHandshake {
    * @return {Object} The request.
    */
   getRequest() {
-    return {
-      method: this._method,
-      url: this._url,
-      headers: this._headers,
+    return this._request;
+  }
+
+  /**
+   * Get the triggered handshake response, `null` until the response
+   * has not been triggered.
+   *
+   * @return {Object} The handshake response.
+   */
+  getResponse() {
+    return this._response;
+  }
+
+  /**
+   * Trigger handshake response.
+   *
+   * @return {void}
+   */
+  respond() {
+    this._response = {
+      status: 101,
+      headers: {
+        'Upgrade': 'websocket',
+        'Connection': 'Upgrade',
+        'Sec-WebSocket-Accept': '',
+      },
     };
+
+    this._ws._openConnection(this._response);
   }
 }

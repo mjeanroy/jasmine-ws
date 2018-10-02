@@ -35,6 +35,7 @@ import {parseUrl} from './common/parse-url.js';
 import {toPairs} from './common/to-pairs.js';
 import {FakeHandshake} from './fake-handshake.js';
 import {track} from './ws-tracker.js';
+import {FakeEvent} from './fake-event.js';
 
 /**
  * The connection has not yet been established.
@@ -270,18 +271,22 @@ export class FakeWebSocket {
     const type = event.type;
     const listeners = has(this._listeners, type) ? this._listeners[type] : [];
 
-    forEach(listeners, (listener) => {
-      if (isFunction(listener)) {
-        listener.call(this, event);
-      } else if (isFunction(listener.handleEvent)) {
-        listener.handleEvent(event);
-      }
-    });
-
     const methodName = `on${type}`;
     const method = this[methodName];
     if (isFunction(method)) {
       method.call(this, event);
+    }
+
+    if (!event._stopped) {
+      forEach(listeners, (listener) => {
+        if (!event._stopped) {
+          if (isFunction(listener)) {
+            listener.call(this, event);
+          } else if (isFunction(listener.handleEvent)) {
+            listener.handleEvent(event);
+          }
+        }
+      });
     }
 
     return !!event.cancelable && !!event.defaultPrevented;
@@ -328,6 +333,8 @@ export class FakeWebSocket {
     // TODO
   }
 
+  // The Fake WebSocket API
+
   /**
    * Establish connection by triggering a fake handshake.
    *
@@ -340,7 +347,23 @@ export class FakeWebSocket {
     this._handshake = new FakeHandshake(this);
   }
 
-  // The Fake WebSocket API
+  /**
+   * Mark the WebSocket connection as opened and trigger appropriate listeners.
+   *
+   * @param {Object} response The HTTP handshake response.
+   * @return {void}
+   */
+  _openConnection(response) {
+    this._readyState = OPEN;
+
+    const headers = response.headers;
+    if (headers) {
+      this._protocol = has(headers, 'Sec-WebSocket-Protocol') ? headers['Sec-WebSocket-Protocol'] : null;
+      this._extensions = has(headers, 'Sec-WebSocket-Extensions') ? headers['Sec-WebSocket-Extensions'] : null;
+    }
+
+    this.dispatchEvent(new FakeEvent('open', this));
+  }
 
   /**
    * The handshake request.

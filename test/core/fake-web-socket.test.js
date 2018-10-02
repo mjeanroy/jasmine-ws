@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+import {FakeEvent} from '../../src/core/fake-event.js';
 import {FakeWebSocket} from '../../src/core/fake-web-socket.js';
 
 describe('FakeWebSocket', () => {
@@ -203,6 +204,48 @@ describe('FakeWebSocket', () => {
       expect(onopen).toHaveBeenCalledWith(event);
       expect(onopen.calls.mostRecent().object).toBe(ws);
       expect(onmessage).not.toHaveBeenCalledWith();
+    });
+
+    it('should stop immediate propagation of event', () => {
+      const listener1 = jasmine.createSpy('listener1').and.callFake((e) => e.stopImmediatePropagation());
+      const listener2 = jasmine.createSpy('listener2');
+      const event = new FakeEvent('open', ws);
+
+      ws.addEventListener('open', listener1);
+      ws.addEventListener('open', listener2);
+      ws.dispatchEvent(event);
+
+      expect(listener1).toHaveBeenCalledWith(event);
+      expect(listener2).not.toHaveBeenCalled();
+    });
+
+    it('mark the connection as opened', () => {
+      ws._openConnection({
+        status: 101,
+        headers: {
+        },
+      });
+
+      expect(ws.readyState).toBe(1);
+      expect(ws.protocol).toBeNull();
+      expect(ws.extensions).toBeNull();
+    });
+
+    it('mark the connection as opened and trigger appropriate listeners', () => {
+      const listener1 = jasmine.createSpy('listener1');
+      const listener2 = jasmine.createSpy('listener2');
+
+      ws.onopen = listener1;
+      ws.addEventListener('open', listener2);
+      ws._openConnection({
+        status: 101,
+        headers: {
+        },
+      });
+
+      expect(ws.readyState).toBe(1);
+      expect(listener1).toHaveBeenCalled();
+      expect(listener2).toHaveBeenCalled();
     });
   });
 });
