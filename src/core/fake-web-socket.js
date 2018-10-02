@@ -278,9 +278,13 @@ export class FakeWebSocket {
       }
     });
 
-    if (isFunction(this.onopen)) {
-      this.onopen(event);
+    const methodName = `on${type}`;
+    const method = this[methodName];
+    if (isFunction(method)) {
+      method.call(this, event);
     }
+
+    return !!event.cancelable && !!event.defaultPrevented;
   }
 
   /**

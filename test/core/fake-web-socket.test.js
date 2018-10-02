@@ -106,51 +106,60 @@ describe('FakeWebSocket', () => {
 
     it('should add event listener', () => {
       const listener = jasmine.createSpy('listener');
+      const event = {type: 'open'};
 
       ws.addEventListener('open', listener);
+      ws.dispatchEvent(event);
 
-      expect(ws._listeners).toEqual({
-        'open': [listener],
-      });
+      expect(listener).toHaveBeenCalledWith(event);
     });
 
     it('should not add duplicated event listener', () => {
       const listener = jasmine.createSpy('listener');
+      const event = {type: 'open'};
 
       ws.addEventListener('open', listener);
-      ws.addEventListener('open', listener);
+      ws.dispatchEvent(event);
 
-      expect(ws._listeners).toEqual({
-        'open': [listener],
-      });
+      expect(listener).toHaveBeenCalledTimes(1);
     });
 
     it('should not try to remove unregistered event listener', () => {
       const listener = jasmine.createSpy('listener');
+      const event = {type: 'open'};
+
       ws.removeEventListener('open', listener);
-      expect(ws._listeners).toEqual({});
+      ws.dispatchEvent(event);
+
+      expect(listener).not.toHaveBeenCalled();
     });
 
     it('should remove event listener', () => {
       const listener = jasmine.createSpy('listener');
+      const event = {type: 'open'};
 
       ws.addEventListener('open', listener);
       ws.removeEventListener('open', listener);
+      ws.dispatchEvent(event);
 
-      expect(ws._listeners).toEqual({
-        'open': [],
-      });
+      expect(listener).not.toHaveBeenCalled();
     });
 
     it('should dispatch event to event listeners', () => {
       const onopen = jasmine.createSpy('onopen');
       const onmessage = jasmine.createSpy('onopen');
-      const event = {type: 'open'};
+      const event = {
+        type: 'open',
+        canceled: false,
+        defaultPrevented: false,
+      };
 
       ws.addEventListener('open', onopen);
       ws.addEventListener('message', onmessage);
-      ws.dispatchEvent(event);
 
+      const canceled = ws.dispatchEvent(event);
+
+      expect(canceled).toBe(false);
       expect(onopen).toHaveBeenCalledWith(event);
       expect(onopen.calls.mostRecent().object).toBe(ws);
       expect(onmessage).not.toHaveBeenCalledWith();
@@ -171,8 +180,10 @@ describe('FakeWebSocket', () => {
 
       ws.addEventListener('open', onopen);
       ws.addEventListener('message', onmessage);
-      ws.dispatchEvent(event);
 
+      const canceled = ws.dispatchEvent(event);
+
+      expect(canceled).toBe(false);
       expect(onopen.handleEvent).toHaveBeenCalledWith(event);
       expect(onopen.handleEvent.calls.mostRecent().object).toBe(onopen);
       expect(onmessage.handleEvent).not.toHaveBeenCalledWith();
@@ -185,8 +196,10 @@ describe('FakeWebSocket', () => {
 
       ws.onopen = onopen;
       ws.onmessage = onmessage;
-      ws.dispatchEvent(event);
 
+      const canceled = ws.dispatchEvent(event);
+
+      expect(canceled).toBe(false);
       expect(onopen).toHaveBeenCalledWith(event);
       expect(onopen.calls.mostRecent().object).toBe(ws);
       expect(onmessage).not.toHaveBeenCalledWith();
