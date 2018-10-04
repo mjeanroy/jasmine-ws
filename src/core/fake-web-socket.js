@@ -33,9 +33,9 @@ import {isFunction} from './common/is-function.js';
 import {isString} from './common/is-string.js';
 import {parseUrl} from './common/parse-url.js';
 import {toPairs} from './common/to-pairs.js';
-import {FakeHandshake} from './fake-handshake.js';
-import {track} from './ws-tracker.js';
+import {FakeOpenHandshake} from './fake-open-handshake.js';
 import {FakeEvent} from './fake-event.js';
+import {track} from './ws-tracker.js';
 
 /**
  * The connection has not yet been established.
@@ -360,7 +360,7 @@ export class FakeWebSocket {
     this._readyState = CONNECTING;
     this._protocol = '';
     this._extensions = '';
-    this._handshake = new FakeHandshake(this);
+    this._openHandshake = new FakeOpenHandshake(this);
   }
 
   /**
@@ -386,8 +386,8 @@ export class FakeWebSocket {
    *
    * @return {Object} The handshake request.
    */
-  handshake() {
-    return this._handshake;
+  openHandshake() {
+    return this._openHandshake;
   }
 
   /**

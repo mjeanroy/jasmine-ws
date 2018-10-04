@@ -66,7 +66,7 @@ describe('jasmine-ws', () => {
       expect(ws.onmessage).not.toHaveBeenCalled();
       expect(jasmine.ws.connections().mostRecent()).toBe(ws);
 
-      expect(ws.handshake().getRequest()).toEqual({
+      expect(ws.openHandshake().getRequest()).toEqual({
         method: 'GET',
         url: 'http://localhost:9200/',
         headers: {

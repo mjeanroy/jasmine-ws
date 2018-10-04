@@ -22,13 +22,13 @@
  * THE SOFTWARE.
  */
 
-import {FakeHandshake} from '../../src/core/fake-handshake';
+import {FakeOpenHandshake} from '../../src/core/fake-open-handshake';
 import {FakeWebSocket} from '../../src/core/fake-web-socket';
 
-describe('FakeHandshake', () => {
+describe('FakeOpenHandshake', () => {
   it('should create basic fake handshake request', () => {
     const ws = new FakeWebSocket('ws://localhost');
-    const handshake = new FakeHandshake(ws);
+    const handshake = new FakeOpenHandshake(ws);
 
     expect(handshake.getResponse()).toBeNull();
     expect(handshake.getRequest()).toEqual({
@@ -44,7 +44,7 @@ describe('FakeHandshake', () => {
 
   it('should create fake handshake request with wss', () => {
     const ws = new FakeWebSocket('wss://localhost');
-    const handshake = new FakeHandshake(ws);
+    const handshake = new FakeOpenHandshake(ws);
 
     expect(handshake.getRequest()).toEqual({
       method: 'GET',
@@ -59,7 +59,7 @@ describe('FakeHandshake', () => {
 
   it('should create fake handshake request with a port', () => {
     const ws = new FakeWebSocket('ws://localhost:9200');
-    const handshake = new FakeHandshake(ws);
+    const handshake = new FakeOpenHandshake(ws);
 
     expect(handshake.getRequest()).toEqual({
       method: 'GET',
@@ -74,7 +74,7 @@ describe('FakeHandshake', () => {
 
   it('should create fake handshake request with a query string', () => {
     const ws = new FakeWebSocket('ws://localhost?test=true');
-    const handshake = new FakeHandshake(ws);
+    const handshake = new FakeOpenHandshake(ws);
 
     expect(handshake.getRequest()).toEqual({
       method: 'GET',
@@ -89,7 +89,7 @@ describe('FakeHandshake', () => {
 
   it('should create fake handshake request with a path', () => {
     const ws = new FakeWebSocket('ws://localhost/test');
-    const handshake = new FakeHandshake(ws);
+    const handshake = new FakeOpenHandshake(ws);
 
     expect(handshake.getRequest()).toEqual({
       method: 'GET',
@@ -104,7 +104,7 @@ describe('FakeHandshake', () => {
 
   it('should create fake handshake request with a single protocol', () => {
     const ws = new FakeWebSocket('ws://localhost/test', 'protocol');
-    const handshake = new FakeHandshake(ws);
+    const handshake = new FakeOpenHandshake(ws);
 
     expect(handshake.getRequest()).toEqual({
       method: 'GET',
@@ -120,7 +120,7 @@ describe('FakeHandshake', () => {
 
   it('should create fake handshake request with a list of protocol', () => {
     const ws = new FakeWebSocket('ws://localhost/test', ['protocol1', 'protocol2']);
-    const handshake = new FakeHandshake(ws);
+    const handshake = new FakeOpenHandshake(ws);
 
     expect(handshake.getRequest()).toEqual({
       method: 'GET',
@@ -140,7 +140,7 @@ describe('FakeHandshake', () => {
 
     beforeEach(() => {
       ws = new FakeWebSocket('ws://localhost/test', ['protocol1', 'protocol2']);
-      handshake = new FakeHandshake(ws);
+      handshake = new FakeOpenHandshake(ws);
     });
 
     it('should trigger response', () => {

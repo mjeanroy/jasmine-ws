@@ -25,7 +25,7 @@
 /**
  * A fake Handshake request.
  */
-export class FakeHandshake {
+export class FakeOpenHandshake {
   /**
    * Create the fake handshake request.
    *

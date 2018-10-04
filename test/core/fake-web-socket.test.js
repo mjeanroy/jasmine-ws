@@ -84,7 +84,7 @@ describe('FakeWebSocket', () => {
     });
 
     it('should get handshake request', () => {
-      const handshake = ws.handshake();
+      const handshake = ws.openHandshake();
 
       expect(handshake.url).toBe('http://localhost/');
       expect(handshake.method).toBe('GET');
@@ -268,7 +268,7 @@ describe('FakeWebSocket', () => {
 
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
-        ws.handshake().respond();
+        ws.openHandshake().respond();
       });
 
       it('should fail to send data without argument', () => {
