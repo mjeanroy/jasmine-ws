@@ -76,7 +76,7 @@ describe('FakeWebSocket', () => {
     expect(ws.binaryType).toBe('blob');
   });
 
-  describe('once initializes', () => {
+  describe('once initialized', () => {
     let ws;
 
     beforeEach(() => {
@@ -246,6 +246,52 @@ describe('FakeWebSocket', () => {
       expect(ws.readyState).toBe(1);
       expect(listener1).toHaveBeenCalled();
       expect(listener2).toHaveBeenCalled();
+    });
+
+    it('fail to send a message if the open handshake is still pending', () => {
+      const onErrorListener = jasmine.createSpy('onErrorListener');
+      const onerror = jasmine.createSpy('onerror');
+
+      ws.onerror = onerror;
+      ws.addEventListener('error', onErrorListener);
+
+      expect(() => ws.send('test')).toThrow(new Error(
+          'Failed to execute \'send\' on \'WebSocket\': Still in CONNECTING state.'
+      ));
+
+      expect(onerror).not.toHaveBeenCalled();
+      expect(onErrorListener).not.toHaveBeenCalled();
+    });
+
+    describe('once opened', () => {
+      let ws;
+
+      beforeEach(() => {
+        ws = new FakeWebSocket('ws://localhost');
+        ws.handshake().respond();
+      });
+
+      it('should fail to send data without argument', () => {
+        expect(() => ws.send()).toThrow(new Error(
+            'Failed to execute \'send\' on \'WebSocket\': 1 argument required, but only 0 present.'
+        ));
+      });
+
+      it('should send string data', () => {
+        const data1 = 'test1';
+        const data2 = 'test2';
+
+        ws.send(data1);
+        expect(ws.sentMessages()).toEqual([data1]);
+
+        ws.send(data2);
+        expect(ws.sentMessages()).toEqual([data1, data2]);
+      });
+
+      it('should not send the empty string', () => {
+        ws.send('');
+        expect(ws.sentMessages()).toEqual([]);
+      });
     });
   });
 });

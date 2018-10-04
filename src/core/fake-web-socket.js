@@ -137,6 +137,7 @@ export class FakeWebSocket {
     this._url = urlRecord;
     this._protocols = protocols;
     this._listeners = {};
+    this._sentMessages = [];
     this._establishConnection();
 
     // 8- Return a new WebSocket object whose url is urlRecord.
@@ -314,13 +315,28 @@ export class FakeWebSocket {
   }
 
   /**
-   * Transmits data using the `WebSocket` connection. data can be a `string`,
-   * a `Blob`, an `ArrayBuffer`, or an `ArrayBufferView`.
+   * Transmits data using the `WebSocket` connection.
    *
+   * @param {*} data The string data to send.
    * @return {void}
    */
-  send() {
-    // TODO
+  send(data) {
+    const nbArguments = arguments.length;
+    if (nbArguments === 0) {
+      throw new Error('Failed to execute \'send\' on \'WebSocket\': 1 argument required, but only 0 present.');
+    }
+
+    if (this._readyState === CONNECTING) {
+      throw new Error('Failed to execute \'send\' on \'WebSocket\': Still in CONNECTING state.');
+    }
+
+    if (this._readyState === CLOSING || this._readyState === CLOSED) {
+      throw new Error('WebSocket is already in CLOSING or CLOSED state.');
+    }
+
+    if (data !== '') {
+      this._sentMessages.push(data);
+    }
   }
 
   /**
@@ -372,6 +388,15 @@ export class FakeWebSocket {
    */
   handshake() {
     return this._handshake;
+  }
+
+  /**
+   * Get all sent messages.
+   *
+   * @return {Array<*>} All sent messages.
+   */
+  sentMessages() {
+    return this._sentMessages.slice();
   }
 }
 

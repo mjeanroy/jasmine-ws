@@ -27,6 +27,10 @@
       console.log('Method `onmessage` called:', e);
     };
 
+    ws.onerror = function (e) {
+      console.log('Method `onerror` called:', e);
+    };
+
     ws.addEventListener('open', function (e) {
       console.log('Event listener `open` called:', this, e);
       appendToOutput('WebSocket connected, `open` listener executed');
@@ -34,6 +38,10 @@
 
     ws.addEventListener('message', function (e) {
       console.log('Event listener `message` called:', e);
+    });
+
+    ws.addEventListener('error', function (e) {
+      console.log('Event listener `error` called: ', e);
     });
 
     function appendToOutput(message) {
