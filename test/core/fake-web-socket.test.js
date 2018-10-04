@@ -292,6 +292,120 @@ describe('FakeWebSocket', () => {
         ws.send('');
         expect(ws.sentMessages()).toEqual([]);
       });
+
+      it('should close websocket', () => {
+        const onCloseListener = jasmine.createSpy('onCloseListener');
+        const onClose = jasmine.createSpy('onclose');
+
+        ws.addEventListener('close', onCloseListener);
+        ws.onclose = onClose;
+        ws.close();
+
+        expect(ws.readyState).toBe(2);
+        expect(ws.closeHandshake()).not.toBeNull();
+
+        ws.closeHandshake().respond();
+
+        expect(onCloseListener).toHaveBeenCalledTimes(1);
+        expect(onClose).toHaveBeenCalledTimes(1);
+
+        const e1 = onCloseListener.calls.mostRecent().args[0];
+        const e2 = onClose.calls.mostRecent().args[0];
+        expect(e1).toBe(e2);
+        expect(e1.code).toBe(1005);
+        expect(e1.reason).toBe('');
+        expect(e1.wasClean).toBe(true);
+      });
+    });
+
+    it('should close websocket with a code and a reason', () => {
+      const onCloseListener = jasmine.createSpy('onCloseListener');
+      const onClose = jasmine.createSpy('onclose');
+      const code = 1000;
+      const reason = 'Closed Manually';
+
+      ws.addEventListener('close', onCloseListener);
+      ws.onclose = onClose;
+      ws.close(code, reason);
+
+      expect(ws.readyState).toBe(2);
+      expect(ws.closeHandshake()).not.toBeNull();
+
+      ws.closeHandshake().respond();
+
+      expect(onCloseListener).toHaveBeenCalledTimes(1);
+      expect(onClose).toHaveBeenCalledTimes(1);
+
+      const e1 = onCloseListener.calls.mostRecent().args[0];
+      const e2 = onClose.calls.mostRecent().args[0];
+      expect(e1).toBe(e2);
+      expect(e1.code).toBe(code);
+      expect(e1.reason).toBe(reason);
+      expect(e1.wasClean).toBe(true);
+    });
+
+    it('should close websocket with a code and a `null` reason', () => {
+      const onCloseListener = jasmine.createSpy('onCloseListener');
+      const code = 1000;
+      const reason = null;
+
+      ws.addEventListener('close', onCloseListener);
+      ws.close(code, reason);
+      ws.closeHandshake().respond();
+
+      expect(onCloseListener).toHaveBeenCalledTimes(1);
+
+      const event = onCloseListener.calls.mostRecent().args[0];
+      expect(event.code).toBe(code);
+      expect(event.reason).toBe('null');
+      expect(event.wasClean).toBe(true);
+    });
+
+    it('should close websocket with a code and a non string reason', () => {
+      const onCloseListener = jasmine.createSpy('onCloseListener');
+      const code = 1000;
+      const reason = true;
+
+      ws.addEventListener('close', onCloseListener);
+      ws.close(code, reason);
+      ws.closeHandshake().respond();
+
+      expect(onCloseListener).toHaveBeenCalledTimes(1);
+
+      const event = onCloseListener.calls.mostRecent().args[0];
+      expect(event.code).toBe(code);
+      expect(event.reason).toBe('true');
+      expect(event.wasClean).toBe(true);
+    });
+
+    it('should fail to close websocket with invalid code', () => {
+      const onCloseListener = jasmine.createSpy('onCloseListener');
+      const onClose = jasmine.createSpy('onclose');
+
+      ws.addEventListener('close', onCloseListener);
+      ws.onclose = onClose;
+
+      const verify = (i) => (
+        expect(() => ws.close(i)).toThrow(new Error(
+            `Failed to execute 'close' on 'WebSocket': The code must be either 1000, or between 3000 and 4999. ` +
+            `${i} is neither.`
+        ))
+      );
+
+      for (let i = 0; i < 1000; ++i) {
+        verify(i);
+      }
+
+      for (let i = 1001; i < 3000; ++i) {
+        verify(i);
+      }
+
+      for (let i = 5000; i < 6000; ++i) {
+        verify(i);
+      }
+
+      expect(onCloseListener).not.toHaveBeenCalled();
+      expect(onClose).not.toHaveBeenCalled();
     });
   });
 });

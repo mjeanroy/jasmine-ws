@@ -8,6 +8,10 @@
 
     <div>
       <div>
+        <div>
+          <button type="button" id="connect-btn">Connect</button>
+          <button type="button" id="disconnect-btn" disabled>Disconnect</button>
+        </div>
         <div id="output" style="border: 1px solid #eee;"></div>
       </div>
     </div>
@@ -15,37 +19,95 @@
 
   <script type="text/javascript">
     var $output = document.getElementById('output');
+    var $connect = document.getElementById('connect-btn');
+    var $disconnect = document.getElementById('disconnect-btn');
     var wsUri = "wss://echo.websocket.org/";
-    var ws = new WebSocket(wsUri);
+    var ws = null;
 
-    ws.onopen = function (e) {
-      console.log('Method `onopen` called:', this, e);
-      appendToOutput('WebSocket connected, `onpen` callback executed');
-    };
+    function createWebSocket() {
+      if (!ws) {
+        ws = new WebSocket(wsUri);
 
-    ws.onmessage = function (e) {
-      console.log('Method `onmessage` called:', e);
-    };
+        ws.onopen = onopen;
+        ws.onerror = onerror;
+        ws.onmessage = onmessage;
+        ws.onclose = onclose;
 
-    ws.onerror = function (e) {
-      console.log('Method `onerror` called:', e);
-    };
+        ws.addEventListener('open', onOpenListener);
+        ws.addEventListener('close', onCloseListener);
+        ws.addEventListener('message', onMessageListener);
+        ws.addEventListener('error', onErrorListener);
+      }
+    }
 
-    ws.addEventListener('open', function (e) {
-      console.log('Event listener `open` called:', this, e);
-      appendToOutput('WebSocket connected, `open` listener executed');
+    function closeWebSocket() {
+      if (ws) {
+        ws.close();
+      }
+    }
+
+    $disconnect.addEventListener('click', function () {
+      closeWebSocket();
     });
 
-    ws.addEventListener('message', function (e) {
-      console.log('Event listener `message` called:', e);
-    });
-
-    ws.addEventListener('error', function (e) {
-      console.log('Event listener `error` called: ', e);
+    $connect.addEventListener('click', function () {
+      createWebSocket();
     });
 
     function appendToOutput(message) {
       $output.innerHTML += message + '<br />';
+    }
+
+    function onOpenListener(e) {
+      console.log('Event listener `open` called:', this, e);
+      appendToOutput('WebSocket connected, `open` listener executed');
+    }
+
+    function onCloseListener(e) {
+      console.log('Event listener `close` called:', this, e);
+      appendToOutput('WebSocket closed, `close` listener executed');
+
+      setTimeout(function () {
+        ws.removeEventListener('open', onOpenListener);
+        ws.removeEventListener('close', onCloseListener);
+        ws.removeEventListener('message', onMessageListener);
+        ws.removeEventListener('error', onErrorListener);
+        ws = null;
+      });
+    }
+
+    function onMessageListener(e) {
+      console.log('Event listener `message` called:', e);
+    }
+
+    function onErrorListener(e) {
+      console.log('Event listener `error` called: ', e);
+      appendToOutput('WebSocket error, `error` listener executed');
+    }
+
+    function onopen(e) {
+      $disconnect.disabled = false;
+      $connect.disabled = true;
+
+      console.log('Method `onopen` called:', this, e);
+      appendToOutput('WebSocket connected, `onpen` callback executed');
+    }
+
+    function onclose(e) {
+      $disconnect.disabled = true;
+      $connect.disabled = false;
+
+      console.log('Method `onclose` called:', this, e);
+      appendToOutput('WebSocket closed, `onclose` callback executed');
+    }
+
+    function onmessage(e) {
+      console.log('Method `onmessage` called:', e);
+    }
+
+    function onerror(e) {
+      console.log('Method `onerror` called:', e);
+      appendToOutput('WebSocket error, `onerror` callback executed');
     }
   </script>
 </html>

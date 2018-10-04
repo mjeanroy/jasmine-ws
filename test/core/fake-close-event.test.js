@@ -22,15 +22,17 @@
  * THE SOFTWARE.
  */
 
-import {FakeEvent} from '../../src/core/fake-event.js';
+import {FakeCloseEvent} from '../../src/core/fake-close-event.js';
 
-describe('FakeEvent', () => {
+describe('FakeCloseEvent', () => {
   it('should create the fake event', () => {
-    const type = 'open';
+    const code = 1000;
+    const reason = 'Manually Closed';
+    const wasClean = true;
     const target = {};
-    const event = new FakeEvent(type, target);
+    const event = new FakeCloseEvent(target, code, reason, wasClean);
 
-    expect(event.type).toBe(type);
+    expect(event.type).toBe('close');
     expect(event.eventPhase).toBe(0);
     expect(event.cancelable).toBe(false);
     expect(event.composed).toBe(false);
@@ -38,20 +40,22 @@ describe('FakeEvent', () => {
     expect(event.bubbles).toBe(false);
     expect(event.isTrusted).toBe(true);
     expect(event.timeStamp).toBeDefined();
-
     expect(event.cancelBubble).toBe(false);
     expect(event.returnValue).toBe(true);
-
     expect(event.target).toBe(target);
     expect(event.currentTarget).toBe(target);
     expect(event.srcElement).toBe(target);
+
+    expect(event.code).toBe(code);
+    expect(event.reason).toBe(reason);
+    expect(event.wasClean).toBe(wasClean);
   });
 
   describe('once created', () => {
     let event;
 
     beforeEach(() => {
-      event = new FakeEvent('open', {});
+      event = new FakeCloseEvent({}, 1000, 'Closed Manually', true);
     });
 
     it('should prevent default if event is caccelable', () => {

@@ -23,7 +23,7 @@
  */
 
 /**
- * A fake Handshake request.
+ * A fake Handshake for the open request.
  */
 export class FakeOpenHandshake {
   /**

@@ -22,10 +22,38 @@
  * THE SOFTWARE.
  */
 
-import './common/index.js';
-import './fake-close-event.test.js';
-import './fake-close-handshake.test.js';
-import './fake-event.test.js';
-import './fake-open-handshake.test.js';
-import './fake-web-socket.test.js';
-import './ws-tracker.test.js';
+import {FakeWebSocket} from '../../src/core/fake-web-socket.js';
+import {FakeCloseHandshake} from '../../src/core/fake-close-handshake.js';
+
+describe('FakeOpenHandshake', () => {
+  it('should create close handshake request', () => {
+    const ws = new FakeWebSocket('ws://localhost');
+    const code = 1000;
+    const reason = 'Connection Aborted';
+    const wasClean = true;
+    const handshake = new FakeCloseHandshake(ws, code, reason, wasClean);
+
+    expect(handshake.code).toBe(code);
+    expect(handshake.reason).toBe(reason);
+    expect(handshake.wasClean).toBe(wasClean);
+  });
+
+  describe('once created', () => {
+    let ws;
+    let handshake;
+
+    beforeEach(() => {
+      ws = new FakeWebSocket('ws://localhost/test', ['protocol1', 'protocol2']);
+      handshake = new FakeCloseHandshake(ws, 1000, 'Aborted', true);
+    });
+
+    it('should trigger response', () => {
+      spyOn(ws, '_doClose').and.callThrough();
+
+      handshake.respond();
+
+      expect(ws._doClose).toHaveBeenCalledWith(handshake.code, handshake.reason, handshake.wasClean);
+      expect(ws.readyState).toBe(3);
+    });
+  });
+});

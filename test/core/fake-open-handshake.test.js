@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {FakeOpenHandshake} from '../../src/core/fake-open-handshake';
-import {FakeWebSocket} from '../../src/core/fake-web-socket';
+import {FakeOpenHandshake} from '../../src/core/fake-open-handshake.js';
+import {FakeWebSocket} from '../../src/core/fake-web-socket.js';
 
 describe('FakeOpenHandshake', () => {
   it('should create basic fake handshake request', () => {

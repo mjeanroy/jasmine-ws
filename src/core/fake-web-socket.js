@@ -31,10 +31,13 @@ import {forEach} from './common/for-each.js';
 import {has} from './common/has.js';
 import {isFunction} from './common/is-function.js';
 import {isString} from './common/is-string.js';
+import {isUndefined} from './common/is-undefined.js';
 import {parseUrl} from './common/parse-url.js';
 import {toPairs} from './common/to-pairs.js';
 import {FakeOpenHandshake} from './fake-open-handshake.js';
+import {FakeCloseHandshake} from './fake-close-handshake.js';
 import {FakeEvent} from './fake-event.js';
+import {FakeCloseEvent} from './fake-close-event.js';
 import {track} from './ws-tracker.js';
 
 /**
@@ -138,6 +141,8 @@ export class FakeWebSocket {
     this._protocols = protocols;
     this._listeners = {};
     this._sentMessages = [];
+    this._openHandshake = null;
+    this._closeHandhsake = null;
     this._establishConnection();
 
     // 8- Return a new WebSocket object whose url is urlRecord.
@@ -315,6 +320,13 @@ export class FakeWebSocket {
   }
 
   /**
+   * The default `onerror` method, a no-op.
+   * @return {void}
+   */
+  onerror() {
+  }
+
+  /**
    * Transmits data using the `WebSocket` connection.
    *
    * @param {*} data The string data to send.
@@ -343,10 +355,34 @@ export class FakeWebSocket {
    * Closes the `WebSocket` connection, optionally using code as the the WebSocket connection close code and
    * reason as the the WebSocket connection close reason.
    *
+   * If the close code is not specified, a default value of 1005 is assumed.
+   * The close `reason` is a `string` that must be no longer than 123 bytes of UTF-8 text (not characters).
+   *
+   * @param {number} code A numeric value indicating the status code explaining why the connection is being closed.
+   * @param {string} reason A human-readable string explaining why the connection is closing.
    * @return {void}
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
    */
-  close() {
-    // TODO
+  close(code, reason) {
+    if (!isUndefined(code)) {
+      code = Number(code) || 0;
+
+      if (code != 1000 && (code < 3000 || code > 4999)) {
+        throw new Error(
+            `Failed to execute 'close' on 'WebSocket': The code must be either 1000, or between 3000 and 4999. ` +
+            `${code} is neither.`
+        );
+      }
+    }
+
+    this._readyState = CLOSING;
+    this._closeHandhsake = new FakeCloseHandshake(
+        this,
+        isUndefined(code) ? 1005 : code,
+        isUndefined(reason) ? '' : String(reason),
+        true
+    );
   }
 
   // The Fake WebSocket API
@@ -382,12 +418,34 @@ export class FakeWebSocket {
   }
 
   /**
+   * Mark the websocket as closed and trigger appropriate listeners.
+   *
+   * @param {number} code A numeric value indicating the status code explaining why the connection is being closed.
+   * @param {string} reason A human-readable string explaining why the connection is closing.
+   * @param {boolean} wasClean A `boolean` that Indicates whether or not the connection was cleanly closed.
+   * @return {void}
+   */
+  _doClose(code, reason, wasClean) {
+    this._readyState = CLOSED;
+    this.dispatchEvent(new FakeCloseEvent(this, code, reason, wasClean));
+  }
+
+  /**
    * The handshake request.
    *
-   * @return {Object} The handshake request.
+   * @return {FakeOpenHandshake} The handshake request.
    */
   openHandshake() {
     return this._openHandshake;
+  }
+
+  /**
+   * The handshake closing request.
+   *
+   * @return {FakeCloseHandshake} The close handshake.
+   */
+  closeHandshake() {
+    return this._closeHandhsake;
   }
 
   /**
