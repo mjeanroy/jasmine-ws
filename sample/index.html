@@ -2,6 +2,49 @@
 <html>
   <head>
     <title>WebSocket Test</title>
+    <style>
+      hr {
+        border: 1px solid #eee;
+        margin: 10px 0;
+      }
+
+      #output {
+        border: 1px solid #eee;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0 0 0;
+      }
+
+      button {
+        cursor: pointer;
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        padding: 5px;
+        border-radius: 5px;
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+      }
+
+      button[disabled] {
+        opacity: .65;
+      }
+
+      input[type="text"] {
+        display: inline-block;
+        padding: 5px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      }
+    </style>
   </head>
   <body>
     <h1>WebSocket API</h1>
@@ -12,6 +55,17 @@
           <button type="button" id="connect-btn">Connect</button>
           <button type="button" id="disconnect-btn" disabled>Disconnect</button>
         </div>
+
+        <hr/>
+
+        <div>
+          <form id="message-form">
+            <label for="input-message">Message:</label>
+            <input type="text" id="input-message"/>
+            <button id="send-btn" type="submit" disabled>Send</button>
+          </form>
+        </div>
+
         <div id="output" style="border: 1px solid #eee;"></div>
       </div>
     </div>
@@ -21,6 +75,10 @@
     var $output = document.getElementById('output');
     var $connect = document.getElementById('connect-btn');
     var $disconnect = document.getElementById('disconnect-btn');
+    var $send = document.getElementById('send-btn');
+    var $input = document.getElementById('input-message');
+    var $form = document.getElementById('message-form');
+
     var wsUri = "wss://echo.websocket.org/";
     var ws = null;
 
@@ -54,6 +112,14 @@
       createWebSocket();
     });
 
+    $form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      ws.send($input.value);
+
+      $input.value = '';
+    });
+
     function appendToOutput(message) {
       $output.innerHTML += message + '<br />';
     }
@@ -77,16 +143,18 @@
     }
 
     function onMessageListener(e) {
-      console.log('Event listener `message` called:', e);
+      console.log('Event listener `message` called:', this, e);
+      appendToOutput('WebSocket message, `message` listener executed');
     }
 
     function onErrorListener(e) {
-      console.log('Event listener `error` called: ', e);
+      console.log('Event listener `error` called: ', this, e);
       appendToOutput('WebSocket error, `error` listener executed');
     }
 
     function onopen(e) {
       $disconnect.disabled = false;
+      $send.disabled = false;
       $connect.disabled = true;
 
       console.log('Method `onopen` called:', this, e);
@@ -95,6 +163,7 @@
 
     function onclose(e) {
       $disconnect.disabled = true;
+      $send.disabled = false;
       $connect.disabled = false;
 
       console.log('Method `onclose` called:', this, e);
@@ -102,7 +171,8 @@
     }
 
     function onmessage(e) {
-      console.log('Method `onmessage` called:', e);
+      console.log('Method `onmessage` called:', this, e);
+      appendToOutput('WebSocket message, `onmessage` callback executed');
     }
 
     function onerror(e) {
