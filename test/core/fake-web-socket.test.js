@@ -524,6 +524,12 @@ describe('FakeWebSocket', () => {
         ws.close();
       });
 
+      it('should faile to send data', () => {
+        expect(() => ws.send('test')).toThrow(new Error(
+            'WebSocket is already in CLOSING or CLOSED state.'
+        ));
+      });
+
       it('should not re-close the websocket', () => {
         const closeHandshake = ws.closeHandshake();
         const onCloseListener = jasmine.createSpy('onCloseListener');
@@ -545,6 +551,12 @@ describe('FakeWebSocket', () => {
         ws.openHandshake().respond();
         ws.close();
         ws.closeHandshake().respond();
+      });
+
+      it('should faile to send data', () => {
+        expect(() => ws.send('test')).toThrow(new Error(
+            'WebSocket is already in CLOSING or CLOSED state.'
+        ));
       });
 
       it('should not re-close the websocket', () => {
