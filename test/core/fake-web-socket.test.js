@@ -70,7 +70,7 @@ describe('FakeWebSocket', () => {
     const ws = new FakeWebSocket('ws://localhost');
 
     expect(ws.readyState).toBe(0);
-    expect(ws.url).toBeDefined();
+    expect(ws.url).toBe('ws://localhost/');
     expect(ws.protocol).toBe('');
     expect(ws.extensions).toBe('');
     expect(ws.binaryType).toBe('blob');

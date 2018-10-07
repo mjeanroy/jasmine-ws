@@ -159,7 +159,7 @@ export class FakeWebSocket {
    * @return {string} The URL.
    */
   get url() {
-    return this._url;
+    return this._url.toString();
   }
 
   /**
