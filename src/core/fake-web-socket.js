@@ -468,7 +468,7 @@ export class FakeWebSocket {
   receiveMessage(data) {
     if (isNull(data) || isUndefined(data)) {
       throw new Error(
-          `Failed to receive message on 'WebSocket': The message is not defined.`
+          `Failed to receive message on 'WebSocket': The message is ${String(data)}.`
       );
     }
 

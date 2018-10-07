@@ -263,6 +263,21 @@ describe('FakeWebSocket', () => {
       expect(onErrorListener).not.toHaveBeenCalled();
     });
 
+    it('should fail to receive a message if the open handshake is still pending', () => {
+      const onmessage = jasmine.createSpy('onmessage');
+      const onMessageListener = jasmine.createSpy('onMessageListener');
+      const data = 'test';
+
+      ws.onmessage = onmessage;
+      ws.addEventListener('message', onMessageListener);
+      expect(() => ws.receiveMessage(data)).toThrow(new Error(
+          'Failed to receive message on \'WebSocket\': The websocket state must be OPEN.'
+      ));
+
+      expect(onmessage).not.toHaveBeenCalled();
+      expect(onMessageListener).not.toHaveBeenCalled();
+    });
+
     describe('once opened', () => {
       let ws;
 
@@ -315,6 +330,54 @@ describe('FakeWebSocket', () => {
         expect(e1.code).toBe(1005);
         expect(e1.reason).toBe('');
         expect(e1.wasClean).toBe(true);
+      });
+
+      it('should receive a message and trigger listeners', () => {
+        const onmessage = jasmine.createSpy('onmessage');
+        const onMessageListener = jasmine.createSpy('onMessageListener');
+        const data = 'test';
+
+        ws.onmessage = onmessage;
+        ws.addEventListener('message', onMessageListener);
+        ws.receiveMessage(data);
+
+        expect(onmessage).toHaveBeenCalledTimes(1);
+        expect(onMessageListener).toHaveBeenCalledTimes(1);
+
+        const e1 = onmessage.calls.mostRecent().args[0];
+        const e2 = onMessageListener.calls.mostRecent().args[0];
+        expect(e1).toBe(e2);
+        expect(e1.data).toBe(data);
+        expect(e1.origin).toBe('ws://localhost');
+      });
+
+      it('should fail to receive a null message', () => {
+        const onmessage = jasmine.createSpy('onmessage');
+        const onMessageListener = jasmine.createSpy('onMessageListener');
+        const data = null;
+
+        ws.onmessage = onmessage;
+        ws.addEventListener('message', onMessageListener);
+        expect(() => ws.receiveMessage(data)).toThrow(new Error(
+            'Failed to receive message on \'WebSocket\': The message is null.'
+        ));
+
+        expect(onmessage).not.toHaveBeenCalled();
+        expect(onMessageListener).not.toHaveBeenCalled();
+      });
+
+      it('should fail to receive a void 0 message', () => {
+        const onmessage = jasmine.createSpy('onmessage');
+        const onMessageListener = jasmine.createSpy('onMessageListener');
+
+        ws.onmessage = onmessage;
+        ws.addEventListener('message', onMessageListener);
+        expect(() => ws.receiveMessage()).toThrow(new Error(
+            'Failed to receive message on \'WebSocket\': The message is undefined.'
+        ));
+
+        expect(onmessage).not.toHaveBeenCalled();
+        expect(onMessageListener).not.toHaveBeenCalled();
       });
     });
 
