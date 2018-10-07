@@ -407,6 +407,30 @@ describe('FakeWebSocket', () => {
       expect(e1.wasClean).toBe(true);
     });
 
+    it('should fail close websocket with a code reason with a lenth > 123', () => {
+      const onCloseListener = jasmine.createSpy('onCloseListener');
+      const onClose = jasmine.createSpy('onclose');
+      const code = 1000;
+      const reason = (() => {
+        let str = '';
+
+        for (let i = 0; i < 125; ++i) {
+          str += 'x';
+        }
+
+        return str;
+      })();
+
+      ws.addEventListener('close', onCloseListener);
+      ws.onclose = onClose;
+      expect(() => ws.close(code, reason)).toThrow(new Error(
+          'Failed to execute \'close\' on \'WebSocket\': The message must not be greater than 123 bytes.'
+      ));
+
+      expect(onCloseListener).not.toHaveBeenCalled();
+      expect(onClose).not.toHaveBeenCalled();
+    });
+
     it('should close websocket with a code and a `null` reason', () => {
       const onCloseListener = jasmine.createSpy('onCloseListener');
       const code = 1000;

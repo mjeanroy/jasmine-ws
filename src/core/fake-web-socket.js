@@ -378,13 +378,17 @@ export class FakeWebSocket {
       }
     }
 
+    code = isUndefined(code) ? 1005 : code;
+    reason = isUndefined(reason) ? '' : String(reason);
+
+    if (reason.length > 123) {
+      throw new Error(
+          `Failed to execute 'close' on 'WebSocket': The message must not be greater than 123 bytes.`
+      );
+    }
+
     this._readyState = CLOSING;
-    this._closeHandhsake = new FakeCloseHandshake(
-        this,
-        isUndefined(code) ? 1005 : code,
-        isUndefined(reason) ? '' : String(reason),
-        true
-    );
+    this._closeHandhsake = new FakeCloseHandshake(this, code, reason, true);
   }
 
   // The Fake WebSocket API
