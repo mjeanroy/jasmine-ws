@@ -30,6 +30,7 @@ import {find} from './common/find.js';
 import {forEach} from './common/for-each.js';
 import {has} from './common/has.js';
 import {isFunction} from './common/is-function.js';
+import {isNull} from './common/is-null.js';
 import {isString} from './common/is-string.js';
 import {isUndefined} from './common/is-undefined.js';
 import {parseUrl} from './common/parse-url.js';
@@ -38,6 +39,7 @@ import {FakeOpenHandshake} from './fake-open-handshake.js';
 import {FakeCloseHandshake} from './fake-close-handshake.js';
 import {FakeEvent} from './fake-event.js';
 import {FakeCloseEvent} from './fake-close-event.js';
+import {FakeMessageEvent} from './fake-message-event.js';
 import {track} from './ws-tracker.js';
 
 /**
@@ -455,6 +457,28 @@ export class FakeWebSocket {
    */
   sentMessages() {
     return this._sentMessages.slice();
+  }
+
+  /**
+   * Emit data and trigger appropriate listeners.
+   *
+   * @param {*} data Emitted data.
+   * @return {void}
+   */
+  receiveMessage(data) {
+    if (isNull(data) || isUndefined(data)) {
+      throw new Error(
+          `Failed to receive message on 'WebSocket': The message is not defined.`
+      );
+    }
+
+    if (this._readyState !== OPEN) {
+      throw new Error(
+          `Failed to receive message on 'WebSocket': The websocket state must be OPEN.`
+      );
+    }
+
+    this.dispatchEvent(new FakeMessageEvent(this, data));
   }
 }
 

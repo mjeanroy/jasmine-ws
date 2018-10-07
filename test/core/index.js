@@ -26,6 +26,7 @@ import './common/index.js';
 import './fake-close-event.test.js';
 import './fake-close-handshake.test.js';
 import './fake-event.test.js';
+import './fake-message-event.test.js';
 import './fake-open-handshake.test.js';
 import './fake-web-socket.test.js';
 import './ws-tracker.test.js';

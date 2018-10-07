@@ -26,6 +26,8 @@ import {FakeEvent} from './fake-event';
 
 /**
  * A fake close event.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
  */
 export class FakeCloseEvent extends FakeEvent {
   /**
