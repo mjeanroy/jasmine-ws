@@ -365,8 +365,11 @@ export class FakeWebSocket {
    * @return {void}
    * @see https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close
    * @see https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent#Status_codes
+   * @see https://html.spec.whatwg.org/multipage/web-sockets.html#dom-websocket-close
    */
   close(code, reason) {
+    // 1- If code is present, but is neither an integer equal to 1000 nor an integer in the range 3000 to 4999,
+    // inclusive, throw an "InvalidAccessError" DOMException.
     if (!isUndefined(code)) {
       code = Number(code) || 0;
 
@@ -378,6 +381,9 @@ export class FakeWebSocket {
       }
     }
 
+    // 2- If reason is present, then run these substeps:
+    //  2-1 Let reasonBytes be the result of encoding reason.
+    //  2-2 If reasonBytes is longer than 123 bytes, then throw a "SyntaxError" DOMException.
     code = isUndefined(code) ? 1005 : code;
     reason = isUndefined(reason) ? '' : String(reason);
 
@@ -387,8 +393,26 @@ export class FakeWebSocket {
       );
     }
 
+    // 3- Run the first matching steps from the following list:
+
+    // 3-1 If the readyState attribute is in the CLOSING (2) or CLOSED (3) state
+    // Do nothing.
+    if (this._readyState === CLOSING || this._readyState === CLOSED) {
+      return;
+    }
+
+    // 3-2 If the WebSocket connection is not yet established
+    // Fail the WebSocket connection and set the readyState attribute's value to CLOSING.
+    if (this._readyState === CONNECTING) {
+      this._failConnection();
+    }
+
+    // 3-3 If the WebSocket closing handshake has not yet been started [WSP]
+    if (!this._closeHandhsake) {
+      this._closeHandhsake = new FakeCloseHandshake(this, code, reason, true);
+    }
+
     this._readyState = CLOSING;
-    this._closeHandhsake = new FakeCloseHandshake(this, code, reason, true);
   }
 
   // The Fake WebSocket API
@@ -434,6 +458,15 @@ export class FakeWebSocket {
   _doClose(code, reason, wasClean) {
     this._readyState = CLOSED;
     this.dispatchEvent(new FakeCloseEvent(this, code, reason, wasClean));
+  }
+
+  /**
+   * Fail the `WebSocket` connection as described in the `WebSocket` protocol.
+   *
+   * @return {void}
+   */
+  _failConnection() {
+    this._closeHandhsake = new FakeCloseHandshake(this, 1006, '', false);
   }
 
   /**
