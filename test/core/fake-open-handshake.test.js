@@ -169,5 +169,13 @@ describe('FakeOpenHandshake', () => {
         },
       });
     });
+
+    it('should fail to trigger response more than once', () => {
+      handshake.respond();
+
+      expect(() => handshake.respond()).toThrow(new Error(
+          'Cannot trigger handshake response since the open handshake is already closed.'
+      ));
+    });
   });
 });

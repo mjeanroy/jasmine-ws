@@ -109,15 +109,41 @@ export class FakeOpenHandshake {
    * @return {void}
    */
   respond() {
-    this._response = {
+    this._triggerResponse({
       status: 101,
       headers: {
         'Upgrade': 'websocket',
         'Connection': 'Upgrade',
         'Sec-WebSocket-Accept': '',
       },
-    };
+    });
+  }
 
-    this._ws._openConnection(this._response);
+  /**
+   * Trigger the handshake response (note that if the handshake response has already been triggered,
+   * this method will throw an error).
+   *
+   * @param {object} response The handshake response.
+   * @return {void}
+   */
+  _triggerResponse(response) {
+    if (this._isClosed()) {
+      throw new Error(
+          'Cannot trigger handshake response since the open handshake is already closed.'
+      );
+    }
+
+    this._response = response;
+    this._ws._openConnection(response);
+  }
+
+  /**
+   * Check if the handshake operation is closed, i.e if the response has already
+   * been triggered.
+   *
+   * @return {boolean} `true` if the handshake response has been triggered, `false` otherwise.
+   */
+  _isClosed() {
+    return this._response !== null;
   }
 }
