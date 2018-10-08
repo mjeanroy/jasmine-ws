@@ -352,7 +352,7 @@ describe('FakeWebSocket', () => {
         expect(e1.wasClean).toBe(true);
       });
 
-      it('should receive a message and trigger listeners', () => {
+      it('should receive a string message and trigger listeners', () => {
         const onmessage = jasmine.createSpy('onmessage');
         const onMessageListener = jasmine.createSpy('onMessageListener');
         const data = 'test';
@@ -369,6 +369,48 @@ describe('FakeWebSocket', () => {
         expect(e1).toBe(e2);
         expect(e1.data).toBe(data);
         expect(e1.origin).toBe('ws://localhost');
+      });
+
+      it('should receive a blob message and trigger listeners', () => {
+        const onMessageListener = jasmine.createSpy('onMessageListener');
+        const data = new Blob(['test'], {
+          type: 'plain/text',
+        });
+
+        ws.addEventListener('message', onMessageListener);
+        ws.receiveMessage(data);
+
+        expect(onMessageListener).toHaveBeenCalledTimes(1);
+
+        const event = onMessageListener.calls.mostRecent().args[0];
+        expect(event.data).toBe(data);
+      });
+
+      it('should receive an ArrayBuffer message and trigger listeners', () => {
+        const onMessageListener = jasmine.createSpy('onMessageListener');
+        const data = new ArrayBuffer(8);
+
+        ws.addEventListener('message', onMessageListener);
+        ws.receiveMessage(data);
+
+        expect(onMessageListener).toHaveBeenCalledTimes(1);
+
+        const event = onMessageListener.calls.mostRecent().args[0];
+        expect(event.data).toBe(data);
+      });
+
+      it('should fail to receive an invalid message', () => {
+        const onMessageListener = jasmine.createSpy('onMessageListener');
+        const data = [];
+
+        ws.addEventListener('message', onMessageListener);
+
+        expect(() => ws.receiveMessage(data)).toThrow(new Error(
+            `Failed to receive message on 'WebSocket': Only String, Blob or ArrayBuffer are allowed. ` +
+            `The message is: [object Array].`
+        ));
+
+        expect(onMessageListener).not.toHaveBeenCalled();
       });
 
       it('should fail to receive a null message', () => {

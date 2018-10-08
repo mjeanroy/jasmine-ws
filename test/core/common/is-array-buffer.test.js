@@ -22,22 +22,18 @@
  * THE SOFTWARE.
  */
 
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-array-buffer.test.js';
-import './is-blob.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
+import {isArrayBuffer} from '../../../src/core/common/is-array-buffer.js';
+
+describe('isArrayBuffer', () => {
+  it('should return true with an ArrayBuffer', () => {
+    expect(isArrayBuffer(new ArrayBuffer())).toBe(true);
+
+    expect(isArrayBuffer(new Blob())).toBe(false);
+    expect(isArrayBuffer(null)).toBe(false);
+    expect(isArrayBuffer(undefined)).toBe(false);
+    expect(isArrayBuffer(0)).toBe(false);
+    expect(isArrayBuffer(true)).toBe(false);
+    expect(isArrayBuffer([])).toBe(false);
+  });
+});
+

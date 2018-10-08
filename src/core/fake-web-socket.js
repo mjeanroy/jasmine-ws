@@ -29,11 +29,14 @@ import {filter} from './common/filter.js';
 import {find} from './common/find.js';
 import {forEach} from './common/for-each.js';
 import {has} from './common/has.js';
+import {isArrayBuffer} from './common/is-array-buffer.js';
+import {isBlob} from './common/is-blob.js';
 import {isFunction} from './common/is-function.js';
 import {isNull} from './common/is-null.js';
 import {isString} from './common/is-string.js';
 import {isUndefined} from './common/is-undefined.js';
 import {parseUrl} from './common/parse-url.js';
+import {tagName} from './common/tag-name.js';
 import {toPairs} from './common/to-pairs.js';
 import {FakeOpenHandshake} from './fake-open-handshake.js';
 import {FakeCloseHandshake} from './fake-close-handshake.js';
@@ -501,11 +504,19 @@ export class FakeWebSocket {
    *
    * @param {*} data Emitted data.
    * @return {void}
+   * @see https://html.spec.whatwg.org/multipage/web-sockets.html#feedback-from-the-protocol
    */
   receiveMessage(data) {
     if (isNull(data) || isUndefined(data)) {
       throw new Error(
           `Failed to receive message on 'WebSocket': The message is ${String(data)}.`
+      );
+    }
+
+    if (!isString(data) && !isBlob(data) && !isArrayBuffer(data)) {
+      throw new Error(
+          `Failed to receive message on 'WebSocket': Only String, Blob or ArrayBuffer are allowed. ` +
+          `The message is: ${tagName(data)}.`
       );
     }
 
