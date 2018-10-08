@@ -37,9 +37,8 @@ export class FakeCloseHandshake {
    */
   constructor(ws, code, reason, wasClean) {
     this._ws = ws;
-    this._code = code;
-    this._reason = reason;
-    this._wasClean = wasClean;
+    this._request = {code, reason, wasClean};
+    this._response = null;
   }
 
   /**
@@ -48,11 +47,11 @@ export class FakeCloseHandshake {
    * @return {void}
    */
   respond() {
-    this._ws._doClose(
-        this._code,
-        this._reason,
-        this._wasClean
-    );
+    this._triggerResponse({
+      code: this._request.code,
+      reason: this._request.reason,
+      wasClean: this._request.wasClean,
+    });
   }
 
   /**
@@ -61,7 +60,7 @@ export class FakeCloseHandshake {
    * @return {number} The close code.
    */
   get code() {
-    return this._code;
+    return this._request.code;
   }
 
   /**
@@ -70,7 +69,7 @@ export class FakeCloseHandshake {
    * @return {string} The close r
    */
   get reason() {
-    return this._reason;
+    return this._request.reason;
   }
 
   /**
@@ -79,6 +78,37 @@ export class FakeCloseHandshake {
    * @return {boolean} The clean flag.
    */
   get wasClean() {
-    return this._wasClean;
+    return this._request.wasClean;
+  }
+
+  /**
+   * Trigger the handshake response.
+   *
+   * @param {Object} response The handshake response.
+   * @return {void}
+   */
+  _triggerResponse(response) {
+    if (this._isClosed()) {
+      throw new Error(
+          'Cannot trigger handshake response since the close handshake is already closed.'
+      );
+    }
+
+    this._response = response;
+    this._ws._doClose(
+        response.code,
+        response.reason,
+        response.wasClean
+    );
+  }
+
+  /**
+   * Check if the handshake operation is closed, i.e if the response has already
+   * been triggered.
+   *
+   * @return {boolean} `true` if the handshake response has been triggered, `false` otherwise.
+   */
+  _isClosed() {
+    return this._response !== null;
   }
 }

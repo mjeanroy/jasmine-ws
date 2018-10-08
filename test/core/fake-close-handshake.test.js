@@ -55,5 +55,13 @@ describe('FakeOpenHandshake', () => {
       expect(ws._doClose).toHaveBeenCalledWith(handshake.code, handshake.reason, handshake.wasClean);
       expect(ws.readyState).toBe(3);
     });
+
+    it('should fail to trigger response more than once', () => {
+      handshake.respond();
+
+      expect(() => handshake.respond()).toThrow(new Error(
+          'Cannot trigger handshake response since the close handshake is already closed.'
+      ));
+    });
   });
 });
