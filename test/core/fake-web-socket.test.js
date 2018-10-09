@@ -105,6 +105,78 @@ describe('FakeWebSocket', () => {
       });
     });
 
+    it('should open websocket after handshake response', () => {
+      const onopen = jasmine.createSpy('onopen');
+      const onOpenListener = jasmine.createSpy('onOpenListener');
+
+      ws.onopen = onopen;
+      ws.addEventListener('open', onOpenListener);
+      ws.openHandshake().respond();
+
+      expect(onopen).toHaveBeenCalledTimes(1);
+      expect(onOpenListener).toHaveBeenCalledTimes(1);
+      expect(ws.readyState).toBe(1);
+
+      const e1 = onopen.calls.mostRecent().args[0];
+      const e2 = onOpenListener.calls.mostRecent().args[0];
+      expect(e1).toBe(e2);
+      expect(e1.type).toBe('open');
+    });
+
+    it('should fail to open websocket after error in handshake response', () => {
+      const onopen = jasmine.createSpy('onopen');
+      const onOpenListener = jasmine.createSpy('onOpenListener');
+      const onerror = jasmine.createSpy('onerror');
+      const onErrorListener = jasmine.createSpy('onErrorListener');
+
+      ws.onopen = onopen;
+      ws.addEventListener('open', onOpenListener);
+
+      ws.onerror = onerror;
+      ws.addEventListener('error', onErrorListener);
+
+      ws.openHandshake().respondWith({
+        status: 401,
+      });
+
+      expect(ws.readyState).toBe(2);
+      expect(onopen).not.toHaveBeenCalled();
+      expect(onOpenListener).not.toHaveBeenCalled();
+      expect(onerror).toHaveBeenCalledTimes(1);
+      expect(onErrorListener).toHaveBeenCalledTimes(1);
+
+      const e1 = onerror.calls.mostRecent().args[0];
+      const e2 = onErrorListener.calls.mostRecent().args[0];
+      expect(e1).toBe(e2);
+      expect(e1.type).toBe('error');
+    });
+
+    it('should fail to open websocket when handshake response is failed', () => {
+      const onopen = jasmine.createSpy('onopen');
+      const onOpenListener = jasmine.createSpy('onOpenListener');
+      const onerror = jasmine.createSpy('onerror');
+      const onErrorListener = jasmine.createSpy('onErrorListener');
+
+      ws.onopen = onopen;
+      ws.addEventListener('open', onOpenListener);
+
+      ws.onerror = onerror;
+      ws.addEventListener('error', onErrorListener);
+
+      ws.openHandshake().fail();
+
+      expect(ws.readyState).toBe(2);
+      expect(onopen).not.toHaveBeenCalled();
+      expect(onOpenListener).not.toHaveBeenCalled();
+      expect(onerror).toHaveBeenCalledTimes(1);
+      expect(onErrorListener).toHaveBeenCalledTimes(1);
+
+      const e1 = onerror.calls.mostRecent().args[0];
+      const e2 = onErrorListener.calls.mostRecent().args[0];
+      expect(e1).toBe(e2);
+      expect(e1.type).toBe('error');
+    });
+
     it('should add event listener', () => {
       const listener = jasmine.createSpy('listener');
       const event = {type: 'open'};

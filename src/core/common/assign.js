@@ -22,23 +22,31 @@
  * THE SOFTWARE.
  */
 
-import './assign.test.js';
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-array-buffer.test.js';
-import './is-blob.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
+import {forEach} from './for-each.js';
+import {has} from './has.js';
+import {keys} from './keys.js';
+
+/**
+ * Copy the values of all enumerable own properties from one or more source objects to a
+ * target object
+ *  It will return the target object.
+ *
+ * @param {*} target The target object.
+ * @param  {...any} sources  The source objects.
+ * @return {Object} The target object.
+ */
+export function assign(target, ...sources) {
+  const to = Object(target);
+
+  for (let i = 0, size = sources.length; i < size; ++i) {
+    const current = sources[i];
+    const currentKeys = keys(current);
+    forEach(currentKeys, (k) => {
+      if (!has(to, k)) {
+        to[k] = current[k];
+      }
+    });
+  }
+
+  return to;
+}

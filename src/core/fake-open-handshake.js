@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 
+import {assign} from './common/assign.js';
+
 /**
  * A fake Handshake for the open request.
  */
@@ -109,14 +111,53 @@ export class FakeOpenHandshake {
    * @return {void}
    */
   respond() {
-    this._triggerResponse({
+    this.respondWith({
       status: 101,
-      headers: {
-        'Upgrade': 'websocket',
-        'Connection': 'Upgrade',
-        'Sec-WebSocket-Accept': '',
-      },
     });
+  }
+
+  /**
+   * Trigger handshake response error with a default status of `500`.
+   *
+   * @param {number} status The handshake response status.
+   * @return {void}
+   */
+  fail(status = 500) {
+    if (status === 101) {
+      throw new Error(
+          'Cannot fail open handshake with status 101, use `respond` method instead.'
+      );
+    }
+
+    this.respondWith({
+      status,
+    });
+  }
+
+  /**
+   * Trigger handshake response, filled unkown field with
+   * default values:
+   * - Default status is `101`,
+   * - Default headers are:
+   *   - `Upgrade: websocket`
+   *   - `Connection: Upgrade`
+   *   - `Sec-WebSocket-Accept: [a given accept key]`
+   *
+   * @param {Object} response The handshake response.
+   * @return {void}
+   */
+  respondWith(response = {}) {
+    const responseStatus = response.status;
+    const responseHeaders = responseStatus !== 101 ? {} : {
+      'Upgrade': 'websocket',
+      'Connection': 'Upgrade',
+      'Sec-WebSocket-Accept': '',
+    };
+
+    this._triggerResponse(assign({}, response, {
+      status: 101,
+      headers: responseHeaders,
+    }));
   }
 
   /**
@@ -134,7 +175,17 @@ export class FakeOpenHandshake {
     }
 
     this._response = response;
-    this._ws._openConnection(response);
+
+    // If the handhsake response does not a return a status code strictly equals to 101, then it means
+    // that the connection cannot be opened.
+    // For example, it may return a redirect code (3XX) or a forbidden code (401, 403).
+    // Note that the `WebSocket` protocol does not specify that a connection must be retried or that
+    // redirect should be followed.
+    if (response.status === 101) {
+      this._ws._openConnection(response);
+    } else {
+      this._ws._failConnection(response);
+    }
   }
 
   /**

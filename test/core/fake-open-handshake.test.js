@@ -170,6 +170,89 @@ describe('FakeOpenHandshake', () => {
       });
     });
 
+    it('should trigger custom response', () => {
+      spyOn(ws, '_openConnection').and.callThrough();
+      spyOn(ws, '_failConnection').and.callThrough();
+
+      handshake.respondWith({
+        status: 401,
+      });
+
+      expect(handshake.getResponse()).toEqual({
+        status: 401,
+        headers: {
+        },
+      });
+
+      expect(ws.readyState).toBe(2);
+      expect(ws.protocol).toBe('');
+      expect(ws.extensions).toBe('');
+      expect(ws._openConnection).not.toHaveBeenCalled();
+      expect(ws._failConnection).toHaveBeenCalledWith({
+        status: 401,
+        headers: {
+        },
+      });
+    });
+
+    it('should fail handshake response', () => {
+      spyOn(ws, '_openConnection').and.callThrough();
+      spyOn(ws, '_failConnection').and.callThrough();
+
+      handshake.fail();
+
+      expect(handshake.getResponse()).toEqual({
+        status: 500,
+        headers: {
+        },
+      });
+
+      expect(ws.readyState).toBe(2);
+      expect(ws.protocol).toBe('');
+      expect(ws.extensions).toBe('');
+      expect(ws._openConnection).not.toHaveBeenCalled();
+      expect(ws._failConnection).toHaveBeenCalledWith({
+        status: 500,
+        headers: {
+        },
+      });
+    });
+
+    it('should fail handshake response with custom status', () => {
+      spyOn(ws, '_openConnection').and.callThrough();
+      spyOn(ws, '_failConnection').and.callThrough();
+
+      handshake.fail(401);
+
+      expect(handshake.getResponse()).toEqual({
+        status: 401,
+        headers: {
+        },
+      });
+
+      expect(ws.readyState).toBe(2);
+      expect(ws.protocol).toBe('');
+      expect(ws.extensions).toBe('');
+      expect(ws._openConnection).not.toHaveBeenCalled();
+      expect(ws._failConnection).toHaveBeenCalledWith({
+        status: 401,
+        headers: {
+        },
+      });
+    });
+
+    it('should throw error when failing handshake response with 101 status', () => {
+      spyOn(ws, '_openConnection').and.callThrough();
+      spyOn(ws, '_failConnection').and.callThrough();
+
+      expect(() => handshake.fail(101)).toThrow(new Error(
+          'Cannot fail open handshake with status 101, use `respond` method instead.'
+      ));
+
+      expect(ws._openConnection).not.toHaveBeenCalled();
+      expect(ws._failConnection).not.toHaveBeenCalled();
+    });
+
     it('should fail to trigger response more than once', () => {
       handshake.respond();
 

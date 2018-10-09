@@ -469,7 +469,9 @@ export class FakeWebSocket {
    * @return {void}
    */
   _failConnection() {
+    this._readyState = CLOSING;
     this._closeHandhsake = new FakeCloseHandshake(this, 1006, '', false);
+    this.dispatchEvent(new FakeEvent('error', this));
   }
 
   /**

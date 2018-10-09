@@ -22,23 +22,20 @@
  * THE SOFTWARE.
  */
 
-import './assign.test.js';
-import './count-by.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-array-buffer.test.js';
-import './is-blob.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
+import {assign} from '../../../src/core/common/assign.js';
+
+describe('assign', () => {
+  it('should create target object from sources object', () => {
+    const target = {};
+    const source1 = {id: 1};
+    const source2 = {id: 2, name: 'John Doe'};
+
+    const result = assign(target, source1, source2);
+
+    expect(result).toBe(target);
+    expect(result).toEqual({
+      id: 1,
+      name: 'John Doe',
+    });
+  });
+});
