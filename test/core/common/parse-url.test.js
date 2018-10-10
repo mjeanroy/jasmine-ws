@@ -29,35 +29,52 @@ describe('parseUrl', () => {
     const input = 'ws://localhost:9200';
     const url = parseUrl(input);
     expect(url).not.toBeNull();
+    expect(url.protocol).toBe('ws:');
+    expect(url.username).toBe('');
+    expect(url.password).toBe('');
     expect(url.host).toBe('localhost:9200');
     expect(url.hostname).toBe('localhost');
-    expect(url.protocol).toBe('ws:');
     expect(url.port).toBe('9200');
+    expect(url.pathname).toBe('/');
     expect(url.search).toBe('');
     expect(url.hash).toBe('');
+    expect(url.toString()).toBe('ws://localhost:9200/');
   });
 
   it('should parse given URL with fragment', () => {
     const input = 'http://localhost:9200#test';
     const url = parseUrl(input);
     expect(url).not.toBeNull();
+    expect(url.protocol).toBe('http:');
+    expect(url.username).toBe('');
+    expect(url.password).toBe('');
     expect(url.host).toBe('localhost:9200');
     expect(url.hostname).toBe('localhost');
-    expect(url.protocol).toBe('http:');
     expect(url.port).toBe('9200');
+    expect(url.pathname).toBe('/');
     expect(url.search).toBe('');
     expect(url.hash).toBe('#test');
+    expect(url.toString()).toBe('http://localhost:9200/#test');
+  });
+
+  it('should parse given URL with query string', () => {
+    const input = 'http://localhost:9200?foo&bar';
+    const url = parseUrl(input);
+    expect(url).not.toBeNull();
+    expect(url.protocol).toBe('http:');
+    expect(url.username).toBe('');
+    expect(url.password).toBe('');
+    expect(url.host).toBe('localhost:9200');
+    expect(url.hostname).toBe('localhost');
+    expect(url.port).toBe('9200');
+    expect(url.pathname).toBe('/');
+    expect(url.search).toBe('?foo&bar');
+    expect(url.hash).toBe('');
+    expect(url.toString()).toBe('http://localhost:9200/?foo&bar');
   });
 
   it('should return null with empty URL', () => {
     const input = '';
-    const url = parseUrl(input);
-    expect(url).toBeNull();
-  });
-
-  // Does not work when parseUrl use the polyfill, needs a better one.
-  xit('should return null with invalid URL', () => {
-    const input = '==://invalid==URL';
     const url = parseUrl(input);
     expect(url).toBeNull();
   });

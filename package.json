@@ -50,6 +50,6 @@
     "rollup-plugin-license": "0.7.0",
     "rollup-plugin-node-resolve": "3.4.0",
     "rollup-plugin-strip-banner": "0.2.0",
-    "url-polyfill": "1.1.0"
+    "url-parse": "1.4.3"
   }
 }
