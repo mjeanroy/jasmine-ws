@@ -23,8 +23,6 @@
  */
 
 const path = require('path');
-const nodeResolve = require('rollup-plugin-node-resolve');
-const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
 const stripBanner = require('rollup-plugin-strip-banner');
 const license = require('rollup-plugin-license');
@@ -42,9 +40,6 @@ module.exports = {
   },
 
   plugins: [
-    nodeResolve(),
-    commonjs(),
-
     babel(),
     stripBanner(),
     esformatter(),

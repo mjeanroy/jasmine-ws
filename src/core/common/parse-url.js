@@ -22,8 +22,6 @@
  * THE SOFTWARE.
  */
 
-import UrlParse from 'url-parse';
-
 /**
  * A fake `URL` implementation.
  *
@@ -51,9 +49,14 @@ class FakeUrl {
     this.host = host || null;
     this.hostname = hostname || null;
     this.port = port || null;
-    this.pathname = pathname || '/';
+    this.pathname = pathname || '';
     this.search = search || '';
     this.hash = hash || '';
+
+    // Ensure the pathname always starts with a '/'
+    if (this.pathname[0] !== '/') {
+      this.pathname = '/' + this.pathname;
+    }
   }
 
   /**
@@ -149,17 +152,19 @@ function nativeUrl(url) {
  * @return {FakeUrl} The parsed URL.
  */
 function polyfillUrl(url) {
-  const result = new UrlParse(url);
+  const a = document.createElement('a');
+  a.href = url;
+
   return new FakeUrl(
-      result.protocol,
-      result.username,
-      result.password,
-      result.host,
-      result.hostname,
-      result.port,
-      result.pathname,
-      result.query,
-      result.hash
+      a.protocol,
+      a.username,
+      a.password,
+      a.host,
+      a.hostname,
+      a.port,
+      a.pathname,
+      a.search,
+      a.hash
   );
 }
 

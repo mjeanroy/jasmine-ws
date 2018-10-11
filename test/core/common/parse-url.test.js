@@ -41,6 +41,22 @@ describe('parseUrl', () => {
     expect(url.toString()).toBe('ws://localhost:9200/');
   });
 
+  it('should parse given URL with pathname', () => {
+    const input = 'ws://localhost:9200/test';
+    const url = parseUrl(input);
+    expect(url).not.toBeNull();
+    expect(url.protocol).toBe('ws:');
+    expect(url.username).toBe('');
+    expect(url.password).toBe('');
+    expect(url.host).toBe('localhost:9200');
+    expect(url.hostname).toBe('localhost');
+    expect(url.port).toBe('9200');
+    expect(url.pathname).toBe('/test');
+    expect(url.search).toBe('');
+    expect(url.hash).toBe('');
+    expect(url.toString()).toBe('ws://localhost:9200/test');
+  });
+
   it('should parse given URL with fragment', () => {
     const input = 'http://localhost:9200#test';
     const url = parseUrl(input);

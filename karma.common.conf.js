@@ -27,8 +27,6 @@
  */
 
 const path = require('path');
-const nodeResolve = require('rollup-plugin-node-resolve');
-const commonjs = require('rollup-plugin-commonjs');
 const conf = require('./conf');
 
 module.exports = (config) => ({
@@ -109,10 +107,5 @@ module.exports = (config) => ({
       name: 'JasmineWS',
       sourcemap: false,
     },
-
-    plugins: [
-      nodeResolve(),
-      commonjs(),
-    ],
   },
 });
