@@ -342,7 +342,7 @@ describe('FakeWebSocket', () => {
 
       ws.onmessage = onmessage;
       ws.addEventListener('message', onMessageListener);
-      expect(() => ws.receiveMessage(data)).toThrow(new Error(
+      expect(() => ws.emitMessage(data)).toThrow(new Error(
           'Failed to receive message on \'WebSocket\': The websocket state must be OPEN.'
       ));
 
@@ -431,7 +431,7 @@ describe('FakeWebSocket', () => {
 
         ws.onmessage = onmessage;
         ws.addEventListener('message', onMessageListener);
-        ws.receiveMessage(data);
+        ws.emitMessage(data);
 
         expect(onmessage).toHaveBeenCalledTimes(1);
         expect(onMessageListener).toHaveBeenCalledTimes(1);
@@ -450,7 +450,7 @@ describe('FakeWebSocket', () => {
         });
 
         ws.addEventListener('message', onMessageListener);
-        ws.receiveMessage(data);
+        ws.emitMessage(data);
 
         expect(onMessageListener).toHaveBeenCalledTimes(1);
 
@@ -463,7 +463,7 @@ describe('FakeWebSocket', () => {
         const data = new ArrayBuffer(8);
 
         ws.addEventListener('message', onMessageListener);
-        ws.receiveMessage(data);
+        ws.emitMessage(data);
 
         expect(onMessageListener).toHaveBeenCalledTimes(1);
 
@@ -477,7 +477,7 @@ describe('FakeWebSocket', () => {
 
         ws.addEventListener('message', onMessageListener);
 
-        expect(() => ws.receiveMessage(data)).toThrow(new Error(
+        expect(() => ws.emitMessage(data)).toThrow(new Error(
             `Failed to receive message on 'WebSocket': Only String, Blob or ArrayBuffer are allowed. ` +
             `The message is: [object Array].`
         ));
@@ -492,7 +492,7 @@ describe('FakeWebSocket', () => {
 
         ws.onmessage = onmessage;
         ws.addEventListener('message', onMessageListener);
-        expect(() => ws.receiveMessage(data)).toThrow(new Error(
+        expect(() => ws.emitMessage(data)).toThrow(new Error(
             'Failed to receive message on \'WebSocket\': The message is null.'
         ));
 
@@ -506,7 +506,7 @@ describe('FakeWebSocket', () => {
 
         ws.onmessage = onmessage;
         ws.addEventListener('message', onMessageListener);
-        expect(() => ws.receiveMessage()).toThrow(new Error(
+        expect(() => ws.emitMessage()).toThrow(new Error(
             'Failed to receive message on \'WebSocket\': The message is undefined.'
         ));
 

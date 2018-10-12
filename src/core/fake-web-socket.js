@@ -508,7 +508,7 @@ export class FakeWebSocket {
    * @return {void}
    * @see https://html.spec.whatwg.org/multipage/web-sockets.html#feedback-from-the-protocol
    */
-  receiveMessage(data) {
+  emitMessage(data) {
     if (isNull(data) || isUndefined(data)) {
       throw new Error(
           `Failed to receive message on 'WebSocket': The message is ${String(data)}.`
