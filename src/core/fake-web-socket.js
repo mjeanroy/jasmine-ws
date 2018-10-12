@@ -148,6 +148,7 @@ export class FakeWebSocket {
     this._sentMessages = [];
     this._openHandshake = null;
     this._closeHandhsake = null;
+    this._bufferedAmount = 0;
     this._establishConnection();
 
     // 8- Return a new WebSocket object whose url is urlRecord.
@@ -192,6 +193,19 @@ export class FakeWebSocket {
    */
   get extensions() {
     return this._extensions;
+  }
+
+  /**
+   * Returns the number of bytes of application data (UTF-8 text and binary data) that have been queued using `send()`
+   * but not yet been transmitted to the network.
+   *
+   * If the WebSocket connection is closed, this attribute's value will only increase with each call to
+   * the `send()` method. (The number does not reset to zero once the connection closes.)
+   *
+   * @return {number} The number of bytes of data not yet transmitted to the network.
+   */
+  get bufferedAmount() {
+    return this._bufferedAmount;
   }
 
   /**

@@ -67,6 +67,7 @@ describe('FakeWebSocket', () => {
     expect(ws.protocol).toBe('');
     expect(ws.extensions).toBe('');
     expect(ws.binaryType).toBe('blob');
+    expect(ws.bufferedAmount).toBe(0);
   });
 
   describe('once initialized', () => {
