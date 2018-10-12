@@ -282,6 +282,9 @@ export class FakeWebSocket {
     const type = event.type;
     const listeners = has(this._listeners, type) ? this._listeners[type] : [];
 
+    // Ensure the event phase is correct.
+    event._eventPhase = FakeEvent.AT_TARGET;
+
     const methodName = `on${type}`;
     const method = this[methodName];
     if (isFunction(method)) {
@@ -291,16 +294,36 @@ export class FakeWebSocket {
     if (!event._stopped) {
       forEach(listeners, (listener) => {
         if (!event._stopped) {
-          if (isFunction(listener)) {
-            listener.call(this, event);
-          } else if (isFunction(listener.handleEvent)) {
-            listener.handleEvent(event);
-          }
+          this._executeListener(listener, event);
         }
       });
     }
 
+    // Ensure the event phase is correct.
+    event._eventPhase = FakeEvent.NONE;
+
     return !!event.cancelable && !!event.defaultPrevented;
+  }
+
+  /**
+   * Execute the listener function (it it is a real `function`).
+   * Note that error are catched and logged to the console.
+   *
+   * @param {function} listener The listener function.
+   * @param {Object} event The event to dispatch.
+   * @return {void}
+   */
+  _executeListener(listener, event) {
+    try {
+      if (isFunction(listener)) {
+        listener.call(this, event);
+      } else if (isFunction(listener.handleEvent)) {
+        listener.handleEvent(event);
+      }
+    } catch (e) {
+      console.error(e);
+      console.error(e.stack);
+    }
   }
 
   /**

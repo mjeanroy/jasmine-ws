@@ -39,13 +39,6 @@ describe('FakeWebSocket', () => {
     ));
   });
 
-  // Does not work when parseUrl use the polyfill, needs a better one.
-  xit('should fail to create WebSocket with invalid URL', () => {
-    expect(() => new FakeWebSocket('==://invalid==URL')).toThrow(new SyntaxError(
-        'Failed to construct \'WebSocket\': The URL \'==://invalid==URL\' is invalid.'
-    ));
-  });
-
   it('should fail to create WebSocket if connection URL scheme is not ws nor wss', () => {
     expect(() => new FakeWebSocket('http://localhost')).toThrow(new SyntaxError(
         'Failed to construct \'WebSocket\': The URL\'s scheme must be either \'ws\' or \'wss\'. ' +
@@ -106,8 +99,9 @@ describe('FakeWebSocket', () => {
     });
 
     it('should open websocket after handshake response', () => {
-      const onopen = jasmine.createSpy('onopen');
-      const onOpenListener = jasmine.createSpy('onOpenListener');
+      const expectEventPhase = (e) => expect(e.eventPhase).toBe(2);
+      const onopen = jasmine.createSpy('onopen').and.callFake(expectEventPhase);
+      const onOpenListener = jasmine.createSpy('onOpenListener').and.callFake(expectEventPhase);
 
       ws.onopen = onopen;
       ws.addEventListener('open', onOpenListener);
@@ -121,20 +115,20 @@ describe('FakeWebSocket', () => {
       const e2 = onOpenListener.calls.mostRecent().args[0];
       expect(e1).toBe(e2);
       expect(e1.type).toBe('open');
+      expect(e1.eventPhase).toBe(0);
     });
 
     it('should fail to open websocket after error in handshake response', () => {
+      const expectEventPhase = (e) => expect(e.eventPhase).toBe(2);
       const onopen = jasmine.createSpy('onopen');
       const onOpenListener = jasmine.createSpy('onOpenListener');
-      const onerror = jasmine.createSpy('onerror');
-      const onErrorListener = jasmine.createSpy('onErrorListener');
+      const onerror = jasmine.createSpy('onerror').and.callFake(expectEventPhase);
+      const onErrorListener = jasmine.createSpy('onErrorListener').and.callFake(expectEventPhase);
 
       ws.onopen = onopen;
       ws.addEventListener('open', onOpenListener);
-
       ws.onerror = onerror;
       ws.addEventListener('error', onErrorListener);
-
       ws.openHandshake().respondWith({
         status: 401,
       });
@@ -149,42 +143,37 @@ describe('FakeWebSocket', () => {
       const e2 = onErrorListener.calls.mostRecent().args[0];
       expect(e1).toBe(e2);
       expect(e1.type).toBe('error');
+      expect(e1.eventPhase).toBe(0);
     });
 
     it('should fail to open websocket when handshake response is failed', () => {
-      const onopen = jasmine.createSpy('onopen');
       const onOpenListener = jasmine.createSpy('onOpenListener');
-      const onerror = jasmine.createSpy('onerror');
       const onErrorListener = jasmine.createSpy('onErrorListener');
 
-      ws.onopen = onopen;
       ws.addEventListener('open', onOpenListener);
-
-      ws.onerror = onerror;
       ws.addEventListener('error', onErrorListener);
-
       ws.openHandshake().fail();
 
       expect(ws.readyState).toBe(2);
-      expect(onopen).not.toHaveBeenCalled();
       expect(onOpenListener).not.toHaveBeenCalled();
-      expect(onerror).toHaveBeenCalledTimes(1);
       expect(onErrorListener).toHaveBeenCalledTimes(1);
 
-      const e1 = onerror.calls.mostRecent().args[0];
-      const e2 = onErrorListener.calls.mostRecent().args[0];
-      expect(e1).toBe(e2);
-      expect(e1.type).toBe('error');
+      const event = onErrorListener.calls.mostRecent().args[0];
+      expect(event.type).toBe('error');
+      expect(event.eventPhase).toBe(0);
     });
 
     it('should add event listener', () => {
-      const listener = jasmine.createSpy('listener');
-      const event = {type: 'open'};
+      const event = new FakeEvent('open', ws);
+      const listener = jasmine.createSpy('listener').and.callFake((e) => (
+        expect(e.eventPhase).toBe(2)
+      ));
 
       ws.addEventListener('open', listener);
       ws.dispatchEvent(event);
 
       expect(listener).toHaveBeenCalledWith(event);
+      expect(event.eventPhase).toBe(0);
     });
 
     it('should not add duplicated event listener', () => {
@@ -209,7 +198,7 @@ describe('FakeWebSocket', () => {
 
     it('should remove event listener', () => {
       const listener = jasmine.createSpy('listener');
-      const event = {type: 'open'};
+      const event = new FakeEvent('open', ws);
 
       ws.addEventListener('open', listener);
       ws.removeEventListener('open', listener);
@@ -219,13 +208,11 @@ describe('FakeWebSocket', () => {
     });
 
     it('should dispatch event to event listeners', () => {
-      const onopen = jasmine.createSpy('onopen');
-      const onmessage = jasmine.createSpy('onopen');
-      const event = {
-        type: 'open',
-        canceled: false,
-        defaultPrevented: false,
-      };
+      const event = new FakeEvent('open', ws);
+      const onmessage = jasmine.createSpy('onmessage');
+      const onopen = jasmine.createSpy('onopen').and.callFake((e) => (
+        expect(e.eventPhase).toBe(2)
+      ));
 
       ws.addEventListener('open', onopen);
       ws.addEventListener('message', onmessage);
@@ -236,20 +223,37 @@ describe('FakeWebSocket', () => {
       expect(onopen).toHaveBeenCalledWith(event);
       expect(onopen.calls.mostRecent().object).toBe(ws);
       expect(onmessage).not.toHaveBeenCalledWith();
+      expect(event.eventPhase).toBe(0);
+    });
+
+    it('should catch errors in event listeners and execute next listeners', () => {
+      spyOn(console, 'error');
+
+      const onOpenListener1 = jasmine.createSpy('onOpenListener1').and.throwError('Error With Listener 1');
+      const onOpenListener2 = jasmine.createSpy('onOpenListener2');
+      const event = new FakeEvent('open', ws);
+
+      ws.addEventListener('open', onOpenListener1);
+      ws.addEventListener('open', onOpenListener2);
+      ws.dispatchEvent(event);
+
+      expect(onOpenListener1).toHaveBeenCalled();
+      expect(onOpenListener2).toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalled();
     });
 
     it('should dispatch event on objects implemeting the handleEvent method', () => {
       const onopen = {
-        handleEvent: jasmine.createSpy('onopen'),
+        handleEvent: jasmine.createSpy('onopen').and.callFake((e) => (
+          expect(e.eventPhase).toBe(2)
+        )),
       };
 
       const onmessage = {
-        handleEvent: jasmine.createSpy('onopen'),
+        handleEvent: jasmine.createSpy('onmessage'),
       };
 
-      const event = {
-        type: 'open',
-      };
+      const event = new FakeEvent('open', ws);
 
       ws.addEventListener('open', onopen);
       ws.addEventListener('message', onmessage);
@@ -260,12 +264,15 @@ describe('FakeWebSocket', () => {
       expect(onopen.handleEvent).toHaveBeenCalledWith(event);
       expect(onopen.handleEvent.calls.mostRecent().object).toBe(onopen);
       expect(onmessage.handleEvent).not.toHaveBeenCalledWith();
+      expect(event.eventPhase).toBe(0);
     });
 
     it('should call direct method listeners', () => {
-      const onopen = jasmine.createSpy('onopen');
-      const onmessage = jasmine.createSpy('onopen');
-      const event = {type: 'open'};
+      const onmessage = jasmine.createSpy('onmessage');
+      const event = new FakeEvent('open', ws);
+      const onopen = jasmine.createSpy('onopen').and.callFake((e) => (
+        expect(e.eventPhase).toBe(2)
+      ));
 
       ws.onopen = onopen;
       ws.onmessage = onmessage;
@@ -276,6 +283,7 @@ describe('FakeWebSocket', () => {
       expect(onopen).toHaveBeenCalledWith(event);
       expect(onopen.calls.mostRecent().object).toBe(ws);
       expect(onmessage).not.toHaveBeenCalledWith();
+      expect(event.eventPhase).toBe(0);
     });
 
     it('should stop immediate propagation of event', () => {
