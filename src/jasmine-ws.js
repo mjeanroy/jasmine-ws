@@ -28,7 +28,7 @@ import {wsTracker, reset} from './core/ws-tracker.js';
 const _global = window || global;
 const _WebSocket = _global.WebSocket;
 
-jasmine.ws = {
+jasmine.ws = () => ({
   /**
    * Install the fake WebSocket implementation, if and only if native WebSocket is supported
    * on runtime environment.
@@ -68,4 +68,4 @@ jasmine.ws = {
   connections() {
     return wsTracker;
   },
-};
+});

@@ -36,12 +36,12 @@ describe('jasmine-ws', () => {
   });
 
   it('should install/uninstall jasmine-ws', () => {
-    jasmine.ws.install();
+    jasmine.ws().install();
 
     expect(window.WebSocket).toBeDefined();
     expect(window.WebSocket).not.toBe(_WebSocket);
 
-    jasmine.ws.uninstall();
+    jasmine.ws().uninstall();
 
     expect(window.WebSocket).toBeDefined();
     expect(window.WebSocket).toBe(_WebSocket);
@@ -49,7 +49,7 @@ describe('jasmine-ws', () => {
 
   describe('once initialized', () => {
     beforeEach(() => {
-      jasmine.ws.install();
+      jasmine.ws().install();
     });
 
     it('should verify handshake', () => {
@@ -64,7 +64,7 @@ describe('jasmine-ws', () => {
       expect(ws.extensions).toBe('');
       expect(ws.onopen).not.toHaveBeenCalled();
       expect(ws.onmessage).not.toHaveBeenCalled();
-      expect(jasmine.ws.connections().mostRecent()).toBe(ws);
+      expect(jasmine.ws().connections().mostRecent()).toBe(ws);
 
       expect(ws.openHandshake().getRequest()).toEqual({
         method: 'GET',
