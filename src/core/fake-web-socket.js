@@ -466,11 +466,14 @@ export class FakeWebSocket {
   /**
    * Fail the `WebSocket` connection as described in the `WebSocket` protocol.
    *
+   * @param {number} code The close status code, defaults to `1006`.
+   * @param {string} reason The close reason message, defaults to an empty string.
+   * @param {boolean} wasClean A flag indicating if the connection is closed cleanly, defaults to `false`.
    * @return {void}
    */
-  _failConnection() {
+  _failConnection(code = 1006, reason = '', wasClean = false) {
     this._readyState = CLOSING;
-    this._closeHandhsake = new FakeCloseHandshake(this, 1006, '', false);
+    this._closeHandhsake = new FakeCloseHandshake(this, code, reason, false);
     this.dispatchEvent(new FakeEvent('error', this));
   }
 
@@ -529,6 +532,31 @@ export class FakeWebSocket {
     }
 
     this.dispatchEvent(new FakeMessageEvent(this, data));
+  }
+
+  /**
+   * Emit a closing request (i.e an abnormal closure requested by the server).
+   *
+   * @param {number} code The close status code, defaults to `1006`.
+   * @param {string} reason The close reason, defaults to an empty string.
+   * @param {boolean} wasClean A flag indicating if the connection is closed cleanly, defaults to `false`.
+   * @return {void}
+   * @see https://tools.ietf.org/html/rfc6455#page-44
+   */
+  emitClose(code = 1006, reason = '', wasClean = false) {
+    if (this._readyState === CLOSED) {
+      throw new Error(
+          'Cannot emit a close event, WebSocket is already closed.'
+      );
+    }
+
+    if (this.readyState === CLOSING) {
+      throw new Error(
+          'Cannot emit a close event, WebSocket is already closing.'
+      );
+    }
+
+    this._failConnection(code, reason, wasClean);
   }
 }
 

@@ -627,6 +627,72 @@ describe('FakeWebSocket', () => {
         expect(onCloseListener).not.toHaveBeenCalled();
         expect(onClose).not.toHaveBeenCalled();
       });
+
+      it('should emit a close operation', () => {
+        const onCloseListener = jasmine.createSpy('onCloseListener');
+
+        ws.addEventListener('close', onCloseListener);
+        ws.emitClose();
+
+        expect(ws.readyState).toBe(2);
+        expect(ws.closeHandshake()).toBeDefined();
+        expect(onCloseListener).not.toHaveBeenCalled();
+
+        ws.closeHandshake().respond();
+
+        expect(ws.readyState).toBe(3);
+        expect(onCloseListener).toHaveBeenCalledTimes(1);
+
+        const event = onCloseListener.calls.mostRecent().args[0];
+        expect(event.code).toBe(1006);
+        expect(event.reason).toBe('');
+        expect(event.wasClean).toBe(false);
+      });
+
+      it('should emit a close operation with a custom code', () => {
+        const onCloseListener = jasmine.createSpy('onCloseListener');
+        const code = 1008;
+
+        ws.addEventListener('close', onCloseListener);
+        ws.emitClose(code);
+
+        expect(ws.readyState).toBe(2);
+        expect(ws.closeHandshake()).toBeDefined();
+        expect(onCloseListener).not.toHaveBeenCalled();
+
+        ws.closeHandshake().respond();
+
+        expect(ws.readyState).toBe(3);
+        expect(onCloseListener).toHaveBeenCalledTimes(1);
+
+        const event = onCloseListener.calls.mostRecent().args[0];
+        expect(event.code).toBe(code);
+        expect(event.reason).toBe('');
+        expect(event.wasClean).toBe(false);
+      });
+
+      it('should emit a close operation with a custom code and reason', () => {
+        const onCloseListener = jasmine.createSpy('onCloseListener');
+        const code = 1008;
+        const reason = 'Policy Violation';
+
+        ws.addEventListener('close', onCloseListener);
+        ws.emitClose(code, reason);
+
+        expect(ws.readyState).toBe(2);
+        expect(ws.closeHandshake()).toBeDefined();
+        expect(onCloseListener).not.toHaveBeenCalled();
+
+        ws.closeHandshake().respond();
+
+        expect(ws.readyState).toBe(3);
+        expect(onCloseListener).toHaveBeenCalledTimes(1);
+
+        const event = onCloseListener.calls.mostRecent().args[0];
+        expect(event.code).toBe(code);
+        expect(event.reason).toBe(reason);
+        expect(event.wasClean).toBe(false);
+      });
     });
 
     describe('once closing', () => {
@@ -654,6 +720,12 @@ describe('FakeWebSocket', () => {
         expect(ws.closeHandshake()).toBe(closeHandshake);
         expect(ws.readyState).toBe(2);
         expect(onCloseListener).not.toHaveBeenCalled();
+      });
+
+      it('should failt to emit a close event', () => {
+        expect(() => ws.emitClose()).toThrow(new Error(
+            'Cannot emit a close event, WebSocket is already closing.'
+        ));
       });
     });
 
@@ -683,6 +755,12 @@ describe('FakeWebSocket', () => {
         expect(ws.closeHandshake()).toBe(closeHandshake);
         expect(ws.readyState).toBe(3);
         expect(onCloseListener).not.toHaveBeenCalled();
+      });
+
+      it('should failt to emit a close event', () => {
+        expect(() => ws.emitClose()).toThrow(new Error(
+            'Cannot emit a close event, WebSocket is already closed.'
+        ));
       });
     });
   });
