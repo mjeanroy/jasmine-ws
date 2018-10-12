@@ -25,6 +25,13 @@
 import {FakeEvent} from '../../src/core/fake-event.js';
 
 describe('FakeEvent', () => {
+  it('should define constant phases', () => {
+    expect(FakeEvent.NONE).toBe(0);
+    expect(FakeEvent.CAPTURING_PHASE).toBe(1);
+    expect(FakeEvent.BUBBLING_PHASE).toBe(3);
+    expect(FakeEvent.AT_TARGET).toBe(2);
+  });
+
   it('should create the fake event', () => {
     const type = 'open';
     const target = {};

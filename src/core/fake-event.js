@@ -23,6 +23,46 @@
  */
 
 /**
+ * No event is being processed at this time.
+ * @type {number}
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Event/eventPhase#Constants
+ */
+const NONE = 0;
+
+/**
+ * The event is being propagated through the target's ancestor objects.
+ * This process starts with the Window, then Document, then the HTMLHtmlElement, and so on through
+ * the elements until the target's parent is reached.
+ * Event listeners registered for capture mode when EventTarget.addEventListener() was called are
+ * triggered during this phase.
+ *
+ * @type {number}
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Event/eventPhase#Constants
+ */
+const CAPTURING_PHASE = 1;
+
+/**
+ * The event has arrived at the event's target. Event listeners registered for this phase are
+ * called at this time.
+ * If Event.bubbles is `false`, processing the event is finished after this phase is complete.
+ *
+ * @type {number}
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Event/eventPhase#Constants
+ */
+const AT_TARGET = 2;
+
+/**
+ * The event is propagating back up through the target's ancestors in reverse order,
+ * starting with the parent, and eventually reaching the containing Window.
+ * This is known as bubbling, and occurs only if Event.bubbles is `true`.
+ * Event listeners registered for this phase are triggered during this process.
+ *
+ * @type {number}
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Event/eventPhase#Constants
+ */
+const BUBBLING_PHASE = 3;
+
+/**
  * A fake implementation of `Event`.
  *
  * @class
@@ -37,7 +77,7 @@ export class FakeEvent {
    */
   constructor(type, target) {
     this._type = type;
-    this._eventPhase = 0;
+    this._eventPhase = NONE;
     this._cancelable = false;
     this._defaultPrevented = false;
     this._bubbles = false;
@@ -202,3 +242,8 @@ export class FakeEvent {
     this.cancelBubble = true;
   }
 }
+
+FakeEvent.NONE = NONE;
+FakeEvent.BUBBLING_PHASE = BUBBLING_PHASE;
+FakeEvent.CAPTURING_PHASE = CAPTURING_PHASE;
+FakeEvent.AT_TARGET = AT_TARGET;
