@@ -48,7 +48,7 @@ export class FakeOpenHandshake {
       url: `${scheme}://${host}${path}${search}`,
       headers: {
         'Upgrade': 'websocket',
-        'Sec-WebSocket-Key': '',
+        'Sec-WebSocket-Key': 'AQIDBAUGBwgJCgsMDQ4PEC==',
         'Sec-WebSocket-Version': '13',
       },
     };
@@ -151,7 +151,7 @@ export class FakeOpenHandshake {
     const responseHeaders = responseStatus !== 101 ? {} : {
       'Upgrade': 'websocket',
       'Connection': 'Upgrade',
-      'Sec-WebSocket-Accept': '',
+      'Sec-WebSocket-Accept': 's3pPLMBiTxaQ9kYGzzhZRbK+xOo=',
     };
 
     this._triggerResponse(assign({}, response, {
