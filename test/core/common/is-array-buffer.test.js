@@ -23,12 +23,15 @@
  */
 
 import {isArrayBuffer} from '../../../src/core/common/is-array-buffer.js';
+import {assumeArrayBuffer} from '../../support/assume-array-buffer.js';
 
 describe('isArrayBuffer', () => {
   it('should return true with an ArrayBuffer', () => {
+    assumeArrayBuffer();
     expect(isArrayBuffer(new ArrayBuffer())).toBe(true);
+  });
 
-    expect(isArrayBuffer(new Blob())).toBe(false);
+  it('should return false without ArrayBuffer', () => {
     expect(isArrayBuffer(null)).toBe(false);
     expect(isArrayBuffer(undefined)).toBe(false);
     expect(isArrayBuffer(0)).toBe(false);

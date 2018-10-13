@@ -22,21 +22,16 @@
  * THE SOFTWARE.
  */
 
-import {isBlob} from '../../../src/core/common/is-blob.js';
-import {assumeBlob} from '../../support/assume-blob.js';
+import {skip} from './skip.js';
 
-describe('isBlob', () => {
-  it('should return true with a Blob', () => {
-    assumeBlob();
-    expect(isBlob(new Blob())).toBe(true);
-  });
-
-  it('should return false without a blob', () => {
-    expect(isBlob(null)).toBe(false);
-    expect(isBlob(undefined)).toBe(false);
-    expect(isBlob(0)).toBe(false);
-    expect(isBlob(true)).toBe(false);
-    expect(isBlob([])).toBe(false);
-  });
-});
-
+/**
+ * Check if given environment supports `WebSocket` and skip test
+ * if it does.
+ *
+ * @return {void}
+ */
+export function assumeNonWebSocket() {
+  skip('WebSocket is supported on this environment', () => (
+    typeof WebSocket === 'undefined'
+  ));
+}
