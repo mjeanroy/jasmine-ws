@@ -50,6 +50,11 @@ const browsers = {
     version: '10',
   },
 
+  SL_ie_9: {
+    base: 'SauceLabs',
+    browserName: 'internet explorer',
+    version: '9',
+  },
 
   SL_chrome: {
     base: 'SauceLabs',

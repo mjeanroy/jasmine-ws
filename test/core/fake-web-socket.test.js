@@ -24,6 +24,8 @@
 
 import {FakeEvent} from '../../src/core/fake-event.js';
 import {FakeWebSocket} from '../../src/core/fake-web-socket.js';
+import {assumeArrayBuffer} from '../support/assume-array-buffer.js';
+import {assumeBlob} from '../support/assume-blob.js';
 
 describe('FakeWebSocket', () => {
   it('should define state as static constant', () => {
@@ -453,6 +455,8 @@ describe('FakeWebSocket', () => {
       });
 
       it('should receive a blob message and trigger listeners', () => {
+        assumeBlob();
+
         const onMessageListener = jasmine.createSpy('onMessageListener');
         const data = new Blob(['test'], {
           type: 'plain/text',
@@ -468,6 +472,8 @@ describe('FakeWebSocket', () => {
       });
 
       it('should receive an ArrayBuffer message and trigger listeners', () => {
+        assumeArrayBuffer();
+
         const onMessageListener = jasmine.createSpy('onMessageListener');
         const data = new ArrayBuffer(8);
 
