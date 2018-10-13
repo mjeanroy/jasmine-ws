@@ -22,93 +22,99 @@
  * THE SOFTWARE.
  */
 
-/**
- * A fake Handshake for the close request.
- */
-export class FakeCloseHandshake {
-  /**
-   * Create the fake event.
-   *
-   * @param {FakeWebSocket} ws The WebSocket.
-   * @param {number} code The close code.
-   * @param {string} reason The close reason.
-   * @param {boolean} wasClean A `boolean` that Indicates whether or not the connection was cleanly closed.
-   * @constructor
-   */
-  constructor(ws, code, reason, wasClean) {
-    this._ws = ws;
-    this._request = {code, reason, wasClean};
-    this._response = null;
-  }
+import {factory} from './common/factory.js';
 
+export const fakeCloseHandshakeFactory = factory(() => {
   /**
-   * Trigger the close handshake response.
-   *
-   * @return {void}
+   * A fake Handshake for the close request.
    */
-  respond() {
-    this._triggerResponse({
-      code: this._request.code,
-      reason: this._request.reason,
-      wasClean: this._request.wasClean,
-    });
-  }
+  class FakeCloseHandshake {
+    /**
+     * Create the fake event.
+     *
+     * @param {FakeWebSocket} ws The WebSocket.
+     * @param {number} code The close code.
+     * @param {string} reason The close reason.
+     * @param {boolean} wasClean A `boolean` that Indicates whether or not the connection was cleanly closed.
+     * @constructor
+     */
+    constructor(ws, code, reason, wasClean) {
+      this._ws = ws;
+      this._request = {code, reason, wasClean};
+      this._response = null;
+    }
 
-  /**
-   * The close code identifier.
-   *
-   * @return {number} The close code.
-   */
-  get code() {
-    return this._request.code;
-  }
+    /**
+     * Trigger the close handshake response.
+     *
+     * @return {void}
+     */
+    respond() {
+      this._triggerResponse({
+        code: this._request.code,
+        reason: this._request.reason,
+        wasClean: this._request.wasClean,
+      });
+    }
 
-  /**
-   * The close reason.
-   *
-   * @return {string} The close r
-   */
-  get reason() {
-    return this._request.reason;
-  }
+    /**
+     * The close code identifier.
+     *
+     * @return {number} The close code.
+     */
+    get code() {
+      return this._request.code;
+    }
 
-  /**
-   * A `boolean` that Indicates whether or not the connection was cleanly closed.
-   *
-   * @return {boolean} The clean flag.
-   */
-  get wasClean() {
-    return this._request.wasClean;
-  }
+    /**
+     * The close reason.
+     *
+     * @return {string} The close r
+     */
+    get reason() {
+      return this._request.reason;
+    }
 
-  /**
-   * Trigger the handshake response.
-   *
-   * @param {Object} response The handshake response.
-   * @return {void}
-   */
-  _triggerResponse(response) {
-    if (this._isClosed()) {
-      throw new Error(
-          'Cannot trigger handshake response since the close handshake is already closed.'
+    /**
+     * A `boolean` that Indicates whether or not the connection was cleanly closed.
+     *
+     * @return {boolean} The clean flag.
+     */
+    get wasClean() {
+      return this._request.wasClean;
+    }
+
+    /**
+     * Trigger the handshake response.
+     *
+     * @param {Object} response The handshake response.
+     * @return {void}
+     */
+    _triggerResponse(response) {
+      if (this._isClosed()) {
+        throw new Error(
+            'Cannot trigger handshake response since the close handshake is already closed.'
+        );
+      }
+
+      this._response = response;
+      this._ws._doClose(
+          response.code,
+          response.reason,
+          response.wasClean
       );
     }
 
-    this._response = response;
-    this._ws._doClose(
-        response.code,
-        response.reason,
-        response.wasClean
-    );
-  }
+    /**
+     * Check if the handshake operation is closed, i.e if the response has already
+     * been triggered.
+     *
+     * @return {boolean} `true` if the handshake response has been triggered, `false` otherwise.
+     */
+    _isClosed() {
+      return this._response !== null;
+    }
+  };
 
-  /**
-   * Check if the handshake operation is closed, i.e if the response has already
-   * been triggered.
-   *
-   * @return {boolean} `true` if the handshake response has been triggered, `false` otherwise.
-   */
-  _isClosed() {
-    return this._response !== null;
-  }
-}
+  return FakeCloseHandshake;
+});

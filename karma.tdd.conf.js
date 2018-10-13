@@ -32,7 +32,7 @@ const karmaConf = require('./karma.common.conf.js');
 module.exports = (config) => {
   config.set(_.extend(karmaConf(config), {
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: ['IE'],
     captureTimeout: 10000,
     singleRun: false,
     reportSlowerThan: 2000,

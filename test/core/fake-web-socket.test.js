@@ -22,12 +22,25 @@
  * THE SOFTWARE.
  */
 
-import {FakeEvent} from '../../src/core/fake-event.js';
-import {FakeWebSocket} from '../../src/core/fake-web-socket.js';
+import {fakeEventFactory} from '../../src/core/fake-event.js';
+import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
 import {assumeArrayBuffer} from '../support/assume-array-buffer.js';
 import {assumeBlob} from '../support/assume-blob.js';
+import {assumeGetter} from '../support/assume-getter.js';
 
 describe('FakeWebSocket', () => {
+  let FakeEvent;
+  let FakeWebSocket;
+
+  beforeAll(() => {
+    assumeGetter();
+  });
+
+  beforeAll(() => {
+    FakeEvent = fakeEventFactory();
+    FakeWebSocket = fakeWebSocketFactory();
+  });
+
   it('should define state as static constant', () => {
     expect(FakeWebSocket.CONNECTING).toBe(0);
     expect(FakeWebSocket.OPEN).toBe(1);

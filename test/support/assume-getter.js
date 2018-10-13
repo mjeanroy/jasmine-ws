@@ -22,24 +22,32 @@
  * THE SOFTWARE.
  */
 
-import './assign.test.js';
-import './count-by.test.js';
-import './factory.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-array-buffer.test.js';
-import './is-blob.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
+import {skip} from './skip.js';
+
+const SUPPORT_GETTER = (() => {
+  const o = {};
+
+  try {
+    Object.defineProperty(o, 'key', {
+      enumerable: false,
+      configurable: false,
+      get() {
+        return true;
+      },
+    });
+
+    return o.key === true;
+  } catch (e) {
+    return false;
+  }
+})();
+
+/**
+ * Check if given environment supports ES5 `getter` and skip test
+ * if it does.
+ *
+ * @return {void}
+ */
+export function assumeGetter() {
+  skip('WebSocket is supported on this environment', () => SUPPORT_GETTER);
+}

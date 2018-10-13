@@ -22,10 +22,23 @@
  * THE SOFTWARE.
  */
 
-import {FakeOpenHandshake} from '../../src/core/fake-open-handshake.js';
-import {FakeWebSocket} from '../../src/core/fake-web-socket.js';
+import {fakeOpenHandshakeFactory} from '../../src/core/fake-open-handshake.js';
+import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
+import {assumeGetter} from '../support/assume-getter.js';
 
 describe('FakeOpenHandshake', () => {
+  let FakeWebSocket;
+  let FakeOpenHandshake;
+
+  beforeAll(() => {
+    assumeGetter();
+  });
+
+  beforeAll(() => {
+    FakeWebSocket = fakeWebSocketFactory();
+    FakeOpenHandshake = fakeOpenHandshakeFactory();
+  });
+
   it('should create basic fake handshake request', () => {
     const ws = new FakeWebSocket('ws://localhost');
     const handshake = new FakeOpenHandshake(ws);

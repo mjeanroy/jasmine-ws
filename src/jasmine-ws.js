@@ -22,11 +22,14 @@
  * THE SOFTWARE.
  */
 
-import {FakeWebSocket} from './core/fake-web-socket.js';
+import {fakeWebSocketFactory} from './core/fake-web-socket.js';
 import {wsTracker, reset} from './core/ws-tracker.js';
 
-const _global = window || global;
-const _WebSocket = _global.WebSocket;
+const GLOBAL = window || global;
+const NATIVE_WEB_SOCKET = GLOBAL.WebSocket;
+const SUPPORT_WEB_SOCKET = typeof NATIVE_WEB_SOCKET !== 'undefined';
+
+let FakeWebSocket;
 
 jasmine.ws = () => ({
   /**
@@ -36,9 +39,14 @@ jasmine.ws = () => ({
    * @return {void}
    */
   install() {
-    if (_WebSocket) {
+    if (SUPPORT_WEB_SOCKET) {
+      // Create the `FakeWebSocket` API lazily.
+      if (!FakeWebSocket) {
+        FakeWebSocket = fakeWebSocketFactory();
+      }
+
       // Override the default `WebSocket` API.
-      _global.WebSocket = FakeWebSocket;
+      GLOBAL.WebSocket = FakeWebSocket;
 
       // Ensure the tracker is resetted.
       reset();
@@ -51,9 +59,9 @@ jasmine.ws = () => ({
    * @return {void}
    */
   uninstall() {
-    if (_WebSocket && _global.WebSocket == FakeWebSocket) {
+    if (SUPPORT_WEB_SOCKET && GLOBAL.WebSocket === FakeWebSocket) {
       // Restore the default `WebSocket` API.
-      _global.WebSocket = _WebSocket;
+      GLOBAL.WebSocket = NATIVE_WEB_SOCKET;
 
       // Ensure the tracker is resetted.
       reset();

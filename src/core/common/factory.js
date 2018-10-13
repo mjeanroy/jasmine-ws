@@ -22,24 +22,28 @@
  * THE SOFTWARE.
  */
 
-import './assign.test.js';
-import './count-by.test.js';
-import './factory.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-array-buffer.test.js';
-import './is-blob.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
+/**
+ * The NULL object used to check if the factory lazy result
+ * has been computed, or not.
+ * @type {Object}
+ */
+const NULL_OBJECT = {};
+
+/**
+ * Create a factory that store given result and returns it once it has been
+ * computed on the first call.
+ *
+ * @param {function} factoryFn The factory function, will be called at most once.
+ * @return {*} The result of the factory function.
+ */
+export function factory(factoryFn) {
+  let factoryFnResult = NULL_OBJECT;
+
+  return () => {
+    if (factoryFnResult === NULL_OBJECT) {
+      factoryFnResult = factoryFn();
+    }
+
+    return factoryFnResult;
+  };
+}
