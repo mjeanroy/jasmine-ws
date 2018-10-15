@@ -22,66 +22,72 @@
  * THE SOFTWARE.
  */
 
-import {FakeEvent} from './fake-event';
+import {factory} from './common/factory.js';
+import {fakeEventFactory} from './fake-event.js';
 
-/**
- * A fake close event.
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
- */
-export class FakeCloseEvent extends FakeEvent {
-  /**
-   * Create the fake event.
-   *
-   * @param {FakeWebSocket} ws The WebSocket.
-   * @param {number} code The close code.
-   * @param {string} reason The close reason.
-   * @param {boolean} wasClean A `boolean` that Indicates whether or not the connection was cleanly closed.
-   * @constructor
-   */
-  constructor(ws, code, reason, wasClean) {
-    super('close', ws);
-    this._code = code;
-    this._reason = reason;
-    this._wasClean = wasClean;
-  }
+export const fakeCloseEventFactory = factory(() => {
+  const FakeEvent = fakeEventFactory();
 
   /**
-   * Initializes the value of a CloseEvent created.
+   * A fake close event.
    *
-   * This method is deprecated and is here just to make the event compatible with a "real"
-   * close event.
-   *
-   * @return {void}
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
    */
-  initCloseEvent() {
+  class FakeCloseEvent extends FakeEvent {
+    /**
+     * Create the fake event.
+     *
+     * @param {FakeWebSocket} ws The WebSocket.
+     * @param {number} code The close code.
+     * @param {string} reason The close reason.
+     * @param {boolean} wasClean A `boolean` that Indicates whether or not the connection was cleanly closed.
+     * @constructor
+     */
+    constructor(ws, code, reason, wasClean) {
+      super('close', ws);
+      this._code = code;
+      this._reason = reason;
+      this._wasClean = wasClean;
+    }
+
+    /**
+     * Initializes the value of a CloseEvent created.
+     *
+     * This method is deprecated and is here just to make the event compatible with a "real"
+     * close event.
+     *
+     * @return {void}
+     */
+    initCloseEvent() {
+    }
+
+    /**
+     * The close code identifier.
+     *
+     * @return {number} The close code.
+     */
+    get code() {
+      return this._code;
+    }
+
+    /**
+     * The close reason.
+     *
+     * @return {string} The close r
+     */
+    get reason() {
+      return this._reason;
+    }
+
+    /**
+     * A `boolean` that Indicates whether or not the connection was cleanly closed.
+     *
+     * @return {boolean} The clean flag.
+     */
+    get wasClean() {
+      return this._wasClean;
+    }
   }
 
-  /**
-   * The close code identifier.
-   *
-   * @return {number} The close code.
-   */
-  get code() {
-    return this._code;
-  }
-
-  /**
-   * The close reason.
-   *
-   * @return {string} The close r
-   */
-  get reason() {
-    return this._reason;
-  }
-
-  /**
-   * A `boolean` that Indicates whether or not the connection was cleanly closed.
-   *
-   * @return {boolean} The clean flag.
-   */
-  get wasClean() {
-    return this._wasClean;
-  }
-}
-
+  return FakeCloseEvent;
+});

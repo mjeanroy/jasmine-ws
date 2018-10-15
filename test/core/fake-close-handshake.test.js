@@ -22,10 +22,18 @@
  * THE SOFTWARE.
  */
 
-import {FakeWebSocket} from '../../src/core/fake-web-socket.js';
-import {FakeCloseHandshake} from '../../src/core/fake-close-handshake.js';
+import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
+import {fakeCloseHandshakeFactory} from '../../src/core/fake-close-handshake.js';
 
 describe('FakeOpenHandshake', () => {
+  let FakeWebSocket;
+  let FakeCloseHandshake;
+
+  beforeAll(() => {
+    FakeCloseHandshake = fakeCloseHandshakeFactory();
+    FakeWebSocket = fakeWebSocketFactory();
+  });
+
   it('should create close handshake request', () => {
     const ws = new FakeWebSocket('ws://localhost');
     const code = 1000;

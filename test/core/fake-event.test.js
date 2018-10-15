@@ -22,9 +22,15 @@
  * THE SOFTWARE.
  */
 
-import {FakeEvent} from '../../src/core/fake-event.js';
+import {fakeEventFactory} from '../../src/core/fake-event.js';
 
 describe('FakeEvent', () => {
+  let FakeEvent;
+
+  beforeAll(() => {
+    FakeEvent = fakeEventFactory();
+  });
+
   it('should define constant phases', () => {
     expect(FakeEvent.NONE).toBe(0);
     expect(FakeEvent.CAPTURING_PHASE).toBe(1);

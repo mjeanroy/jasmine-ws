@@ -22,10 +22,18 @@
  * THE SOFTWARE.
  */
 
-import {FakeWebSocket} from '../../src/core/fake-web-socket.js';
-import {FakeMessageEvent} from '../../src/core/fake-message-event.js';
+import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
+import {fakeMessageEventFactory} from '../../src/core/fake-message-event.js';
 
 describe('FakeMessageEvent', () => {
+  let FakeWebSocket;
+  let FakeMessageEvent;
+
+  beforeAll(() => {
+    FakeMessageEvent = fakeMessageEventFactory();
+    FakeWebSocket = fakeWebSocketFactory();
+  });
+
   it('should create the fake event', () => {
     const data = 'test';
     const target = new FakeWebSocket('ws://localhost');

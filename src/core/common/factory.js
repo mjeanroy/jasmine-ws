@@ -22,24 +22,27 @@
  * THE SOFTWARE.
  */
 
-import './assign.test.js';
-import './count-by.test.js';
-import './factory.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-array-buffer.test.js';
-import './is-blob.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
+/**
+ * The factory value initializer.
+ * @type {Object}
+ */
+const NULL_OBJECT = {};
+
+/**
+ * A factory that will build a given getter function to compute a value once (and
+ * only once).
+ *
+ * @param {function} factoryFn The factory function.
+ * @return {function} The getter function.
+ */
+export function factory(factoryFn) {
+  let value = NULL_OBJECT;
+
+  return () => {
+    if (value === NULL_OBJECT) {
+      value = factoryFn();
+    }
+
+    return value;
+  };
+}

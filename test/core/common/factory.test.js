@@ -22,24 +22,32 @@
  * THE SOFTWARE.
  */
 
-import './assign.test.js';
-import './count-by.test.js';
-import './factory.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-array-buffer.test.js';
-import './is-blob.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
+import {factory} from '../../../src/core/common/factory.js';
+
+describe('factory', () => {
+  it('should build value once', () => {
+    const o = {};
+    const factoryFn = jasmine.createSpy('factoryFn').and.callFake(() => o);
+    const resultFn = factory(factoryFn);
+
+    const r1 = resultFn();
+    const r2 = resultFn();
+
+    expect(r1).toBe(r2);
+    expect(r1).toBe(o);
+    expect(factoryFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should build value once even if function returns undefined', () => {
+    const o = void 0;
+    const factoryFn = jasmine.createSpy('factoryFn').and.callFake(() => o);
+    const resultFn = factory(factoryFn);
+
+    const r1 = resultFn();
+    const r2 = resultFn();
+
+    expect(r1).toBe(r2);
+    expect(r1).toBe(o);
+    expect(factoryFn).toHaveBeenCalledTimes(1);
+  });
+});

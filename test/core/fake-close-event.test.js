@@ -22,9 +22,15 @@
  * THE SOFTWARE.
  */
 
-import {FakeCloseEvent} from '../../src/core/fake-close-event.js';
+import {fakeCloseEventFactory} from '../../src/core/fake-close-event.js';
 
 describe('FakeCloseEvent', () => {
+  let FakeCloseEvent;
+
+  beforeAll(() => {
+    FakeCloseEvent = fakeCloseEventFactory();
+  });
+
   it('should create the fake event', () => {
     const code = 1000;
     const reason = 'Manually Closed';
