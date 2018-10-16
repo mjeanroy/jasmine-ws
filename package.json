@@ -1,6 +1,6 @@
 {
   "name": "jasmine-ws",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Jasmine plugin to fake WebSocket connections",
   "main": "src/index.js",
   "repository": {
