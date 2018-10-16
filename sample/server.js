@@ -22,13 +22,32 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const ROOT = __dirname;
+const express = require('express');
+const app = express();
 
-module.exports = {
-  root: ROOT,
-  src: path.join(ROOT, 'src'),
-  test: path.join(ROOT, 'test'),
-  dist: path.join(ROOT, 'dist'),
-  sample: path.join(ROOT, 'sample'),
-};
+require('express-ws')(app);
+
+app.use('/', express.static(__dirname));
+
+app.ws('/echo', (ws) => {
+  ws.on('error', (msg) => {
+    console.log('[ERROR] Error on WebSocket connection: ', msg);
+  });
+
+  ws.on('close', (code, reason) => {
+    console.log('[ERROR] Closing WebSocket connection: ', code, reason);
+  });
+
+  ws.on('message', (msg) => {
+    console.log('[DEBUG] Receiving message: ', msg);
+
+    setTimeout(() => {
+      console.log('[DEBUG] Sending message: ', msg);
+      ws.send(msg);
+    });
+  });
+});
+
+app.listen(3000, () => {
+  console.log('[INFO] App listening on port 3000...');
+});

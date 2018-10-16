@@ -43,6 +43,7 @@ gulp.task('lint', () => {
     path.join(conf.root, '*.js'),
     path.join(conf.src, '**', '*.js'),
     path.join(conf.test, '**', '*.js'),
+    path.join(conf.sample, '**', '*.js'),
   ];
 
   return gulp.src(inputs)
