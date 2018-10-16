@@ -74,4 +74,22 @@ export const wsTracker = {
   at(idx) {
     return _queue[idx];
   },
+
+  /**
+   * Get the number of previously opened `WebSocket` connections.
+   *
+   * @return {number} Number of tracked connections.
+   */
+  count() {
+    return _queue.length;
+  },
+
+  /**
+   * Get all previously opened `WebSocket` connections.
+   *
+   * @return {Array<FakeWebSocket>} The list of tracked connections.
+   */
+  all() {
+    return _queue.slice();
+  },
 };

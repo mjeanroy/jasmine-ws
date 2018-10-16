@@ -33,6 +33,8 @@ describe('wsTracker', () => {
     expect(wsTracker.mostRecent()).toBe(ws);
     expect(wsTracker.first()).toBe(ws);
     expect(wsTracker.at(0)).toBe(ws);
+    expect(wsTracker.count()).toBe(1);
+    expect(wsTracker.all()).toEqual([ws]);
   });
 
   it('should get first connection', () => {
@@ -46,6 +48,8 @@ describe('wsTracker', () => {
     expect(wsTracker.first()).toBe(ws1);
     expect(wsTracker.at(0)).toBe(ws1);
     expect(wsTracker.at(1)).toBe(ws2);
+    expect(wsTracker.count()).toBe(2);
+    expect(wsTracker.all()).toEqual([ws1, ws2]);
   });
 
   it('should reset tracked connection', () => {
@@ -59,6 +63,8 @@ describe('wsTracker', () => {
     expect(wsTracker.first()).toBe(ws1);
     expect(wsTracker.at(0)).toBe(ws1);
     expect(wsTracker.at(1)).toBe(ws2);
+    expect(wsTracker.count()).toBe(2);
+    expect(wsTracker.all()).toEqual([ws1, ws2]);
 
     reset();
 
@@ -66,5 +72,7 @@ describe('wsTracker', () => {
     expect(wsTracker.first()).toBeUndefined();
     expect(wsTracker.at(0)).toBeUndefined();
     expect(wsTracker.at(1)).toBeUndefined();
+    expect(wsTracker.count()).toBe(0);
+    expect(wsTracker.all()).toEqual([]);
   });
 });
