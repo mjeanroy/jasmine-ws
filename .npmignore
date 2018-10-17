@@ -23,6 +23,7 @@
 ##
 
 /.babelrc
+/.eslintignore
 /.eslintrc
 /.nvmrc
 /.travis.yml
