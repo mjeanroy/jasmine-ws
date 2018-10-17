@@ -2,7 +2,7 @@
   "name": "jasmine-ws",
   "version": "0.0.0",
   "description": "Jasmine plugin to test WebSocket applications",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:mjeanroy/jasmine-ws.git"
