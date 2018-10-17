@@ -28,6 +28,7 @@ import {indexOf} from './common/index-of.js';
 import {factory} from './common/factory.js';
 import {filter} from './common/filter.js';
 import {find} from './common/find.js';
+import {flatten} from './common/flatten.js';
 import {forEach} from './common/for-each.js';
 import {has} from './common/has.js';
 import {isArrayBuffer} from './common/is-array-buffer.js';
@@ -39,6 +40,7 @@ import {isUndefined} from './common/is-undefined.js';
 import {parseUrl} from './common/parse-url.js';
 import {tagName} from './common/tag-name.js';
 import {toPairs} from './common/to-pairs.js';
+import {values} from './common/values.js';
 
 import {fakeOpenHandshakeFactory} from './fake-open-handshake.js';
 import {fakeCloseHandshakeFactory} from './fake-close-handshake.js';
@@ -605,6 +607,18 @@ export const fakeWebSocketFactory = factory(() => {
       }
 
       this._failConnection(code, reason, wasClean);
+    }
+
+    /**
+     * Get all registered listeners, or listeners for given specific event
+     * type.
+     *
+     * @param {string} type Event type (optional).
+     * @return {Array<function>} The registered listeners.
+     */
+    getEventListeners(type = '') {
+      const listeners = type ? this._listeners[type] : flatten(values(this._listeners));
+      return listeners ? listeners.slice() : [];
     }
   }
 

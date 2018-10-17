@@ -389,6 +389,46 @@ describe('FakeWebSocket', () => {
       expect(event.wasClean).toBe(false);
     });
 
+    it('should get register listeners', () => {
+      const listener1 = jasmine.createSpy('listener1');
+      const listener2 = jasmine.createSpy('listener2');
+      ws.addEventListener('open', listener1);
+      ws.addEventListener('close', listener2);
+
+      const listeners = ws.getEventListeners();
+
+      expect(listeners.length).toBe(2);
+      expect(listeners).toContain(listener1);
+      expect(listeners).toContain(listener2);
+    });
+
+    it('should get register listeners for given event type', () => {
+      const listener1 = jasmine.createSpy('listener1');
+      const listener2 = jasmine.createSpy('listener2');
+      const listener3 = jasmine.createSpy('listener3');
+
+      ws.addEventListener('open', listener1);
+      ws.addEventListener('close', listener2);
+      ws.addEventListener('close', listener3);
+
+      const listeners = ws.getEventListeners('close');
+
+      expect(listeners).toEqual([listener2, listener3]);
+    });
+
+    it('should get empty array if there is not registered listener', () => {
+      const listeners = ws.getEventListeners();
+      expect(listeners).toEqual([]);
+    });
+
+    it('should get empty array if there is not registered listener for given event type', () => {
+      const listener1 = jasmine.createSpy('listener1');
+      ws.addEventListener('open', listener1);
+
+      const listeners = ws.getEventListeners('close');
+      expect(listeners).toEqual([]);
+    });
+
     describe('once opened', () => {
       let ws;
 
