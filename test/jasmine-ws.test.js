@@ -54,6 +54,24 @@ describe('jasmine-ws', () => {
       expect(window.WebSocket).toBe(_WebSocket);
     });
 
+    it('should fail to uninstall jasmine-ws if it has not been previously installed', () => {
+      expect(() => jasmine.ws().uninstall()).toThrow(new Error(
+          'It seems that `jasmine.ws` has not been installed, make sure `jasmine.ws().install()` ' +
+          'has been called before uninstalling it.'
+      ));
+    });
+
+    it('should fail to install jasmine-ws if it is already installed', () => {
+      jasmine.ws().install();
+
+      expect(() => jasmine.ws().install()).toThrow(new Error(
+          'It seems that jasmine-ws has already been installed, make sure `jasmine.ws().uninstall()` ' +
+          'has been called after test suite.'
+      ));
+
+      jasmine.ws().uninstall();
+    });
+
     describe('once initialized', () => {
       beforeEach(() => {
         jasmine.ws().install();

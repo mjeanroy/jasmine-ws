@@ -44,6 +44,13 @@ jasmine.ws = () => ({
         FakeWebSocket = fakeWebSocketFactory();
       }
 
+      if (GLOBAL.WebSocket === FakeWebSocket) {
+        throw new Error(
+            'It seems that jasmine-ws has already been installed, make sure `jasmine.ws().uninstall()` ' +
+            'has been called after test suite.'
+        );
+      }
+
       // Override the default `WebSocket` API.
       GLOBAL.WebSocket = FakeWebSocket;
 
@@ -58,7 +65,14 @@ jasmine.ws = () => ({
    * @return {void}
    */
   uninstall() {
-    if (WEB_SOCKET && GLOBAL.WebSocket == FakeWebSocket) {
+    if (WEB_SOCKET) {
+      if (GLOBAL.WebSocket !== FakeWebSocket) {
+        throw new Error(
+            'It seems that `jasmine.ws` has not been installed, make sure `jasmine.ws().install()` ' +
+            'has been called before uninstalling it.'
+        );
+      }
+
       // Restore the default `WebSocket` API.
       GLOBAL.WebSocket = WEB_SOCKET;
 
