@@ -154,6 +154,11 @@ export const fakeWebSocketFactory = factory(() => {
       // 7- Run this step in parallel:
 
       // 7-1 Establish a WebSocket connection given urlRecord, protocols, and the entry settings object.
+      this.onerror = null;
+      this.onopen = null;
+      this.onmessage = null;
+      this.onclose = null;
+
       this._binaryType = 'blob';
       this._url = urlRecord;
       this._protocols = protocols;
@@ -351,34 +356,6 @@ export const fakeWebSocketFactory = factory(() => {
         console.error(e);
         console.error(e.stack);
       }
-    }
-
-    /**
-     * The default `onopen` method, a no-op.
-     * @return {void}
-     */
-    onopen() {
-    }
-
-    /**
-     * The default `onmessage` method, a no-op.
-     * @return {void}
-     */
-    onmessage() {
-    }
-
-    /**
-     * The default `onclose` method, a no-op.
-     * @return {void}
-     */
-    onclose() {
-    }
-
-    /**
-     * The default `onerror` method, a no-op.
-     * @return {void}
-     */
-    onerror() {
     }
 
     /**

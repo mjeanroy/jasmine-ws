@@ -92,6 +92,13 @@ describe('FakeWebSocket', () => {
       expect(ws.binaryType).toBe('text');
     });
 
+    it('should initialize handlers to null', () => {
+      expect(ws.onerror).toBeNull();
+      expect(ws.onopen).toBeNull();
+      expect(ws.onclose).toBeNull();
+      expect(ws.onmessage).toBeNull();
+    });
+
     it('should get handshake request', () => {
       const handshake = ws.openHandshake();
 
