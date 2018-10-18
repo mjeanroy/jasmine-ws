@@ -87,6 +87,11 @@ describe('FakeWebSocket', () => {
       ws = new FakeWebSocket('ws://localhost');
     });
 
+    it('should set binaryType', () => {
+      ws.binaryType = 'text';
+      expect(ws.binaryType).toBe('text');
+    });
+
     it('should get handshake request', () => {
       const handshake = ws.openHandshake();
 

@@ -239,7 +239,7 @@ export const fakeWebSocketFactory = factory(() => {
      * @return {void}
      */
     set binaryType(binaryType) {
-      this._binaryType = this.binaryType;
+      this._binaryType = binaryType;
     }
 
     /**
