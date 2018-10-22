@@ -80,18 +80,18 @@ describe('jasmine-ws', () => {
       it('should verify handshake', () => {
         const protocolName = 'customProtocol';
         const ws = new WebSocket('ws://localhost:9200', protocolName);
-
         ws.onopen = jasmine.createSpy('onopen');
         ws.onmessage = jasmine.createSpy('onmessage');
 
-        expect(ws.readyState).toBe(0);
-        expect(ws.protocol).toBe('');
-        expect(ws.extensions).toBe('');
-        expect(ws.onopen).not.toHaveBeenCalled();
-        expect(ws.onmessage).not.toHaveBeenCalled();
-        expect(jasmine.ws().connections().mostRecent()).toBe(ws);
+        const connection = jasmine.ws().connections().first();
+        expect(connection.url).toBe('ws://localhost:9200/');
+        expect(connection.readyState).toBe(0);
+        expect(connection.protocol).toBe('');
+        expect(connection.extensions).toBe('');
+        expect(connection.onopen).not.toHaveBeenCalled();
+        expect(connection.onmessage).not.toHaveBeenCalled();
 
-        expect(ws.openHandshake().getRequest()).toEqual({
+        expect(connection.openHandshake().getRequest()).toEqual({
           method: 'GET',
           url: 'http://localhost:9200/',
           headers: {

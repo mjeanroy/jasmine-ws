@@ -24,8 +24,6 @@
 
 import {fakeEventFactory} from '../../src/core/fake-event.js';
 import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
-import {assumeArrayBuffer} from '../support/assume-array-buffer.js';
-import {assumeBlob} from '../support/assume-blob.js';
 
 describe('FakeWebSocket', () => {
   let FakeWebSocket;
@@ -99,28 +97,6 @@ describe('FakeWebSocket', () => {
       expect(ws.onmessage).toBeNull();
     });
 
-    it('should get handshake request', () => {
-      const handshake = ws.openHandshake();
-
-      expect(handshake.url).toBe('http://localhost/');
-      expect(handshake.method).toBe('GET');
-      expect(handshake.headers).toEqual({
-        'Upgrade': 'websocket',
-        'Sec-WebSocket-Key': jasmine.any(String),
-        'Sec-WebSocket-Version': '13',
-      });
-
-      expect(handshake.getRequest()).toEqual({
-        method: 'GET',
-        url: 'http://localhost/',
-        headers: {
-          'Upgrade': 'websocket',
-          'Sec-WebSocket-Key': jasmine.any(String),
-          'Sec-WebSocket-Version': '13',
-        },
-      });
-    });
-
     it('should open websocket after handshake response', () => {
       const expectEventPhase = (e) => expect(e.eventPhase).toBe(2);
       const onopen = jasmine.createSpy('onopen').and.callFake(expectEventPhase);
@@ -128,7 +104,7 @@ describe('FakeWebSocket', () => {
 
       ws.onopen = onopen;
       ws.addEventListener('open', onOpenListener);
-      ws.openHandshake().respond();
+      ws._openHandshake.respond();
 
       expect(onopen).toHaveBeenCalledTimes(1);
       expect(onOpenListener).toHaveBeenCalledTimes(1);
@@ -152,7 +128,7 @@ describe('FakeWebSocket', () => {
       ws.addEventListener('open', onOpenListener);
       ws.onerror = onerror;
       ws.addEventListener('error', onErrorListener);
-      ws.openHandshake().respondWith({
+      ws._openHandshake.respondWith({
         status: 401,
       });
 
@@ -175,7 +151,7 @@ describe('FakeWebSocket', () => {
 
       ws.addEventListener('open', onOpenListener);
       ws.addEventListener('error', onErrorListener);
-      ws.openHandshake().fail();
+      ws._openHandshake.fail();
 
       expect(ws.readyState).toBe(2);
       expect(onOpenListener).not.toHaveBeenCalled();
@@ -366,21 +342,6 @@ describe('FakeWebSocket', () => {
       expect(onErrorListener).not.toHaveBeenCalled();
     });
 
-    it('should fail to receive a message if the open handshake is still pending', () => {
-      const onmessage = jasmine.createSpy('onmessage');
-      const onMessageListener = jasmine.createSpy('onMessageListener');
-      const data = 'test';
-
-      ws.onmessage = onmessage;
-      ws.addEventListener('message', onMessageListener);
-      expect(() => ws.emitMessage(data)).toThrow(new Error(
-          'Failed to receive message on \'WebSocket\': The websocket state must be OPEN.'
-      ));
-
-      expect(onmessage).not.toHaveBeenCalled();
-      expect(onMessageListener).not.toHaveBeenCalled();
-    });
-
     it('should fail to close the connection if the handshake is still pending', () => {
       const onCloseListener = jasmine.createSpy('onCloseListener');
 
@@ -390,7 +351,7 @@ describe('FakeWebSocket', () => {
       expect(ws.readyState).toBe(2);
       expect(onCloseListener).not.toHaveBeenCalled();
 
-      ws.closeHandshake().respond();
+      ws._closeHandshake.respond();
 
       expect(ws.readyState).toBe(3);
       expect(onCloseListener).toHaveBeenCalledTimes(1);
@@ -401,52 +362,12 @@ describe('FakeWebSocket', () => {
       expect(event.wasClean).toBe(false);
     });
 
-    it('should get register listeners', () => {
-      const listener1 = jasmine.createSpy('listener1');
-      const listener2 = jasmine.createSpy('listener2');
-      ws.addEventListener('open', listener1);
-      ws.addEventListener('close', listener2);
-
-      const listeners = ws.getEventListeners();
-
-      expect(listeners.length).toBe(2);
-      expect(listeners).toContain(listener1);
-      expect(listeners).toContain(listener2);
-    });
-
-    it('should get register listeners for given event type', () => {
-      const listener1 = jasmine.createSpy('listener1');
-      const listener2 = jasmine.createSpy('listener2');
-      const listener3 = jasmine.createSpy('listener3');
-
-      ws.addEventListener('open', listener1);
-      ws.addEventListener('close', listener2);
-      ws.addEventListener('close', listener3);
-
-      const listeners = ws.getEventListeners('close');
-
-      expect(listeners).toEqual([listener2, listener3]);
-    });
-
-    it('should get empty array if there is not registered listener', () => {
-      const listeners = ws.getEventListeners();
-      expect(listeners).toEqual([]);
-    });
-
-    it('should get empty array if there is not registered listener for given event type', () => {
-      const listener1 = jasmine.createSpy('listener1');
-      ws.addEventListener('open', listener1);
-
-      const listeners = ws.getEventListeners('close');
-      expect(listeners).toEqual([]);
-    });
-
     describe('once opened', () => {
       let ws;
 
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
-        ws.openHandshake().respond();
+        ws._openHandshake.respond();
       });
 
       it('should fail to send data without argument', () => {
@@ -460,15 +381,15 @@ describe('FakeWebSocket', () => {
         const data2 = 'test2';
 
         ws.send(data1);
-        expect(ws.sentMessages()).toEqual([data1]);
+        expect(ws._sentMessages).toEqual([data1]);
 
         ws.send(data2);
-        expect(ws.sentMessages()).toEqual([data1, data2]);
+        expect(ws._sentMessages).toEqual([data1, data2]);
       });
 
       it('should not send the empty string', () => {
         ws.send('');
-        expect(ws.sentMessages()).toEqual([]);
+        expect(ws._sentMessages).toEqual([]);
       });
 
       it('should close websocket', () => {
@@ -480,9 +401,9 @@ describe('FakeWebSocket', () => {
         ws.close();
 
         expect(ws.readyState).toBe(2);
-        expect(ws.closeHandshake()).not.toBeNull();
+        expect(ws._closeHandshake).not.toBeNull();
 
-        ws.closeHandshake().respond();
+        ws._closeHandshake.respond();
 
         expect(onCloseListener).toHaveBeenCalledTimes(1);
         expect(onClose).toHaveBeenCalledTimes(1);
@@ -493,100 +414,6 @@ describe('FakeWebSocket', () => {
         expect(e1.code).toBe(1005);
         expect(e1.reason).toBe('');
         expect(e1.wasClean).toBe(true);
-      });
-
-      it('should receive a string message and trigger listeners', () => {
-        const onmessage = jasmine.createSpy('onmessage');
-        const onMessageListener = jasmine.createSpy('onMessageListener');
-        const data = 'test';
-
-        ws.onmessage = onmessage;
-        ws.addEventListener('message', onMessageListener);
-        ws.emitMessage(data);
-
-        expect(onmessage).toHaveBeenCalledTimes(1);
-        expect(onMessageListener).toHaveBeenCalledTimes(1);
-
-        const e1 = onmessage.calls.mostRecent().args[0];
-        const e2 = onMessageListener.calls.mostRecent().args[0];
-        expect(e1).toBe(e2);
-        expect(e1.data).toBe(data);
-        expect(e1.origin).toBe('ws://localhost');
-      });
-
-      it('should receive a blob message and trigger listeners', () => {
-        assumeBlob();
-
-        const onMessageListener = jasmine.createSpy('onMessageListener');
-        const data = new Blob(['test'], {
-          type: 'plain/text',
-        });
-
-        ws.addEventListener('message', onMessageListener);
-        ws.emitMessage(data);
-
-        expect(onMessageListener).toHaveBeenCalledTimes(1);
-
-        const event = onMessageListener.calls.mostRecent().args[0];
-        expect(event.data).toBe(data);
-      });
-
-      it('should receive an ArrayBuffer message and trigger listeners', () => {
-        assumeArrayBuffer();
-
-        const onMessageListener = jasmine.createSpy('onMessageListener');
-        const data = new ArrayBuffer(8);
-
-        ws.addEventListener('message', onMessageListener);
-        ws.emitMessage(data);
-
-        expect(onMessageListener).toHaveBeenCalledTimes(1);
-
-        const event = onMessageListener.calls.mostRecent().args[0];
-        expect(event.data).toBe(data);
-      });
-
-      it('should fail to receive an invalid message', () => {
-        const onMessageListener = jasmine.createSpy('onMessageListener');
-        const data = [];
-
-        ws.addEventListener('message', onMessageListener);
-
-        expect(() => ws.emitMessage(data)).toThrow(new Error(
-            `Failed to receive message on 'WebSocket': Only String, Blob or ArrayBuffer are allowed. ` +
-            `The message is: [object Array].`
-        ));
-
-        expect(onMessageListener).not.toHaveBeenCalled();
-      });
-
-      it('should fail to receive a null message', () => {
-        const onmessage = jasmine.createSpy('onmessage');
-        const onMessageListener = jasmine.createSpy('onMessageListener');
-        const data = null;
-
-        ws.onmessage = onmessage;
-        ws.addEventListener('message', onMessageListener);
-        expect(() => ws.emitMessage(data)).toThrow(new Error(
-            'Failed to receive message on \'WebSocket\': The message is null.'
-        ));
-
-        expect(onmessage).not.toHaveBeenCalled();
-        expect(onMessageListener).not.toHaveBeenCalled();
-      });
-
-      it('should fail to receive a void 0 message', () => {
-        const onmessage = jasmine.createSpy('onmessage');
-        const onMessageListener = jasmine.createSpy('onMessageListener');
-
-        ws.onmessage = onmessage;
-        ws.addEventListener('message', onMessageListener);
-        expect(() => ws.emitMessage()).toThrow(new Error(
-            'Failed to receive message on \'WebSocket\': The message is undefined.'
-        ));
-
-        expect(onmessage).not.toHaveBeenCalled();
-        expect(onMessageListener).not.toHaveBeenCalled();
       });
 
       it('should close websocket with a code and a reason', () => {
@@ -600,9 +427,9 @@ describe('FakeWebSocket', () => {
         ws.close(code, reason);
 
         expect(ws.readyState).toBe(2);
-        expect(ws.closeHandshake()).not.toBeNull();
+        expect(ws._closeHandshake).not.toBeNull();
 
-        ws.closeHandshake().respond();
+        ws._closeHandshake.respond();
 
         expect(onCloseListener).toHaveBeenCalledTimes(1);
         expect(onClose).toHaveBeenCalledTimes(1);
@@ -646,7 +473,7 @@ describe('FakeWebSocket', () => {
 
         ws.addEventListener('close', onCloseListener);
         ws.close(code, reason);
-        ws.closeHandshake().respond();
+        ws._closeHandshake.respond();
 
         expect(onCloseListener).toHaveBeenCalledTimes(1);
 
@@ -663,7 +490,7 @@ describe('FakeWebSocket', () => {
 
         ws.addEventListener('close', onCloseListener);
         ws.close(code, reason);
-        ws.closeHandshake().respond();
+        ws._closeHandshake.respond();
 
         expect(onCloseListener).toHaveBeenCalledTimes(1);
 
@@ -702,72 +529,6 @@ describe('FakeWebSocket', () => {
         expect(onCloseListener).not.toHaveBeenCalled();
         expect(onClose).not.toHaveBeenCalled();
       });
-
-      it('should emit a close operation', () => {
-        const onCloseListener = jasmine.createSpy('onCloseListener');
-
-        ws.addEventListener('close', onCloseListener);
-        ws.emitClose();
-
-        expect(ws.readyState).toBe(2);
-        expect(ws.closeHandshake()).toBeDefined();
-        expect(onCloseListener).not.toHaveBeenCalled();
-
-        ws.closeHandshake().respond();
-
-        expect(ws.readyState).toBe(3);
-        expect(onCloseListener).toHaveBeenCalledTimes(1);
-
-        const event = onCloseListener.calls.mostRecent().args[0];
-        expect(event.code).toBe(1006);
-        expect(event.reason).toBe('');
-        expect(event.wasClean).toBe(false);
-      });
-
-      it('should emit a close operation with a custom code', () => {
-        const onCloseListener = jasmine.createSpy('onCloseListener');
-        const code = 1008;
-
-        ws.addEventListener('close', onCloseListener);
-        ws.emitClose(code);
-
-        expect(ws.readyState).toBe(2);
-        expect(ws.closeHandshake()).toBeDefined();
-        expect(onCloseListener).not.toHaveBeenCalled();
-
-        ws.closeHandshake().respond();
-
-        expect(ws.readyState).toBe(3);
-        expect(onCloseListener).toHaveBeenCalledTimes(1);
-
-        const event = onCloseListener.calls.mostRecent().args[0];
-        expect(event.code).toBe(code);
-        expect(event.reason).toBe('');
-        expect(event.wasClean).toBe(false);
-      });
-
-      it('should emit a close operation with a custom code and reason', () => {
-        const onCloseListener = jasmine.createSpy('onCloseListener');
-        const code = 1008;
-        const reason = 'Policy Violation';
-
-        ws.addEventListener('close', onCloseListener);
-        ws.emitClose(code, reason);
-
-        expect(ws.readyState).toBe(2);
-        expect(ws.closeHandshake()).toBeDefined();
-        expect(onCloseListener).not.toHaveBeenCalled();
-
-        ws.closeHandshake().respond();
-
-        expect(ws.readyState).toBe(3);
-        expect(onCloseListener).toHaveBeenCalledTimes(1);
-
-        const event = onCloseListener.calls.mostRecent().args[0];
-        expect(event.code).toBe(code);
-        expect(event.reason).toBe(reason);
-        expect(event.wasClean).toBe(false);
-      });
     });
 
     describe('once closing', () => {
@@ -775,7 +536,7 @@ describe('FakeWebSocket', () => {
 
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
-        ws.openHandshake().respond();
+        ws._openHandshake.respond();
         ws.close();
       });
 
@@ -786,21 +547,15 @@ describe('FakeWebSocket', () => {
       });
 
       it('should not re-close the websocket', () => {
-        const closeHandshake = ws.closeHandshake();
+        const closeHandshake = ws._closeHandshake;
         const onCloseListener = jasmine.createSpy('onCloseListener');
 
         ws.addEventListener('close', onCloseListener);
         ws.close();
 
-        expect(ws.closeHandshake()).toBe(closeHandshake);
+        expect(ws._closeHandshake).toBe(closeHandshake);
         expect(ws.readyState).toBe(2);
         expect(onCloseListener).not.toHaveBeenCalled();
-      });
-
-      it('should failt to emit a close event', () => {
-        expect(() => ws.emitClose()).toThrow(new Error(
-            'Cannot emit a close event, WebSocket is already closing.'
-        ));
       });
     });
 
@@ -809,33 +564,27 @@ describe('FakeWebSocket', () => {
 
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
-        ws.openHandshake().respond();
+        ws._openHandshake.respond();
         ws.close();
-        ws.closeHandshake().respond();
+        ws._closeHandshake.respond();
       });
 
-      it('should faile to send data', () => {
+      it('should fail to send data', () => {
         expect(() => ws.send('test')).toThrow(new Error(
             'WebSocket is already in CLOSING or CLOSED state.'
         ));
       });
 
       it('should not re-close the websocket', () => {
-        const closeHandshake = ws.closeHandshake();
+        const closeHandshake = ws._closeHandshake;
         const onCloseListener = jasmine.createSpy('onCloseListener');
 
         ws.addEventListener('close', onCloseListener);
         ws.close();
 
-        expect(ws.closeHandshake()).toBe(closeHandshake);
+        expect(ws._closeHandshake).toBe(closeHandshake);
         expect(ws.readyState).toBe(3);
         expect(onCloseListener).not.toHaveBeenCalled();
-      });
-
-      it('should failt to emit a close event', () => {
-        expect(() => ws.emitClose()).toThrow(new Error(
-            'Cannot emit a close event, WebSocket is already closed.'
-        ));
       });
     });
   });

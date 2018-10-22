@@ -28,25 +28,19 @@ import {indexOf} from './common/index-of.js';
 import {factory} from './common/factory.js';
 import {filter} from './common/filter.js';
 import {find} from './common/find.js';
-import {flatten} from './common/flatten.js';
 import {forEach} from './common/for-each.js';
 import {has} from './common/has.js';
-import {isArrayBuffer} from './common/is-array-buffer.js';
-import {isBlob} from './common/is-blob.js';
 import {isFunction} from './common/is-function.js';
-import {isNull} from './common/is-null.js';
 import {isString} from './common/is-string.js';
 import {isUndefined} from './common/is-undefined.js';
 import {parseUrl} from './common/parse-url.js';
-import {tagName} from './common/tag-name.js';
 import {toPairs} from './common/to-pairs.js';
-import {values} from './common/values.js';
 
 import {fakeOpenHandshakeFactory} from './fake-open-handshake.js';
 import {fakeCloseHandshakeFactory} from './fake-close-handshake.js';
 import {fakeEventFactory} from './fake-event.js';
 import {fakeCloseEventFactory} from './fake-close-event.js';
-import {fakeMessageEventFactory} from './fake-message-event.js';
+import {CONNECTING, OPEN, CLOSING, CLOSED} from './web-socket-state.js';
 
 import {track} from './ws-tracker.js';
 
@@ -55,31 +49,6 @@ export const fakeWebSocketFactory = factory(() => {
   const FakeCloseHandshake = fakeCloseHandshakeFactory();
   const FakeEvent = fakeEventFactory();
   const FakeCloseEvent = fakeCloseEventFactory();
-  const FakeMessageEvent = fakeMessageEventFactory();
-
-  /**
-   * The connection has not yet been established.
-   * @type {number}
-   */
-  const CONNECTING = 0;
-
-  /**
-   * The WebSocket connection is established and communication is possible.
-   * @type {string}
-   */
-  const OPEN = 1;
-
-  /**
-   * The connection is going through the closing handshake, or the close() method has been invoked.
-   * @type {number}
-   */
-  const CLOSING = 2;
-
-  /**
-   * The connection has been closed or could not be opened.
-   * @type {number}
-   */
-  const CLOSED = 3;
 
   /**
    * A Fake WebSocket implementation.
@@ -165,7 +134,7 @@ export const fakeWebSocketFactory = factory(() => {
       this._listeners = {};
       this._sentMessages = [];
       this._openHandshake = null;
-      this._closeHandhsake = null;
+      this._closeHandshake = null;
       this._bufferedAmount = 0;
       this._establishConnection();
 
@@ -338,27 +307,6 @@ export const fakeWebSocketFactory = factory(() => {
     }
 
     /**
-     * Execute the listener function (it it is a real `function`).
-     * Note that error are catched and logged to the console.
-     *
-     * @param {function} listener The listener function.
-     * @param {Object} event The event to dispatch.
-     * @return {void}
-     */
-    _executeListener(listener, event) {
-      try {
-        if (isFunction(listener)) {
-          listener.call(this, event);
-        } else if (isFunction(listener.handleEvent)) {
-          listener.handleEvent(event);
-        }
-      } catch (e) {
-        console.error(e);
-        console.error(e.stack);
-      }
-    }
-
-    /**
      * Transmits data using the `WebSocket` connection.
      *
      * @param {*} data The string data to send.
@@ -438,8 +386,8 @@ export const fakeWebSocketFactory = factory(() => {
       }
 
       // 3-3 If the WebSocket closing handshake has not yet been started [WSP]
-      if (!this._closeHandhsake) {
-        this._closeHandhsake = new FakeCloseHandshake(this, code, reason, true);
+      if (!this._closeHandshake) {
+        this._closeHandshake = new FakeCloseHandshake(this, code, reason, true);
       }
 
       this._readyState = CLOSING;
@@ -477,6 +425,28 @@ export const fakeWebSocketFactory = factory(() => {
       this.dispatchEvent(new FakeEvent('open', this));
     }
 
+
+    /**
+     * Execute the listener function (it it is a real `function`).
+     * Note that error are catched and logged to the console.
+     *
+     * @param {function} listener The listener function.
+     * @param {Object} event The event to dispatch.
+     * @return {void}
+     */
+    _executeListener(listener, event) {
+      try {
+        if (isFunction(listener)) {
+          listener.call(this, event);
+        } else if (isFunction(listener.handleEvent)) {
+          listener.handleEvent(event);
+        }
+      } catch (e) {
+        console.error(e);
+        console.error(e.stack);
+      }
+    }
+
     /**
      * Mark the websocket as closed and trigger appropriate listeners.
      *
@@ -500,102 +470,8 @@ export const fakeWebSocketFactory = factory(() => {
      */
     _failConnection(code = 1006, reason = '', wasClean = false) {
       this._readyState = CLOSING;
-      this._closeHandhsake = new FakeCloseHandshake(this, code, reason, false);
+      this._closeHandshake = new FakeCloseHandshake(this, code, reason, false);
       this.dispatchEvent(new FakeEvent('error', this));
-    }
-
-    /**
-     * The handshake request.
-     *
-     * @return {FakeOpenHandshake} The handshake request.
-     */
-    openHandshake() {
-      return this._openHandshake;
-    }
-
-    /**
-     * The handshake closing request.
-     *
-     * @return {FakeCloseHandshake} The close handshake.
-     */
-    closeHandshake() {
-      return this._closeHandhsake;
-    }
-
-    /**
-     * Get all sent messages.
-     *
-     * @return {Array<*>} All sent messages.
-     */
-    sentMessages() {
-      return this._sentMessages.slice();
-    }
-
-    /**
-     * Emit data and trigger appropriate listeners.
-     *
-     * @param {*} data Emitted data.
-     * @return {void}
-     * @see https://html.spec.whatwg.org/multipage/web-sockets.html#feedback-from-the-protocol
-     */
-    emitMessage(data) {
-      if (isNull(data) || isUndefined(data)) {
-        throw new Error(
-            `Failed to receive message on 'WebSocket': The message is ${String(data)}.`
-        );
-      }
-
-      if (!isString(data) && !isBlob(data) && !isArrayBuffer(data)) {
-        throw new Error(
-            `Failed to receive message on 'WebSocket': Only String, Blob or ArrayBuffer are allowed. ` +
-            `The message is: ${tagName(data)}.`
-        );
-      }
-
-      if (this._readyState !== OPEN) {
-        throw new Error(
-            `Failed to receive message on 'WebSocket': The websocket state must be OPEN.`
-        );
-      }
-
-      this.dispatchEvent(new FakeMessageEvent(this, data));
-    }
-
-    /**
-     * Emit a closing request (i.e an abnormal closure requested by the server).
-     *
-     * @param {number} code The close status code, defaults to `1006`.
-     * @param {string} reason The close reason, defaults to an empty string.
-     * @param {boolean} wasClean A flag indicating if the connection is closed cleanly, defaults to `false`.
-     * @return {void}
-     * @see https://tools.ietf.org/html/rfc6455#page-44
-     */
-    emitClose(code = 1006, reason = '', wasClean = false) {
-      if (this._readyState === CLOSED) {
-        throw new Error(
-            'Cannot emit a close event, WebSocket is already closed.'
-        );
-      }
-
-      if (this.readyState === CLOSING) {
-        throw new Error(
-            'Cannot emit a close event, WebSocket is already closing.'
-        );
-      }
-
-      this._failConnection(code, reason, wasClean);
-    }
-
-    /**
-     * Get all registered listeners, or listeners for given specific event
-     * type.
-     *
-     * @param {string} type Event type (optional).
-     * @return {Array<function>} The registered listeners.
-     */
-    getEventListeners(type = '') {
-      const listeners = type ? this._listeners[type] : flatten(values(this._listeners));
-      return listeners ? listeners.slice() : [];
     }
   }
 

@@ -30,11 +30,15 @@ describe('wsTracker', () => {
 
     track(ws);
 
-    expect(wsTracker.mostRecent()).toBe(ws);
-    expect(wsTracker.first()).toBe(ws);
-    expect(wsTracker.at(0)).toBe(ws);
+    expect(wsTracker.mostRecent()._ws).toBe(ws);
+    expect(wsTracker.first()._ws).toBe(ws);
+    expect(wsTracker.at(0)._ws).toBe(ws);
     expect(wsTracker.count()).toBe(1);
-    expect(wsTracker.all()).toEqual([ws]);
+    expect(wsTracker.all()).toEqual([
+      jasmine.objectContaining({
+        _ws: ws,
+      }),
+    ]);
   });
 
   it('should get first connection', () => {
@@ -44,12 +48,19 @@ describe('wsTracker', () => {
     track(ws1);
     track(ws2);
 
-    expect(wsTracker.mostRecent()).toBe(ws2);
-    expect(wsTracker.first()).toBe(ws1);
-    expect(wsTracker.at(0)).toBe(ws1);
-    expect(wsTracker.at(1)).toBe(ws2);
+    expect(wsTracker.mostRecent()._ws).toBe(ws2);
+    expect(wsTracker.first()._ws).toBe(ws1);
+    expect(wsTracker.at(0)._ws).toBe(ws1);
+    expect(wsTracker.at(1)._ws).toBe(ws2);
     expect(wsTracker.count()).toBe(2);
-    expect(wsTracker.all()).toEqual([ws1, ws2]);
+    expect(wsTracker.all()).toEqual([
+      jasmine.objectContaining({
+        _ws: ws1,
+      }),
+      jasmine.objectContaining({
+        _ws: ws2,
+      }),
+    ]);
   });
 
   it('should reset tracked connection', () => {
@@ -59,12 +70,19 @@ describe('wsTracker', () => {
     track(ws1);
     track(ws2);
 
-    expect(wsTracker.mostRecent()).toBe(ws2);
-    expect(wsTracker.first()).toBe(ws1);
-    expect(wsTracker.at(0)).toBe(ws1);
-    expect(wsTracker.at(1)).toBe(ws2);
+    expect(wsTracker.mostRecent()._ws).toBe(ws2);
+    expect(wsTracker.first()._ws).toBe(ws1);
+    expect(wsTracker.at(0)._ws).toBe(ws1);
+    expect(wsTracker.at(1)._ws).toBe(ws2);
     expect(wsTracker.count()).toBe(2);
-    expect(wsTracker.all()).toEqual([ws1, ws2]);
+    expect(wsTracker.all()).toEqual([
+      jasmine.objectContaining({
+        _ws: ws1,
+      }),
+      jasmine.objectContaining({
+        _ws: ws2,
+      }),
+    ]);
 
     reset();
 

@@ -22,12 +22,26 @@
  * THE SOFTWARE.
  */
 
-import './common/index.js';
-import './fake-close-event.test.js';
-import './fake-close-handshake.test.js';
-import './fake-event.test.js';
-import './fake-message-event.test.js';
-import './fake-open-handshake.test.js';
-import './fake-web-socket.test.js';
-import './fake-web-socket-proxy.test.js';
-import './ws-tracker.test.js';
+/**
+ * The connection has not yet been established.
+ * @type {number}
+ */
+export const CONNECTING = 0;
+
+/**
+ * The WebSocket connection is established and communication is possible.
+ * @type {string}
+ */
+export const OPEN = 1;
+
+/**
+ * The connection is going through the closing handshake, or the close() method has been invoked.
+ * @type {number}
+ */
+export const CLOSING = 2;
+
+/**
+ * The connection has been closed or could not be opened.
+ * @type {number}
+ */
+export const CLOSED = 3;

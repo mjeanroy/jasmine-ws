@@ -22,11 +22,13 @@
  * THE SOFTWARE.
  */
 
+import {fakeWebSocketProxyFactory} from './fake-web-socket-proxy.js';
+
 /**
  * The queue of opened WebSocket.
- * @type {Array<FakeWebSocket}
+ * @type {Array<FakeWebSocketProxy>}
  */
-const _queue = [];
+const queue = [];
 
 /**
  * Add `WebSocket` to the internal tracker.
@@ -34,7 +36,9 @@ const _queue = [];
  * @return {void}
  */
 export function track(ws) {
-  _queue.push(ws);
+  const FakeWebSocketProxy = fakeWebSocketProxyFactory();
+  const proxy = new FakeWebSocketProxy(ws);
+  queue.push(proxy);
 }
 
 /**
@@ -43,7 +47,7 @@ export function track(ws) {
  * @return {void}
  */
 export function reset() {
-  _queue.splice(0, _queue.length);
+  queue.splice(0, queue.length);
 }
 
 export const wsTracker = {
@@ -53,7 +57,7 @@ export const wsTracker = {
    * @return {void}
    */
   mostRecent() {
-    return _queue[_queue.length - 1];
+    return queue[queue.length - 1];
   },
 
   /**
@@ -62,7 +66,7 @@ export const wsTracker = {
    * @return {void}
    */
   first() {
-    return _queue[0];
+    return queue[0];
   },
 
   /**
@@ -72,7 +76,7 @@ export const wsTracker = {
    * @return {void}
    */
   at(idx) {
-    return _queue[idx];
+    return queue[idx];
   },
 
   /**
@@ -81,7 +85,7 @@ export const wsTracker = {
    * @return {number} Number of tracked connections.
    */
   count() {
-    return _queue.length;
+    return queue.length;
   },
 
   /**
@@ -90,6 +94,6 @@ export const wsTracker = {
    * @return {Array<FakeWebSocket>} The list of tracked connections.
    */
   all() {
-    return _queue.slice();
+    return queue.slice();
   },
 };
