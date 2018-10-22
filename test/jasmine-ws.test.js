@@ -54,6 +54,31 @@ describe('jasmine-ws', () => {
       expect(window.WebSocket).toBe(_WebSocket);
     });
 
+    it('should allow installation of jasmine-ws in a single shot', () => {
+      const testFn = jasmine.createSpy('testFn').and.callFake(() => {
+        expect(window.WebSocket).toBeDefined();
+        expect(window.WebSocket).not.toBe(_WebSocket);
+      });
+
+      jasmine.ws().withMock(testFn);
+
+      expect(testFn).toHaveBeenCalledTimes(1);
+      expect(window.WebSocket).toBeDefined();
+      expect(window.WebSocket).toBe(_WebSocket);
+    });
+
+    it('should allow installation of jasmine-ws in a single shot and reset spies if test throw an exception', () => {
+      const testFn = jasmine.createSpy('testFn').and.callFake(() => {
+        throw new Error('Fail Test');
+      });
+
+      expect(() => jasmine.ws().withMock(testFn)).toThrow();
+
+      expect(testFn).toHaveBeenCalledTimes(1);
+      expect(window.WebSocket).toBeDefined();
+      expect(window.WebSocket).toBe(_WebSocket);
+    });
+
     it('should fail to uninstall jasmine-ws if it has not been previously installed', () => {
       expect(() => jasmine.ws().uninstall()).toThrow(new Error(
           'It seems that `jasmine.ws` has not been installed, make sure `jasmine.ws().install()` ' +

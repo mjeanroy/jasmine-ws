@@ -82,6 +82,23 @@ jasmine.ws = () => ({
   },
 
   /**
+   * Allow to use fake `WebSocket` API in a single test function (without dealing
+   * with `jasmine.ws().install` and `jasmine.ws().uninstall()`).
+   *
+   * @param {function} testFn The test function.
+   * @return {void}
+   */
+  withMock(testFn) {
+    this.install();
+
+    try {
+      testFn();
+    } finally {
+      this.uninstall();
+    }
+  },
+
+  /**
    * Get the store of opened `WebSocket` connections.
    *
    * @return {Object} The store.
