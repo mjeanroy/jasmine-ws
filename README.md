@@ -89,7 +89,7 @@ describe('app', () => {
 
 #### `jasmine.ws`
 
-`jasmine.ws().install()`
+`jasmine.ws().install()` (@since 0.1.0)
 
 Install the fake `WebSocket` implementation, typically called in a `beforeEach` method.
 Note that:
@@ -97,25 +97,39 @@ Note that:
 this method do nothing (and do not fail).
   - This method will fail if `jasmine-ws` has already been installed.
 
-`jasmine.ws().uninstall()`
+`jasmine.ws().uninstall()` (@since 0.1.0)
 
 Install the fake `WebSocket` implementation, typically called in a `beforeEach` method.
 Note that:
   - Like the `jasmine.ws().install()` method, if browser does not support native `WebSocket` this method do nothing (and do not fail).
   - This method will fail if `jasmine-ws` has not been previously installed.
 
-`jasmine.ws().connections()`
+`jasmine.ws().connections()` (@since 0.1.0)
 
 Returns an object containing method to get tracked connection:
   - `count(): number` Get the number of tracked connections.
   - `all(): Array<FakeWebSocket>` Get an array of all tracked connections.
   - `first(): FakeWebSocket` Get the first tracked connections or `undefined`.
-  - `last(): FakeWebSocket` Get the last tracked connections or `undefined`.
+  - `last(): FakeWebSoFakeWebSocketcketProxy` Get the last tracked connections or `undefined`.
   - `at(idx: number): FakeWebSocket` Get the tracked connection at given index or `undefined`.
+
+`jasmine.ws().withMock(testFn)` (@since 0.2.0)
+
+Install the fake `WebSocket` implementation, execute the test function `testFn`, then reset the fake implementation. This method can be used
+to install/uninstall fake `WebSocket` API in a single test, for example:
+
+```javascript
+it('should run test with fake WebSocket', () => {
+  jasmine.ws().withMock(() => {
+    doYourTest();
+    doYourExpect();
+  });
+});
+```
 
 #### `FakeWebSocket`
 
-A tracked connection is a `WebSocket` (so contains all methods of `WebSocket` object as documented [here]()) with additional methods:
+A tracked connection is kke a `WebSocket` (so contains all methods of `WebSocket` object as documented [here](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)) with additional methods:
 
 - `openHandshake(): FakeOpenHandshake` Get the "open" handshake request, that can be used to trigger handshake response.
 - `closeHandshake(): FakeCloseHandshake` Get the "close" handshake request, that can be used to trigger handshake response.
