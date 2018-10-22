@@ -109,13 +109,13 @@ jasmine.ws = () => ({
    * with `jasmine.ws().install` and `jasmine.ws().uninstall()`).
    *
    * @param {function} testFn The test function.
-   * @return {void}
+   * @return {*} The return value of the test function.
    */
   withMock(testFn) {
     this.install();
 
     try {
-      testFn();
+      return testFn();
     } finally {
       this.uninstall();
     }
