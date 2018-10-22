@@ -66,7 +66,6 @@ class FakeUrl {
    * @override
    */
   toString() {
-    debugger;
     // 1- Let output be url’s scheme and U+003A (:) concatenated.
     let output = this.protocol;
 
