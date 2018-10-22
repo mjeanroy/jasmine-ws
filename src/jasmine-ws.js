@@ -22,11 +22,34 @@
  * THE SOFTWARE.
  */
 
+import {find} from './core/common/find.js';
 import {fakeWebSocketFactory} from './core/fake-web-socket.js';
 import {wsTracker, reset} from './core/ws-tracker.js';
 
 const GLOBAL = window || global;
-const WEB_SOCKET = GLOBAL.WebSocket;
+const WEB_SOCKET_IMPL_NAME = find(['WebSocket', 'MozWebSocket'], (impl) => impl in GLOBAL);
+const WEB_SOCKET = WEB_SOCKET_IMPL_NAME ? GLOBAL[WEB_SOCKET_IMPL_NAME] : null;
+
+/**
+ * Update the global `WebSocket` API in the current running environment.
+ *
+ * @param {function} impl The `WebSocket` API implementation.
+ * @return {void}
+ */
+function setWebSocketImpl(impl) {
+  GLOBAL[WEB_SOCKET_IMPL_NAME] = impl;
+}
+
+/**
+ * Check if the current installed `WebSocket` in the running environment is strictly
+ * equal to the one in parameter.
+ *
+ * @param {function} impl The `WebSocket` API implementation to check.
+ * @return {boolean} `true` if the global `WebSocket` is equal to `impl`, `false` otherwise.
+ */
+function checkWebSocketImpl(impl) {
+  return GLOBAL[WEB_SOCKET_IMPL_NAME] === impl;
+}
 
 let FakeWebSocket;
 
@@ -44,7 +67,7 @@ jasmine.ws = () => ({
         FakeWebSocket = fakeWebSocketFactory();
       }
 
-      if (GLOBAL.WebSocket === FakeWebSocket) {
+      if (checkWebSocketImpl(FakeWebSocket)) {
         throw new Error(
             'It seems that jasmine-ws has already been installed, make sure `jasmine.ws().uninstall()` ' +
             'has been called after test suite.'
@@ -52,7 +75,7 @@ jasmine.ws = () => ({
       }
 
       // Override the default `WebSocket` API.
-      GLOBAL.WebSocket = FakeWebSocket;
+      setWebSocketImpl(FakeWebSocket);
 
       // Ensure the tracker is resetted.
       reset();
@@ -66,7 +89,7 @@ jasmine.ws = () => ({
    */
   uninstall() {
     if (WEB_SOCKET) {
-      if (GLOBAL.WebSocket !== FakeWebSocket) {
+      if (!checkWebSocketImpl(FakeWebSocket)) {
         throw new Error(
             'It seems that `jasmine.ws` has not been installed, make sure `jasmine.ws().install()` ' +
             'has been called before uninstalling it.'
@@ -74,7 +97,7 @@ jasmine.ws = () => ({
       }
 
       // Restore the default `WebSocket` API.
-      GLOBAL.WebSocket = WEB_SOCKET;
+      setWebSocketImpl(WEB_SOCKET);
 
       // Ensure the tracker is resetted.
       reset();
