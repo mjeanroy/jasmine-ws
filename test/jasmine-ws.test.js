@@ -30,7 +30,7 @@ describe('jasmine-ws', () => {
   describe('with a browser supporting WebSocket', () => {
     let _WebSocket;
 
-    beforeAll(() => {
+    beforeEach(() => {
       assumeWebSocket();
     });
 
@@ -147,7 +147,7 @@ describe('jasmine-ws', () => {
   });
 
   describe('with a browser that does not support WebSocket', () => {
-    beforeAll(() => {
+    beforeEach(() => {
       assumeNonWebSocket();
     });
 
