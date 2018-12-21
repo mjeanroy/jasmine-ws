@@ -22,108 +22,24 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const del = require('del');
 const gulp = require('gulp');
-const eslint = require('gulp-eslint');
-const bump = require('gulp-bump');
-const git = require('gulp-git');
-const tagVersion = require('gulp-tag-version');
-const log = require('fancy-log');
-const colors = require('ansi-colors');
-const karma = require('karma');
-const rollup = require('rollup');
+const clean = require('./tasks/clean.js');
+const lint = require('./tasks/lint.js');
+const bundle = require('./tasks/bundle.js');
+const test = require('./tasks/test.js');
+const release = require('./tasks/release.js');
 
-const conf = require('./conf');
-const rollupConf = require('./rollup.conf');
+const prepare = gulp.parallel(clean, lint);
+const build = gulp.series(prepare, bundle);
 
-gulp.task('clean', () => {
-  return del(conf.dist);
-});
-
-gulp.task('lint', () => {
-  const inputs = [
-    path.join(conf.root, '*.js'),
-    path.join(conf.src, '**', '*.js'),
-    path.join(conf.test, '**', '*.js'),
-    path.join(conf.sample, '**', '*.js'),
-  ];
-
-  return gulp.src(inputs)
-      .pipe(eslint())
-      .pipe(eslint.format())
-      .pipe(eslint.failAfterError());
-});
-
-gulp.task('test', ['lint'], (done) => {
-  startKarma('test', done);
-});
-
-gulp.task('tdd', (done) => {
-  startKarma('tdd', done);
-});
-
-gulp.task('saucelab', (done) => {
-  startKarma('saucelab', done);
-});
-
-gulp.task('travis', ['lint'], (done) => {
-  if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
-    log(colors.grey('SauceLab environment not set, running classic test suite'));
-    startKarma('test', done);
-  } else {
-    startKarma('saucelab', done);
-  }
-});
-
-gulp.task('build', ['clean', 'lint'], () => {
-  return rollup.rollup(rollupConf).then((bundle) => bundle.write(rollupConf.output));
-});
-
-// Release tasks
-['minor', 'major', 'patch'].forEach((level) => {
-  const PKG_JSON = path.join(conf.root, 'package.json');
-  const DIST = conf.dist;
-
-  gulp.task(`bump:${level}`, () => (
-    gulp.src([PKG_JSON])
-        .pipe(bump({type: level}))
-        .pipe(gulp.dest(conf.root))
-  ));
-
-  gulp.task(`release:prepare:${level}`, ['build', `bump:${level}`], () => (
-    gulp.src([DIST, PKG_JSON])
-        .pipe(git.add({args: '-f'}))
-        .pipe(git.commit('release: release version'))
-  ));
-
-  gulp.task(`tag:${level}`, [`release:prepare:${level}`], () => (
-    gulp.src([PKG_JSON]).pipe(tagVersion())
-  ));
-
-  gulp.task(`release:${level}`, ['build', `tag:${level}`], () => (
-    gulp.src([DIST])
-        .pipe(git.rm({args: '-rf'}))
-        .pipe(git.commit('release: prepare next release'))
-  ));
-});
-
-/**
- * Start Karma Server and run unit tests.
- *
- * @param {string} mode The test mode (test or tdd).
- * @param {function} done The done callback.
- * @return {void}
- */
-function startKarma(mode, done) {
-  const fileName = `karma.${mode}.conf.js`;
-  const configFile = path.join(conf.root, fileName);
-
-  const srv = new karma.Server({configFile}, () => {
-    log(colors.grey('Calling done callback of Karma'));
-    done();
-  });
-
-  log(colors.grey(`Running karma with configuration: ${fileName}`));
-  srv.start();
-}
+module.exports = {
+  'clean': clean,
+  'lint': lint,
+  'build': build,
+  'tdd': test.tdd,
+  'test': gulp.series(prepare, test.test),
+  'travis': gulp.series(prepare, test.travis),
+  'release:patch': gulp.series(build, release.patch),
+  'release:minor': gulp.series(build, release.minor),
+  'release:major': gulp.series(build, release.major),
+};

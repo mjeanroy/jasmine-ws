@@ -22,14 +22,9 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const ROOT = __dirname;
+const del = require('del');
+const conf = require('../conf.js');
 
-module.exports = {
-  root: ROOT,
-  src: path.join(ROOT, 'src'),
-  test: path.join(ROOT, 'test'),
-  dist: path.join(ROOT, 'dist'),
-  sample: path.join(ROOT, 'sample'),
-  tasks: path.join(ROOT, 'tasks'),
+module.exports = function clean() {
+  return del(conf.dist);
 };
