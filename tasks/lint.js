@@ -23,13 +23,21 @@
  */
 
 const path = require('path');
-const ROOT = __dirname;
+const gulp = require('gulp');
+const eslint = require('gulp-eslint');
+const conf = require('../conf.js');
 
-module.exports = {
-  root: ROOT,
-  src: path.join(ROOT, 'src'),
-  test: path.join(ROOT, 'test'),
-  dist: path.join(ROOT, 'dist'),
-  sample: path.join(ROOT, 'sample'),
-  tasks: path.join(ROOT, 'tasks'),
+module.exports = function lint() {
+  const inputs = [
+    path.join(conf.root, '*.js'),
+    path.join(conf.src, '**', '*.js'),
+    path.join(conf.test, '**', '*.js'),
+    path.join(conf.sample, '**', '*.js'),
+    path.join(conf.tasks, '*.js'),
+  ];
+
+  return gulp.src(inputs)
+      .pipe(eslint())
+      .pipe(eslint.format())
+      .pipe(eslint.failAfterError());
 };
