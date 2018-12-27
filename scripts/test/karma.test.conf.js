@@ -22,22 +22,35 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const gulp = require('gulp');
-const eslint = require('gulp-eslint');
-const conf = require('../conf.js');
+/**
+ * Karma Configuration, mainly used on CI environement.
+ */
 
-module.exports = function lint() {
-  const inputs = [
-    path.join(conf.root, '*.js'),
-    path.join(conf.src, '**', '*.js'),
-    path.join(conf.test, '**', '*.js'),
-    path.join(conf.sample, '**', '*.js'),
-    path.join(conf.tasks, '*.js'),
-  ];
+const _ = require('lodash');
+const karmaConf = require('./karma.common.conf');
 
-  return gulp.src(inputs)
-      .pipe(eslint())
-      .pipe(eslint.format())
-      .pipe(eslint.failAfterError());
+module.exports = (config) => {
+  config.set(_.extend(karmaConf(config), {
+    autoWatch: false,
+    singleRun: true,
+
+    browsers: [
+      'CustomHeadlessChrome',
+      'PhantomJS',
+    ],
+
+    reporters: [
+      'progress',
+    ],
+
+    customLaunchers: {
+      CustomHeadlessChrome: {
+        base: 'ChromeHeadless',
+        flags: [
+          '--disable-translate',
+          '--disable-extensions',
+        ],
+      },
+    },
+  }));
 };

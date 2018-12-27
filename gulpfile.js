@@ -23,23 +23,23 @@
  */
 
 const gulp = require('gulp');
-const clean = require('./tasks/clean.js');
-const lint = require('./tasks/lint.js');
-const bundle = require('./tasks/bundle.js');
-const test = require('./tasks/test.js');
-const release = require('./tasks/release.js');
+const clean = require('./scripts/clean');
+const lint = require('./scripts/lint');
+const build = require('./scripts/build');
+const test = require('./scripts/test');
+const release = require('./scripts/release');
 
-const prepare = gulp.parallel(clean, lint);
-const build = gulp.series(prepare, bundle);
+const prebuild = gulp.series(clean, lint);
+const prerelease = gulp.series(prebuild, test.travis, build);
 
 module.exports = {
   'clean': clean,
   'lint': lint,
-  'build': build,
+  'build': gulp.series(prebuild, build),
   'tdd': test.tdd,
-  'test': gulp.series(prepare, test.test),
-  'travis': gulp.series(prepare, test.travis),
-  'release:patch': gulp.series(build, release.patch),
-  'release:minor': gulp.series(build, release.minor),
-  'release:major': gulp.series(build, release.major),
+  'test': gulp.series(lint, test.test),
+  'travis': gulp.series(lint, test.travis),
+  'release:patch': gulp.series(prerelease, release.patch),
+  'release:minor': gulp.series(prerelease, release.minor),
+  'release:major': gulp.series(prerelease, release.major),
 };

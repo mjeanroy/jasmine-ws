@@ -22,9 +22,22 @@
  * THE SOFTWARE.
  */
 
-const del = require('del');
-const conf = require('../conf.js');
+const path = require('path');
+const gulp = require('gulp');
+const eslint = require('gulp-eslint');
+const config = require('../config');
 
-module.exports = function clean() {
-  return del(conf.dist);
+module.exports = function lint() {
+  const inputs = [
+    path.join(config.root, '*.js'),
+    path.join(config.src, '**', '*.js'),
+    path.join(config.test, '**', '*.js'),
+    path.join(config.sample, '**', '*.js'),
+    path.join(config.scripts, '**', '*.js'),
+  ];
+
+  return gulp.src(inputs)
+      .pipe(eslint())
+      .pipe(eslint.format())
+      .pipe(eslint.failAfterError());
 };

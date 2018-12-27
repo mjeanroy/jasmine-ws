@@ -26,7 +26,6 @@ const path = require('path');
 const colors = require('ansi-colors');
 const log = require('fancy-log');
 const karma = require('karma');
-const conf = require('../conf.js');
 
 /**
  * Run unit tests and exit.
@@ -86,7 +85,7 @@ function travis(done) {
  */
 function runKarma(mode, done) {
   const fileName = `karma.${mode}.conf.js`;
-  const configFile = path.join(conf.root, fileName);
+  const configFile = path.join(__dirname, fileName);
   const srv = new karma.Server({configFile}, (err) => {
     log(colors.grey('Calling done callback of Karma'));
     done(err);

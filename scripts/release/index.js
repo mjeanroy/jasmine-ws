@@ -28,7 +28,7 @@ const bump = require('gulp-bump');
 const git = require('gulp-git');
 const tagVersion = require('gulp-tag-version');
 
-const conf = require('../conf.js');
+const conf = require('../config');
 const PKG_JSON = path.join(conf.root, 'package.json');
 const DIST = conf.dist;
 

@@ -22,20 +22,31 @@
  * THE SOFTWARE.
  */
 
-/**
- * Karma Configuration, mainly used for local development.
- */
+const path = require('path');
+const babel = require('rollup-plugin-babel');
+const stripBanner = require('rollup-plugin-strip-banner');
+const license = require('rollup-plugin-license');
+const esformatter = require('rollup-plugin-esformatter');
+const config = require('../config');
 
-const _ = require('lodash');
-const karmaConf = require('./karma.common.conf.js');
+module.exports = {
+  input: path.join(config.src, 'jasmine-ws.js'),
 
-module.exports = (config) => {
-  config.set(_.extend(karmaConf(config), {
-    autoWatch: true,
-    browsers: ['Chrome'],
-    captureTimeout: 10000,
-    singleRun: false,
-    reportSlowerThan: 2000,
-    reporters: ['progress'],
-  }));
+  output: {
+    file: path.join(config.dist, 'jasmine-ws.js'),
+    format: 'iife',
+    name: 'JasmineWS',
+    sourcemap: false,
+  },
+
+  plugins: [
+    babel(),
+    stripBanner(),
+    esformatter(),
+    license({
+      banner: {
+        file: path.join(config.root, 'LICENSE'),
+      },
+    }),
+  ],
 };

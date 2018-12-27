@@ -23,34 +23,19 @@
  */
 
 /**
- * Karma Configuration, mainly used on CI environement.
+ * Karma Configuration, mainly used for local development.
  */
 
 const _ = require('lodash');
-const karmaConf = require('./karma.common.conf.js');
+const karmaConf = require('./karma.common.conf');
 
 module.exports = (config) => {
   config.set(_.extend(karmaConf(config), {
-    autoWatch: false,
-    singleRun: true,
-
-    browsers: [
-      'CustomHeadlessChrome',
-      'PhantomJS',
-    ],
-
-    reporters: [
-      'progress',
-    ],
-
-    customLaunchers: {
-      CustomHeadlessChrome: {
-        base: 'ChromeHeadless',
-        flags: [
-          '--disable-translate',
-          '--disable-extensions',
-        ],
-      },
-    },
+    autoWatch: true,
+    browsers: ['Chrome'],
+    captureTimeout: 10000,
+    singleRun: false,
+    reportSlowerThan: 2000,
+    reporters: ['progress'],
   }));
 };

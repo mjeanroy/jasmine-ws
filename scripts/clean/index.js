@@ -22,11 +22,9 @@
  * THE SOFTWARE.
  */
 
-const rollup = require('rollup');
-const rollupConf = require('../rollup.conf.js');
+const del = require('del');
+const config = require('../config');
 
-module.exports = function bundle() {
-  return rollup.rollup(rollupConf).then((bundleFile) => (
-    bundleFile.write(rollupConf.output)
-  ));
+module.exports = function clean() {
+  return del(config.dist);
 };
