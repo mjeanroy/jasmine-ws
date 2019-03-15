@@ -22,33 +22,16 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {skip} from './skip';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+/**
+ * Check if given environment supports `WebSocket` and skip test
+ * if it does.
+ *
+ * @return {void}
+ */
+export function assumeNonWebSocket(): void {
+  skip('WebSocket is supported on this environment', () => (
+    typeof WebSocket === 'undefined'
+  ));
+}

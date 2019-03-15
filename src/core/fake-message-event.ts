@@ -1,0 +1,132 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2018 Mickael Jeanroy
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+import {factory} from './common/factory';
+import {FakeEvent, fakeEventFactory} from './fake-event';
+
+export interface FakeMessageEvent extends FakeEvent {
+}
+
+export const fakeMessageEventFactory = factory(() => {
+  const FakeEventImpl = fakeEventFactory();
+
+  /**
+   * An integer that will be incremented each a new `FakeMessageEvent` is created, will
+   * be used to get unique identifiers.
+   * @type {number}
+   */
+  let _id: number = 0;
+
+  /**
+   * A fake Message Event.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent
+   */
+  return class FakeMessageEvent extends FakeEventImpl {
+    private _data: any;
+    private _lastEventId: string;
+    private _origin: string;
+
+    /**
+     * Create the fake event.
+     *
+     * @param {FakeWebSocket} ws The WebSocket.
+     * @param {*} data The sent data.
+     * @constructor
+     */
+    constructor(ws, data) {
+      super('message', ws);
+      this._data = data;
+      this._lastEventId = (_id++).toString();
+      this._origin = `${ws._url.protocol}//${ws._url.host}`;
+    }
+
+    /**
+     * Initializes a message event.
+     *
+     * This method is deprecated and is here just to make the event compatible with a "real"
+     * message event.
+     *
+     * @return {void}
+     */
+    initMessageEvent(): void {
+    }
+
+    /**
+     * The data sent by the message emitter.
+     *
+     * @return {*} The sent data.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/data
+     */
+    get data(): any {
+      return this._data;
+    }
+
+    /**
+     * A `string` representing a unique ID for the event.
+     *
+     * @return {string} The unique event identifier.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/lastEventId
+     */
+    get lastEventId(): string {
+      return this._lastEventId;
+    }
+
+    /**
+     * An array of `MessagePort` objects representing the ports associated with the channel the message is being sent
+     * through (where appropriate, e.g. in channel messaging or when sending a message to a shared worker).
+     *
+     * In this implementation, this method always returns an empty array.
+     *
+     * @return {Array<Object>} The message ports.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/ports
+     */
+    get ports(): any[] {
+      return [];
+    }
+
+    /**
+     * A USVString representing the origin of the message emitter.
+     *
+     * @return {string} The message emitter origin.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/origin
+     */
+    get origin(): string {
+      return this._origin;
+    }
+
+    /**
+     * A `MessageEventSource` (which can be a `WindowProxy`, `MessagePort`, or `ServiceWorker` object) representing
+     * the message emitter.
+     *
+     * In this implementation, this method always returns `null`.
+     *
+     * @return {Object} The message emitter source.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/MessageEvent/source
+     */
+    get source(): null {
+      return null;
+    }
+  }
+});

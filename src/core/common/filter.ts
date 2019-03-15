@@ -22,33 +22,26 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+interface Iteratee<T> {
+  (x: T, idx?: number, array?: T[]): boolean;
+}
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+/**
+ * Returns elements in given array for wich predicate returns a truthy value.
+ *
+ * @param {Array<*>} array The given array.
+ * @param {function} iteratee The given predicate.
+ * @return {Array<*>} Filtered results.
+ */
+export function filter<T>(array: T[], iteratee: Iteratee<T>): T[] {
+  const results: T[] = [];
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+  for (let i: number = 0, size: number = array.length; i < size; ++i) {
+    const current: T = array[i];
+    if (iteratee.call(null, current, i, array)) {
+      results.push(current);
+    }
+  }
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+  return results;
+}

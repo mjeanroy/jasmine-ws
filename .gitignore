@@ -29,3 +29,6 @@
 
 # Bundles
 /dist
+
+# TypeScript
+/.rpt2_cache

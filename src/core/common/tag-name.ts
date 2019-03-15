@@ -22,33 +22,24 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {isNull} from './is-null';
+import {isUndefined} from './is-undefined';
+import {ObjectProto} from './object-proto';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+/**
+ * Return the tag name of the object (a.k.a the result of `Object.prototype.toString`).
+ *
+ * @param {*} value Object to get tag name.
+ * @return {string} Tag name.
+ */
+export function tagName(value: any): string {
+  if (isNull(value)) {
+    return '[object Null]';
+  }
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+  if (isUndefined(value)) {
+    return '[object Undefined]';
+  }
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+  return ObjectProto.toString.call(value);
+}

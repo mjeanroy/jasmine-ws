@@ -22,33 +22,13 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
-
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+/**
+ * Returns the first index at which a given element can be found in the array, or -1 if it is not present.
+ *
+ * @param {Array<*>} array The array.
+ * @param {*} item The element to look for.
+ * @return {number} The index of element in the array, -1 otherwise.
+ */
+export function indexOf<T>(array: T[], item: T): number {
+  return array.indexOf(item);
+}

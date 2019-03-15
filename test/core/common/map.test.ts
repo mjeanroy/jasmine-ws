@@ -22,33 +22,20 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {map} from '../../../src/core/common/map';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('map', () => {
+  it('should map elements of array', () => {
+    const array = [2, 4, 6];
+    const iteratee = jasmine.createSpy().and.callFake((x) =>
+      x * x
+    );
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+    const results = map(array, iteratee);
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+    expect(results).toEqual([4, 16, 36]);
+    expect(iteratee).toHaveBeenCalledWith(2, 0, array);
+    expect(iteratee).toHaveBeenCalledWith(4, 1, array);
+    expect(iteratee).toHaveBeenCalledWith(6, 2, array);
+  });
+});

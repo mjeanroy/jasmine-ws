@@ -22,33 +22,31 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+/**
+ * The factory value initializer.
+ * @type {Object}
+ */
+const NULL_OBJECT = {};
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+interface Factory<T> {
+  (): T;
+}
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+/**
+ * A factory that will build a given getter function to compute a value once (and
+ * only once).
+ *
+ * @param {function} factoryFn The factory function.
+ * @return {function} The getter function.
+ */
+export function factory<T>(factoryFn: Factory<T>): Factory<T> {
+  let value: T = NULL_OBJECT as T;
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+  return () => {
+    if (value === NULL_OBJECT) {
+      value = factoryFn();
+    }
+
+    return value;
+  };
+}

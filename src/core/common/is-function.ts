@@ -22,33 +22,14 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {is} from './is';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+/**
+ * Check if a given value is a `string` value.
+ *
+ * @param {*} value The value to check.
+ * @return {boolean} `true` if `value` is a `string`, `false`otherwise.
+ */
+export function isFunction(value: any): value is Function {
+  return is(value, 'Function');
+}

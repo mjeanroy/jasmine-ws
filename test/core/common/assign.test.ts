@@ -22,33 +22,20 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {assign} from '../../../src/core/common/assign';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('assign', () => {
+  it('should create target object from sources object', () => {
+    const target: object = {};
+    const source1: object = {id: 1};
+    const source2: object = {id: 2, name: 'John Doe'};
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+    const result = assign(target, source1, source2);
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+    expect(result).toBe(target);
+    expect(result).toEqual({
+      id: 1,
+      name: 'John Doe',
+    });
+  });
+});

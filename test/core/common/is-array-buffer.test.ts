@@ -22,33 +22,21 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {isArrayBuffer} from '../../../src/core/common/is-array-buffer';
+import {assumeArrayBuffer} from '../../support/assume-array-buffer';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('isArrayBuffer', () => {
+  it('should return true with an ArrayBuffer', () => {
+    assumeArrayBuffer();
+    expect(isArrayBuffer(new ArrayBuffer(8))).toBe(true);
+  });
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+  it('should return false without ArrayBuffer', () => {
+    expect(isArrayBuffer(null)).toBe(false);
+    expect(isArrayBuffer(undefined)).toBe(false);
+    expect(isArrayBuffer(0)).toBe(false);
+    expect(isArrayBuffer(true)).toBe(false);
+    expect(isArrayBuffer([])).toBe(false);
+  });
+});
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};

@@ -22,33 +22,26 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+interface Iteratee<T, U> {
+  (x: T, idx?: number, array?: T[]): U;
+}
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+/**
+ * Map each elements of given array to an array of new elements, each one
+ * being the results of the `iteratee` function.
+ *
+ * @param {Array<*>} array The given array.
+ * @param {function} iteratee The given predicate.
+ * @return {Array<*>} The new results.
+ */
+export function map<T, U>(array: T[], iteratee: Iteratee<T, U>): U[] {
+  const results: U[] = [];
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+  for (let i: number = 0, size: number = array.length; i < size; ++i) {
+    const input: T = array[i];
+    const output: U = iteratee.call(null, input, i, array);
+    results.push(output);
+  }
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+  return results;
+}

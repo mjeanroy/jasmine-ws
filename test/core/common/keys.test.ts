@@ -22,33 +22,12 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {keys} from '../../../src/core/common/keys';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+describe('keys', () => {
+  it('should get all keys of object', () => {
+    const object = {id: 1, name: 'John Doe'};
+    const result = keys(object);
+    expect(result).toEqual(['id', 'name']);
+  });
+});

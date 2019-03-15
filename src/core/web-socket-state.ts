@@ -22,33 +22,26 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+/**
+ * The connection has not yet been established.
+ * @type {number}
+ */
+export const CONNECTING: number = 0;
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+/**
+ * The WebSocket connection is established and communication is possible.
+ * @type {string}
+ */
+export const OPEN: number = 1;
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+/**
+ * The connection is going through the closing handshake, or the close() method has been invoked.
+ * @type {number}
+ */
+export const CLOSING: number = 2;
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+/**
+ * The connection has been closed or could not be opened.
+ * @type {number}
+ */
+export const CLOSED: number = 3;

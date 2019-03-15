@@ -22,33 +22,15 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {isNull} from '../../../src/core/common/is-null';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('isNull', () => {
+  it('should return true with null', () => {
+    expect(isNull(null)).toBe(true);
+    expect(isNull(undefined)).toBe(false);
+    expect(isNull(0)).toBe(false);
+    expect(isNull(true)).toBe(false);
+    expect(isNull([])).toBe(false);
+  });
+});
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};

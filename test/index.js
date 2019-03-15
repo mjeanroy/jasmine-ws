@@ -22,6 +22,6 @@
  * THE SOFTWARE.
  */
 
-import './core/index.js';
-import './jasmine-ws.test.js';
-import './after-each.js';
+import './core/index';
+// import './jasmine-ws.test.js';
+// import './after-each.js';

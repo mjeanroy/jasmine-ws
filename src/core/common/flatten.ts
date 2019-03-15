@@ -22,33 +22,12 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
-
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+/**
+ * Flatten all given array into a new single flat array.
+ *
+ * @param {Array<Array<*>>} arrays Array of given arrays.
+ * @return {Array<*>} An array containing all arrays elements.
+ */
+export function flatten<T>(arrays: T[][]): T[] {
+  return [].concat(...arrays);
+}

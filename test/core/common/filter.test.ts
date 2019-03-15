@@ -22,33 +22,23 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {filter} from '../../../src/core/common/filter';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('filter', () => {
+  it('should filter elements of array', () => {
+    const array = [1, 2, 3, 4, 5, 6];
+    const iteratee = jasmine.createSpy().and.callFake((x) =>
+      x % 2 === 0
+    );
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+    const results = filter(array, iteratee);
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+    expect(results).toEqual([2, 4, 6]);
+    expect(iteratee).toHaveBeenCalledWith(1, 0, array);
+    expect(iteratee).toHaveBeenCalledWith(2, 1, array);
+    expect(iteratee).toHaveBeenCalledWith(3, 2, array);
+    expect(iteratee).toHaveBeenCalledWith(4, 3, array);
+    expect(iteratee).toHaveBeenCalledWith(5, 4, array);
+    expect(iteratee).toHaveBeenCalledWith(6, 5, array);
+  });
+});

@@ -22,33 +22,17 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {tagName} from './tag-name';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+/**
+ * Check that a given value is of a given type.
+ * The type is the tag name displayed with `Object.prototype.toString`
+ * function call.
+ *
+ * @param {*} value Value to check.
+ * @param {string} type The type id.
+ * @return {boolean} `true` if `obj` is of given type, `false` otherwise.
+ */
+export function is(value: any, type: string): boolean {
+  return tagName(value) === `[object ${type}]`;
+}

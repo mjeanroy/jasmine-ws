@@ -22,33 +22,32 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {factory} from '../../../src/core/common/factory';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('factory', () => {
+  it('should build value once', () => {
+    const o = {};
+    const factoryFn = jasmine.createSpy('factoryFn').and.callFake(() => o);
+    const resultFn = factory(factoryFn);
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+    const r1 = resultFn();
+    const r2 = resultFn();
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+    expect(r1).toBe(r2);
+    expect(r1).toBe(o);
+    expect(factoryFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should build value once even if function returns undefined', () => {
+    const o = void 0;
+    const factoryFn = jasmine.createSpy('factoryFn').and.callFake(() => o);
+    const resultFn = factory(factoryFn);
+
+    const r1 = resultFn();
+    const r2 = resultFn();
+
+    expect(r1).toBe(r2);
+    expect(r1).toBe(o);
+    expect(factoryFn).toHaveBeenCalledTimes(1);
+  });
+});

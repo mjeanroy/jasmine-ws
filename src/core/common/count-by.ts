@@ -22,33 +22,33 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {has} from './has';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+interface Counters {
+  [key: string]: number;
+}
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+interface Iteratee<T> {
+  (x: T, idx?: number, array?: T[]): string;
+}
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+/**
+ * Check that a given predicate returns a truthy value for each elements in the
+ * given array (if array is empty, this function will returns `true`).
+ *
+ * @param {Array<*>} array The given array.
+ * @param {function} iteratee The given predicate.
+ * @return {boolean} `true` if `predicate` returns a truthy values for all elements in array, `false` otherwise.
+ */
+export function countBy<T>(array: T[], iteratee: Iteratee<T>): Counters {
+  const counters: Counters = {};
+
+  for (let i: number = 0, size: number = array.length; i < size; ++i) {
+    const current: T = array[i];
+    const key: string = iteratee.call(null, current, i, array);
+    const count: number = has(counters, key) ? counters[key] : 0;
+    counters[key] = count + 1;
+  }
+
+  return counters;
+}

@@ -22,33 +22,24 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+interface Predicate<T> {
+  (x: T, idx?: number, array?: T[]): boolean;
+}
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+/**
+ * Iterates over elements of collection, returning the first element predicate returns truthy for.
+ *
+ * @param {Array<*>} array The given array.
+ * @param {function} predicate The given predicate.
+ * @return {*} The first result.
+ */
+export function find<T>(array: T[], predicate: Predicate<T>): T | undefined {
+  for (let i: number = 0, size: number = array.length; i < size; ++i) {
+    const current: T = array[i];
+    if (predicate.call(null, current, i, array)) {
+      return current;
+    }
+  }
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+  return undefined;
+}

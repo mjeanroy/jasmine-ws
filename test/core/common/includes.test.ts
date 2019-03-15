@@ -22,33 +22,17 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {includes} from '../../../src/core/common/includes';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('includes', () => {
+  it('should check if element is in array', () => {
+    const array = [1, 2, 3];
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+    expect(includes(array, 1)).toBe(true);
+    expect(includes(array, 2)).toBe(true);
+    expect(includes(array, 3)).toBe(true);
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+    expect(includes(array, 0)).toBe(false);
+    expect(includes(array, 4)).toBe(false);
+  });
+});

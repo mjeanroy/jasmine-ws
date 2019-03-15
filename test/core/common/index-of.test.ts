@@ -22,33 +22,16 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {indexOf} from '../../../src/core/common/index-of';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('indexOf', () => {
+  it('should get index of elements in array', () => {
+    const array = [1, 2, 3];
+    expect(indexOf(array, 1)).toBe(0);
+    expect(indexOf(array, 2)).toBe(1);
+    expect(indexOf(array, 3)).toBe(2);
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+    expect(indexOf(array, 0)).toBe(-1);
+    expect(indexOf(array, 4)).toBe(-1);
+  });
+});

@@ -22,33 +22,21 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {isString} from '../../../src/core/common/is-string';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('isString', () => {
+  it('should return true with a string', () => {
+    expect(isString('')).toBe(true);
+    expect(isString(String(''))).toBe(true);
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+    // eslint-disable-next-line no-new-wrappers
+    expect(isString(new String(''))).toBe(true);
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+    expect(isString(null)).toBe(false);
+    expect(isString(undefined)).toBe(false);
+    expect(isString(0)).toBe(false);
+    expect(isString(true)).toBe(false);
+    expect(isString([])).toBe(false);
+  });
+});
+

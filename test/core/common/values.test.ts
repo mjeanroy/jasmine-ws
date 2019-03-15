@@ -22,33 +22,19 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {values} from '../../../src/core/common/values';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('values', () => {
+  it('should get object values', () => {
+    const object = {
+      id: 1,
+      name: 'John Doe',
+    };
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+    const results = values(object);
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+    expect(results.length).toBe(2);
+    expect(results).toContain(1);
+    expect(results).toContain('John Doe');
+  });
+});

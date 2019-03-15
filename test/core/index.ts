@@ -22,33 +22,12 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
-
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+import './common/index';
+// import './fake-close-event.test.js';
+// import './fake-close-handshake.test.js';
+// import './fake-event.test.js';
+// import './fake-message-event.test.js';
+// import './fake-open-handshake.test.js';
+// import './fake-web-socket.test.js';
+// import './fake-web-socket-proxy.test.js';
+// import './ws-tracker.test.js';

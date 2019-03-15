@@ -22,33 +22,17 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {isUndefined} from '../../../src/core/common/is-undefined';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('isUndefined', () => {
+  it('should return true with undefined', () => {
+    expect(isUndefined(undefined)).toBe(true);
+    expect(isUndefined(void 0)).toBe(true);
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+    expect(isUndefined(null)).toBe(false);
+    expect(isUndefined(0)).toBe(false);
+    expect(isUndefined(true)).toBe(false);
+    expect(isUndefined([])).toBe(false);
+  });
+});
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};

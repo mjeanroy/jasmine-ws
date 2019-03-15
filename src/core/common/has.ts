@@ -22,33 +22,15 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {ObjectProto} from './object-proto';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+/**
+ * Check if a given object has given key as own property.
+ *
+ * @param {Object} object The given object.
+ * @param {string} key The given key.
+ * @return {boolean} `true` if `objecct` has given `key`, `false`otherwise.
+ */
+export function has(object: object, key: string): boolean {
+  return ObjectProto.hasOwnProperty.call(object, key);
+}

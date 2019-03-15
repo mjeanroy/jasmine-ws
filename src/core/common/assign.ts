@@ -22,33 +22,31 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {forEach} from './for-each';
+import {has} from './has';
+import {keys} from './keys';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+/**
+ * Copy the values of all enumerable own properties from one or more source objects to a
+ * target object
+ *  It will return the target object.
+ *
+ * @param {*} target The target object.
+ * @param  {...any} sources  The source objects.
+ * @return {Object} The target object.
+ */
+export function assign(target, ...sources) {
+  const to = Object(target);
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+  for (let i = 0, size = sources.length; i < size; ++i) {
+    const current = sources[i];
+    const currentKeys = keys(current);
+    forEach(currentKeys, (k) => {
+      if (!has(to, k)) {
+        to[k] = current[k];
+      }
+    });
+  }
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+  return to;
+}

@@ -22,33 +22,14 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {flatten} from '../../../src/core/common/flatten';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+describe('flatten', () => {
+  it('should flatten arrays', () => {
+    const array1 = [1, 2, 3];
+    const array2 = [4, 5, 6];
+    const arrays = [array1, array2];
+    const results = flatten(arrays);
+    expect(results).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+});

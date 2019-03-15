@@ -22,33 +22,24 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {keys} from './keys';
+import {map} from './map';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+interface Mapper {
+  (x: string): [string, any];
+}
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+/**
+ * Creates an array of own enumerable string keyed-value pairs for object.
+ *
+ * @param {Object} object The given object.
+ * @return {Array<Object>} The array of pairs.
+ */
+export function toPairs(object: object): [string, any][] {
+  const objectKeys: string[] = keys(object);
+  const mapper: Mapper = (k: string) => (
+    [k, object[k]]
+  );
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+  return map(objectKeys, mapper);
+}

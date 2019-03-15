@@ -22,33 +22,21 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+import {isBlob} from '../../../src/core/common/is-blob';
+import {assumeBlob} from '../../support/assume-blob';
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
+describe('isBlob', () => {
+  it('should return true with a Blob', () => {
+    assumeBlob();
+    expect(isBlob(new Blob())).toBe(true);
+  });
 
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
+  it('should return false without a blob', () => {
+    expect(isBlob(null)).toBe(false);
+    expect(isBlob(undefined)).toBe(false);
+    expect(isBlob(0)).toBe(false);
+    expect(isBlob(true)).toBe(false);
+    expect(isBlob([])).toBe(false);
+  });
+});
 
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};

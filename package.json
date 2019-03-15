@@ -29,6 +29,7 @@
   "devDependencies": {
     "@babel/core": "7.3.4",
     "@babel/preset-env": "7.3.4",
+    "@types/jasmine": "3.3.10",
     "ansi-colors": "3.2.4",
     "del": "4.0.0",
     "eslint": "5.15.1",
@@ -58,6 +59,8 @@
     "rollup-plugin-babel": "4.3.2",
     "rollup-plugin-esformatter": "0.7.0",
     "rollup-plugin-license": "0.8.1",
-    "rollup-plugin-strip-banner": "0.2.0"
+    "rollup-plugin-strip-banner": "0.2.0",
+    "rollup-plugin-typescript2": "0.20.1",
+    "typescript": "3.3.3333"
   }
 }

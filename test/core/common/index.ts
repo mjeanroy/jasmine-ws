@@ -22,33 +22,26 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
-
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+import './assign.test';
+import './count-by.test';
+import './factory.test';
+import './filter.test';
+import './find.test';
+import './flatten.test';
+import './for-each.test';
+import './has.test';
+import './is-array-buffer.test';
+import './is-blob.test';
+import './is-function.test';
+import './is-null.test';
+import './is-string.test';
+import './is-undefined.test';
+import './is.test';
+import './includes.test';
+import './index-of.test';
+import './keys.test';
+import './map.test';
+import './parse-url.test';
+import './tag-name.test';
+import './to-pairs.test';
+import './values.test';

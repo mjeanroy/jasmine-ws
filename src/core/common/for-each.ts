@@ -22,33 +22,19 @@
  * THE SOFTWARE.
  */
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const typescript = require('rollup-plugin-typescript2');
-const stripBanner = require('rollup-plugin-strip-banner');
-const license = require('rollup-plugin-license');
-const esformatter = require('rollup-plugin-esformatter');
-const config = require('../config');
+interface Iteratee<T> {
+  (x: T, idx?: number, array?: T[]): void;
+}
 
-module.exports = {
-  input: path.join(config.src, 'jasmine-ws.ts'),
-
-  output: {
-    file: path.join(config.dist, 'jasmine-ws.js'),
-    format: 'iife',
-    name: 'JasmineWS',
-    sourcemap: false,
-  },
-
-  plugins: [
-    typescript(),
-    babel(),
-    stripBanner(),
-    esformatter(),
-    license({
-      banner: {
-        file: path.join(config.root, 'LICENSE'),
-      },
-    }),
-  ],
-};
+/**
+ * Iterates over elements of collection and invokes iteratee for each element.
+ *
+ * @param {Array<*>} array The given array.
+ * @param {function} iteratee The given iteratee function.
+ * @return {void}
+ */
+export function forEach<T>(array: T[], iteratee: Iteratee<T>): void {
+  for (let i: number = 0, size: number = array.length; i < size; ++i) {
+    iteratee.call(null, array[i], i, array);
+  }
+}
