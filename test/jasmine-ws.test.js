@@ -43,7 +43,6 @@ describe('jasmine-ws', () => {
     });
 
     it('should install/uninstall jasmine-ws', () => {
-      debugger;
       jasmine.ws().install();
 
       expect(window.WebSocket).toBeDefined();

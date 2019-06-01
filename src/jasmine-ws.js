@@ -26,6 +26,7 @@ import {find} from './core/common/find.js';
 import {fakeWebSocketFactory} from './core/fake-web-socket.js';
 import {wsTracker, reset} from './core/ws-tracker.js';
 
+// eslint-disable-next-line no-undef
 const GLOBAL = window || global;
 const WEB_SOCKET_IMPL_NAME = find(['WebSocket', 'MozWebSocket'], (impl) => impl in GLOBAL);
 const WEB_SOCKET = WEB_SOCKET_IMPL_NAME ? GLOBAL[WEB_SOCKET_IMPL_NAME] : null;
