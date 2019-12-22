@@ -142,6 +142,22 @@ describe('jasmine-ws', () => {
           },
         });
       });
+
+      it('should have message event origin', () => {
+        const protocolName = 'customProtocol';
+        const ws = new WebSocket('ws://localhost:9200/socket', protocolName);
+        const onMessage = jasmine.createSpy('onmessage').and.callFake((e) => {
+          expect(e.origin).toBe('ws://localhost:9200');
+        });
+
+        ws.onmessage = onMessage;
+
+        const connection = jasmine.ws().connections().mostRecent();
+        connection.openHandshake().respond();
+        connection.emitMessage('data');
+
+        expect(onMessage).toHaveBeenCalledTimes(1);
+      });
     });
   });
 

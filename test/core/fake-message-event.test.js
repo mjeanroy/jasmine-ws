@@ -60,6 +60,13 @@ describe('FakeMessageEvent', () => {
     expect(event.ports).toEqual([]);
   });
 
+  it('should create the fake event and extract origin from URL', () => {
+    const data = 'test';
+    const target = new FakeWebSocket('ws://localhost/ws');
+    const event = new FakeMessageEvent(target, data);
+    expect(event.origin).toBe('ws://localhost');
+  });
+
   describe('once created', () => {
     let event;
 

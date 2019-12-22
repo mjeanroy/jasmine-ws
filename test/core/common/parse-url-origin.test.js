@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Mickael Jeanroy
+ * Copyright (c) 2019 Mickael Jeanroy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,30 @@
  * THE SOFTWARE.
  */
 
-import './assign.test.js';
-import './count-by.test.js';
-import './factory.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './flatten.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-array-buffer.test.js';
-import './is-blob.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './parse-url-origin.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
-import './values.test.js';
+import {parseUrlOrigin} from '../../../src/core/common/parse-url-origin.js';
+
+describe('parseUrlOrigin', () => {
+  it('should get URL origin', () => {
+    const input = 'ws://localhost:9200';
+    const origin = parseUrlOrigin(input);
+    expect(origin).toBe('ws://localhost:9200');
+  });
+
+  it('should get origin from URL with a path', () => {
+    const input = 'ws://localhost:9200/path';
+    const origin = parseUrlOrigin(input);
+    expect(origin).toBe('ws://localhost:9200');
+  });
+
+  it('should get origin from URL with query parameters', () => {
+    const input = 'ws://localhost:9200/path?x';
+    const origin = parseUrlOrigin(input);
+    expect(origin).toBe('ws://localhost:9200');
+  });
+
+  it('should get origin from URL without port', () => {
+    const input = 'ws://localhost';
+    const origin = parseUrlOrigin(input);
+    expect(origin).toBe('ws://localhost');
+  });
+});

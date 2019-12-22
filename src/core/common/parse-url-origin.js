@@ -22,27 +22,15 @@
  * THE SOFTWARE.
  */
 
-import './assign.test.js';
-import './count-by.test.js';
-import './factory.test.js';
-import './filter.test.js';
-import './find.test.js';
-import './flatten.test.js';
-import './for-each.test.js';
-import './has.test.js';
-import './is-array-buffer.test.js';
-import './is-blob.test.js';
-import './is-function.test.js';
-import './is-null.test.js';
-import './is-string.test.js';
-import './is-undefined.test.js';
-import './is.test.js';
-import './includes.test.js';
-import './index-of.test.js';
-import './keys.test.js';
-import './map.test.js';
-import './parse-url.test.js';
-import './parse-url-origin.test.js';
-import './tag-name.test.js';
-import './to-pairs.test.js';
-import './values.test.js';
+import {parseUrl} from './parse-url.js';
+
+/**
+ * Parse given URL to a new `URL` instance, returns `null` if URL parsing fails.
+ *
+ * @param {string} url The URL.
+ * @return {FakeUrl} The parsed URL.
+ */
+export function parseUrlOrigin(url) {
+  const parsedUrl = parseUrl(url);
+  return `${parsedUrl.protocol}//${parsedUrl.host}`;
+}

@@ -23,6 +23,7 @@
  */
 
 import {factory} from './common/factory.js';
+import {parseUrlOrigin} from './common/parse-url-origin.js';
 import {fakeEventFactory} from './fake-event.js';
 
 export const fakeMessageEventFactory = factory(() => {
@@ -52,7 +53,7 @@ export const fakeMessageEventFactory = factory(() => {
       super('message', ws);
       this._data = data;
       this._lastEventId = (_id++).toString();
-      this._origin = `${ws._url.protocol}//${ws._url.host}`;
+      this._origin = parseUrlOrigin(ws.url);
     }
 
     /**
