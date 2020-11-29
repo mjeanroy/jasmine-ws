@@ -30,7 +30,7 @@ sudo: required
 addons:
   chrome: stable
   sauce_connect: true
-script: npm run travis
+script: npm test
 env:
   global:
     - secure: DG1WIfttoOUq985KKbGXBiF/hSzs68T+U8TmJpTeTSLLHEzgJTqqbchDuU1shPD7Y5Ukyf+474//Gs9oUog8yweFnZcdJDwX0oWlW2AYMGckQt9x4Oa/9ZsptCj3qm+FzBZAqjsBWuBd+dlUnRh+FGWdkQd6v52csXTFuEsht+QmicG2Y4LITQiPjTHGQ198gOA+02qUqrYmU2KZu4v6d9XsTgWbB3u4Lf2ZxAAVEi9MHZmB4SURRurXFM+nqThwsT+lqNRl+xYJHrWZYT7n9ovBSzqf04KHvw19suJ9eCZzYbBq9Zi12ldThK9+A3cW4rSw5o4pBxQGwg2C1pCfscSSF/k90XwI+6HL+/I61dlFo7SmJpiIFr1/TMA9/2jH0yefjWlti8t+ckKAmt3sVyELjZS+bF0vxtDdVpeUror896ymfWEuHgfw1BOuDypuwYxy+nZIhn7hmtScdxGTh3YSVIXEG06+rZr/r/zCOcvqqRSo0hARYouqFBn3fYcW9ASniDWd8c8QWGUlkE2XksTm6LF/+LFk88cHqsguzq/irOITq8ZlcSvPghzl5mZmRDq5kAG4MVEfdfcEmSCd2OhmiPQRuCSiv0uzmgVHpPNCfEHbRE49OYF3cXUqDcHRZrF4n3JmTq7PttgvfVFMyAxdNmh08GIb/gqVKjp0R2k=
