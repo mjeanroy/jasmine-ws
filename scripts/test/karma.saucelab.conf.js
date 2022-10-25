@@ -31,73 +31,74 @@ const karmaConf = require('./karma.common.conf');
 
 const browsers = {
   SL_safari_8: {
-    base: 'SauceLabs',
-    browserName: 'safari',
-    version: '8.0',
-    platform: 'OS X 10.10',
+    'base': 'SauceLabs',
+    'browserName': 'safari',
+    'version': '8.0',
+    'platform': 'OS X 10.10',
   },
 
   SL_safari_9: {
-    base: 'SauceLabs',
-    browserName: 'safari',
-    version: '9.0',
-    platform: 'OS X 10.11',
+    'base': 'SauceLabs',
+    'browserName': 'safari',
+    'version': '9.0',
+    'platform': 'OS X 10.11',
   },
 
   SL_safari_10: {
-    base: 'SauceLabs',
-    browserName: 'safari',
-    version: '10.0',
-    platform: 'OS X 10.11',
+    'base': 'SauceLabs',
+    'browserName': 'safari',
+    'version': '10.0',
+    'platform': 'OS X 10.11',
   },
 
   SL_safari_11: {
-    base: 'SauceLabs',
-    browserName: 'safari',
-    version: '11.0',
-    platform: 'macOS 10.12',
+    'base': 'SauceLabs',
+    'browserName': 'safari',
+    'version': '11.0',
+    'platform': 'macOS 10.12',
   },
 
   SL_Win10_edge: {
-    base: 'SauceLabs',
-    browserName: 'microsoftedge',
-    version: 'latest',
-    platform: 'Windows 10',
+    'base': 'SauceLabs',
+    'browserName': 'microsoftedge',
+    'version': 'latest',
+    'platform': 'Windows 10',
   },
 
   SL_Win10_ie_11: {
-    base: 'SauceLabs',
-    browserName: 'internet explorer',
-    version: '11.285',
-    platform: 'Windows 10',
+    'base': 'SauceLabs',
+    'browserName': 'internet explorer',
+    'version': '11.285',
+    'platform': 'Windows 10',
   },
 
   SL_ie_10: {
-    base: 'SauceLabs',
-    browserName: 'internet explorer',
-    version: '10.0',
-    platform: 'Windows 8',
+    'base': 'SauceLabs',
+    'browserName': 'internet explorer',
+    'version': '10.0',
+    'platform': 'Windows 8',
   },
 
   SL_ie_9: {
-    base: 'SauceLabs',
-    browserName: 'internet explorer',
-    version: '9.0',
-    platform: 'Windows 7',
+    'base': 'SauceLabs',
+    'browserName': 'internet explorer',
+    'version': '9.0',
+    'platform': 'Windows 7',
   },
 
   SL_chrome: {
-    base: 'SauceLabs',
-    browserName: 'chrome',
-    version: 'latest',
-    platform: 'Windows 10',
+    'base': 'SauceLabs',
+    'browserName': 'chrome',
+    'version': 'latest',
+    'platform': 'Windows 10',
   },
 
   SL_firefox: {
-    base: 'SauceLabs',
-    browserName: 'firefox',
-    version: 'latest',
-    platform: 'Windows 10',
+    'base': 'SauceLabs',
+    'browserName': 'firefox',
+    // Specify version < 90, as there is an issue with `moz:debuggerAddress` capability.
+    'version': '89',
+    'platform': 'Windows 10',
   },
 };
 
