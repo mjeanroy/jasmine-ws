@@ -35,7 +35,7 @@
     "express": "4.19.2",
     "express-ws": "5.0.2",
     "fancy-log": "2.0.0",
-    "gulp": "4.0.2",
+    "gulp": "5.0.0",
     "jasmine-core": "2.99.1",
     "karma": "6.4.3",
     "karma-babel-preprocessor": "8.0.2",
