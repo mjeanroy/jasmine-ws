@@ -22,12 +22,16 @@
  * THE SOFTWARE.
  */
 
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable prefer-template */
+/* eslint-disable wrap-iife */
+/* eslint-disable func-names */
 /* eslint-disable no-var */
 /* eslint-disable no-invalid-this */
 /* eslint-disable require-jsdoc */
 /* eslint-disable no-console */
 
-(function() {
+(function () {
   var $output = document.getElementById('output');
   var $connect = document.getElementById('connect-btn');
   var $disconnect = document.getElementById('disconnect-btn');
@@ -60,15 +64,15 @@
     }
   }
 
-  $disconnect.addEventListener('click', function() {
+  $disconnect.addEventListener('click', function () {
     closeWebSocket();
   });
 
-  $connect.addEventListener('click', function() {
+  $connect.addEventListener('click', function () {
     createWebSocket();
   });
 
-  $form.addEventListener('submit', function(e) {
+  $form.addEventListener('submit', function (e) {
     e.preventDefault();
 
     ws.send($input.value);
@@ -89,7 +93,7 @@
     console.log('Event listener `close` called:', this, e);
     appendToOutput('WebSocket closed, `close` listener executed');
 
-    setTimeout(function() {
+    setTimeout(function () {
       ws.removeEventListener('open', onOpenListener);
       ws.removeEventListener('close', onCloseListener);
       ws.removeEventListener('message', onMessageListener);

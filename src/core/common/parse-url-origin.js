@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {parseUrl} from './parse-url.js';
+import { parseUrl } from './parse-url';
 
 /**
  * Parse given URL to a new `URL` instance, returns `null` if URL parsing fails.

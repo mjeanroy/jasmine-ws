@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {fakeCloseEventFactory} from '../../src/core/fake-close-event.js';
+import { fakeCloseEventFactory } from '../../src/core/fake-close-event';
 
 describe('FakeCloseEvent', () => {
   let FakeCloseEvent;

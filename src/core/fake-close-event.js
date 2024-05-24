@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {factory} from './common/factory.js';
-import {fakeEventFactory} from './fake-event.js';
+import { factory } from './common/factory';
+import { fakeEventFactory } from './fake-event';
 
 export const fakeCloseEventFactory = factory(() => {
   const FakeEvent = fakeEventFactory();
@@ -58,6 +58,7 @@ export const fakeCloseEventFactory = factory(() => {
      *
      * @return {void}
      */
+    // eslint-disable-next-line class-methods-use-this
     initCloseEvent() {
     }
 

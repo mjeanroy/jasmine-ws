@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-import {countBy} from '../../../src/core/common/count-by.js';
+import { countBy } from '../../../src/core/common/count-by';
 
 describe('countBy', () => {
   it('should count elements in array', () => {
     const array = [2, 4, 6, 4];
-    const iteratee = jasmine.createSpy().and.callFake((x) =>
+    const iteratee = jasmine.createSpy().and.callFake((x) => (
       x.toString()
-    );
+    ));
 
     const counters = countBy(array, iteratee);
 

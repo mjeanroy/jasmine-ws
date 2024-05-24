@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {assign} from './common/assign.js';
-import {factory} from './common/factory.js';
+import { assign } from './common/assign';
+import { factory } from './common/factory';
 
 export const fakeOpenHandshakeFactory = factory(() => {
   /**
@@ -40,9 +40,7 @@ export const fakeOpenHandshakeFactory = factory(() => {
       this._ws = ws;
 
       const scheme = ws._url.protocol === 'ws:' ? 'http' : 'https';
-      const host = ws._url.host;
-      const path = ws._url.pathname;
-      const search = ws._url.search;
+      const { host, search, pathname: path } = ws._url;
 
       this._response = null;
       this._request = {
@@ -127,7 +125,7 @@ export const fakeOpenHandshakeFactory = factory(() => {
     fail(status = 500) {
       if (status === 101) {
         throw new Error(
-            'Cannot fail open handshake with status 101, use `respond` method instead.'
+          'Cannot fail open handshake with status 101, use `respond` method instead.',
         );
       }
 
@@ -172,7 +170,7 @@ export const fakeOpenHandshakeFactory = factory(() => {
     _triggerResponse(response) {
       if (this._isClosed()) {
         throw new Error(
-            'Cannot trigger handshake response since the open handshake is already closed.'
+          'Cannot trigger handshake response since the open handshake is already closed.',
         );
       }
 

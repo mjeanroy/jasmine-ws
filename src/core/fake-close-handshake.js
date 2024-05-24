@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {factory} from './common/factory.js';
+import { factory } from './common/factory';
 
 export const fakeCloseHandshakeFactory = factory(() => {
   /**
@@ -40,7 +40,7 @@ export const fakeCloseHandshakeFactory = factory(() => {
      */
     constructor(ws, code, reason, wasClean) {
       this._ws = ws;
-      this._request = {code, reason, wasClean};
+      this._request = { code, reason, wasClean };
       this._response = null;
     }
 
@@ -93,15 +93,15 @@ export const fakeCloseHandshakeFactory = factory(() => {
     _triggerResponse(response) {
       if (this._isClosed()) {
         throw new Error(
-            'Cannot trigger handshake response since the close handshake is already closed.'
+          'Cannot trigger handshake response since the close handshake is already closed.',
         );
       }
 
       this._response = response;
       this._ws._doClose(
-          response.code,
-          response.reason,
-          response.wasClean
+        response.code,
+        response.reason,
+        response.wasClean,
       );
     }
 

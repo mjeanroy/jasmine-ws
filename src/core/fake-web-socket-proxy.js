@@ -22,18 +22,18 @@
  * THE SOFTWARE.
  */
 
-import {factory} from './common/factory.js';
-import {flatten} from './common/flatten.js';
-import {isArrayBuffer} from './common/is-array-buffer.js';
-import {isString} from './common/is-string.js';
-import {isBlob} from './common/is-blob.js';
-import {isNull} from './common/is-null.js';
-import {isUndefined} from './common/is-undefined.js';
-import {tagName} from './common/tag-name.js';
-import {values} from './common/values.js';
+import { factory } from './common/factory';
+import { flatten } from './common/flatten';
+import { isArrayBuffer } from './common/is-array-buffer';
+import { isString } from './common/is-string';
+import { isBlob } from './common/is-blob';
+import { isNull } from './common/is-null';
+import { isUndefined } from './common/is-undefined';
+import { tagName } from './common/tag-name';
+import { values } from './common/values';
 
-import {fakeMessageEventFactory} from './fake-message-event.js';
-import {CONNECTING, OPEN, CLOSING, CLOSED} from './web-socket-state.js';
+import { fakeMessageEventFactory } from './fake-message-event';
+import { CONNECTING, OPEN, CLOSING, CLOSED } from './web-socket-state';
 
 export const fakeWebSocketProxyFactory = factory(() => {
   const FakeMessageEvent = fakeMessageEventFactory();
@@ -281,20 +281,20 @@ export const fakeWebSocketProxyFactory = factory(() => {
     emitMessage(data) {
       if (isNull(data) || isUndefined(data)) {
         throw new Error(
-            `Failed to receive message on 'WebSocket': The message is ${String(data)}.`
+          `Failed to receive message on 'WebSocket': The message is ${String(data)}.`,
         );
       }
 
       if (!isString(data) && !isBlob(data) && !isArrayBuffer(data)) {
         throw new Error(
-            `Failed to receive message on 'WebSocket': Only String, Blob or ArrayBuffer are allowed. ` +
-            `The message is: ${tagName(data)}.`
+          "Failed to receive message on 'WebSocket': Only String, Blob or ArrayBuffer are allowed. " +
+          `The message is: ${tagName(data)}.`,
         );
       }
 
       if (this.readyState !== OPEN) {
         throw new Error(
-            `Failed to receive message on 'WebSocket': The websocket state must be OPEN.`
+          "Failed to receive message on 'WebSocket': The websocket state must be OPEN.",
         );
       }
 
@@ -313,13 +313,13 @@ export const fakeWebSocketProxyFactory = factory(() => {
     emitClose(code = 1006, reason = '', wasClean = false) {
       if (this.readyState === CLOSED) {
         throw new Error(
-            'Cannot emit a close event, WebSocket is already closed.'
+          'Cannot emit a close event, WebSocket is already closed.',
         );
       }
 
       if (this.readyState === CLOSING) {
         throw new Error(
-            'Cannot emit a close event, WebSocket is already closing.'
+          'Cannot emit a close event, WebSocket is already closing.',
         );
       }
 

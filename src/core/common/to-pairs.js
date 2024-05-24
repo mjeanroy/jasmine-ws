@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {keys} from './keys.js';
-import {map} from './map.js';
+import { keys } from './keys';
+import { map } from './map';
 
 /**
  * Creates an array of own enumerable string keyed-value pairs for object.

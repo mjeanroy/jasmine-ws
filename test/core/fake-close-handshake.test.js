@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
-import {fakeCloseHandshakeFactory} from '../../src/core/fake-close-handshake.js';
+import { fakeWebSocketFactory } from '../../src/core/fake-web-socket';
+import { fakeCloseHandshakeFactory } from '../../src/core/fake-close-handshake';
 
 describe('FakeOpenHandshake', () => {
   let FakeWebSocket;
@@ -68,7 +68,7 @@ describe('FakeOpenHandshake', () => {
       handshake.respond();
 
       expect(() => handshake.respond()).toThrow(new Error(
-          'Cannot trigger handshake response since the close handshake is already closed.'
+        'Cannot trigger handshake response since the close handshake is already closed.',
       ));
     });
   });

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {reset} from '../src/core/ws-tracker.js';
+import { reset } from '../src/core/ws-tracker';
 
 afterEach(() => {
   reset();
