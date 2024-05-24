@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-import {assumeWebSocket} from './support/assume-websocket.js';
-import {assumeNonWebSocket} from './support/assume-non-websocket.js';
-import '../src/jasmine-ws.js';
+import { assumeWebSocket } from './support/assume-websocket';
+import { assumeNonWebSocket } from './support/assume-non-websocket';
+import '../src/jasmine-ws';
 
 describe('jasmine-ws', () => {
   describe('with a browser supporting WebSocket', () => {
@@ -96,8 +96,8 @@ describe('jasmine-ws', () => {
 
     it('should fail to uninstall jasmine-ws if it has not been previously installed', () => {
       expect(() => jasmine.ws().uninstall()).toThrow(new Error(
-          'It seems that `jasmine.ws` has not been installed, make sure `jasmine.ws().install()` ' +
-          'has been called before uninstalling it.'
+        'It seems that `jasmine.ws` has not been installed, make sure `jasmine.ws().install()` ' +
+        'has been called before uninstalling it.',
       ));
     });
 
@@ -105,8 +105,8 @@ describe('jasmine-ws', () => {
       jasmine.ws().install();
 
       expect(() => jasmine.ws().install()).toThrow(new Error(
-          'It seems that jasmine-ws has already been installed, make sure `jasmine.ws().uninstall()` ' +
-          'has been called after test suite.'
+        'It seems that jasmine-ws has already been installed, make sure `jasmine.ws().uninstall()` ' +
+        'has been called after test suite.',
       ));
 
       jasmine.ws().uninstall();

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {is} from '../../../src/core/common/is.js';
+import { is } from '../../../src/core/common/is';
 
 describe('is', () => {
   it('should check if value is of given type', () => {
@@ -32,4 +32,3 @@ describe('is', () => {
     expect(is(() => {}, 'Function')).toBe(true);
   });
 });
-

@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-import {find} from './core/common/find.js';
-import {fakeWebSocketFactory} from './core/fake-web-socket.js';
-import {wsTracker, reset} from './core/ws-tracker.js';
+import { find } from './core/common/find';
+import { fakeWebSocketFactory } from './core/fake-web-socket';
+import { wsTracker, reset } from './core/ws-tracker';
 
 // eslint-disable-next-line no-undef
 const GLOBAL = window || global;
@@ -70,8 +70,8 @@ jasmine.ws = () => ({
 
       if (checkWebSocketImpl(FakeWebSocket)) {
         throw new Error(
-            'It seems that jasmine-ws has already been installed, make sure `jasmine.ws().uninstall()` ' +
-            'has been called after test suite.'
+          'It seems that jasmine-ws has already been installed, make sure `jasmine.ws().uninstall()` ' +
+          'has been called after test suite.',
         );
       }
 
@@ -92,8 +92,8 @@ jasmine.ws = () => ({
     if (WEB_SOCKET) {
       if (!checkWebSocketImpl(FakeWebSocket)) {
         throw new Error(
-            'It seems that `jasmine.ws` has not been installed, make sure `jasmine.ws().install()` ' +
-            'has been called before uninstalling it.'
+          'It seems that `jasmine.ws` has not been installed, make sure `jasmine.ws().install()` ' +
+          'has been called before uninstalling it.',
         );
       }
 

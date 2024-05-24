@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-import {indexOf} from './index-of.js';
+import { indexOf } from './index-of';
 
 /**
  * Returns the first index at which a given element can be found in the array, or -1 if it is not present.
  *
  * @param {Array<*>} array The array.
  * @param {*} item The element to look for.
- * @return {number} The index of element in the array, -1 otherwise.
+ * @return {boolean} The index of element in the array, -1 otherwise.
  */
 export function includes(array, item) {
   return indexOf(array, item) >= 0;

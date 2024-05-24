@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {isBlob} from '../../../src/core/common/is-blob.js';
-import {assumeBlob} from '../../support/assume-blob.js';
+import { isBlob } from '../../../src/core/common/is-blob';
+import { assumeBlob } from '../../support/assume-blob';
 
 describe('isBlob', () => {
   it('should return true with a Blob', () => {
@@ -39,4 +39,3 @@ describe('isBlob', () => {
     expect(isBlob([])).toBe(false);
   });
 });
-

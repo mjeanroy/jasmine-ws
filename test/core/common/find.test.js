@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-import {find} from '../../../src/core/common/find.js';
+import { find } from '../../../src/core/common/find';
 
 describe('find', () => {
   it('should find elements in array', () => {
     const array = [1, 2, 3, 4, 5, 6];
-    const iteratee = jasmine.createSpy().and.callFake((x) =>
+    const iteratee = jasmine.createSpy().and.callFake((x) => (
       x % 2 === 0
-    );
+    ));
 
     const result = find(array, iteratee);
 

@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {fakeOpenHandshakeFactory} from '../../src/core/fake-open-handshake.js';
-import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
+import { fakeOpenHandshakeFactory } from '../../src/core/fake-open-handshake';
+import { fakeWebSocketFactory } from '../../src/core/fake-web-socket';
 
 describe('FakeOpenHandshake', () => {
   let FakeOpenHandshake;
@@ -254,7 +254,7 @@ describe('FakeOpenHandshake', () => {
       spyOn(ws, '_failConnection').and.callThrough();
 
       expect(() => handshake.fail(101)).toThrow(new Error(
-          'Cannot fail open handshake with status 101, use `respond` method instead.'
+        'Cannot fail open handshake with status 101, use `respond` method instead.',
       ));
 
       expect(ws._openConnection).not.toHaveBeenCalled();
@@ -265,7 +265,7 @@ describe('FakeOpenHandshake', () => {
       handshake.respond();
 
       expect(() => handshake.respond()).toThrow(new Error(
-          'Cannot trigger handshake response since the open handshake is already closed.'
+        'Cannot trigger handshake response since the open handshake is already closed.',
       ));
     });
   });

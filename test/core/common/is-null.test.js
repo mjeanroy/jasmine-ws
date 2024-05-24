@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {isNull} from '../../../src/core/common/is-null.js';
+import { isNull } from '../../../src/core/common/is-null';
 
 describe('isNull', () => {
   it('should return true with null', () => {
@@ -33,4 +33,3 @@ describe('isNull', () => {
     expect(isNull([])).toBe(false);
   });
 });
-

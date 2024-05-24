@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-import {forEach} from './for-each.js';
-import {has} from './has.js';
-import {keys} from './keys.js';
+import { forEach } from './for-each';
+import { has } from './has';
+import { keys } from './keys';
 
 /**
  * Copy the values of all enumerable own properties from one or more source objects to a

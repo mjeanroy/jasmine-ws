@@ -22,10 +22,10 @@
  * THE SOFTWARE.
  */
 
-import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
-import {fakeWebSocketProxyFactory} from '../../src/core/fake-web-socket-proxy.js';
-import {assumeArrayBuffer} from '../support/assume-array-buffer.js';
-import {assumeBlob} from '../support/assume-blob.js';
+import { fakeWebSocketFactory } from '../../src/core/fake-web-socket';
+import { fakeWebSocketProxyFactory } from '../../src/core/fake-web-socket-proxy';
+import { assumeArrayBuffer } from '../support/assume-array-buffer';
+import { assumeBlob } from '../support/assume-blob';
 
 describe('FakeWebSocketTracker', () => {
   let FakeWebSocketProxy;
@@ -281,7 +281,7 @@ describe('FakeWebSocketTracker', () => {
       ws.addEventListener('message', onMessageListener);
 
       expect(() => proxy.emitMessage(data)).toThrow(new Error(
-          'Failed to receive message on \'WebSocket\': The websocket state must be OPEN.'
+        "Failed to receive message on 'WebSocket': The websocket state must be OPEN.",
       ));
 
       expect(onmessage).not.toHaveBeenCalled();
@@ -346,9 +346,6 @@ describe('FakeWebSocketTracker', () => {
     });
 
     describe('once opened', () => {
-      let ws;
-      let proxy;
-
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
         proxy = new FakeWebSocketProxy(ws);
@@ -457,8 +454,8 @@ describe('FakeWebSocketTracker', () => {
         ws.addEventListener('message', onMessageListener);
 
         expect(() => proxy.emitMessage(data)).toThrow(new Error(
-            `Failed to receive message on 'WebSocket': Only String, Blob or ArrayBuffer are allowed. ` +
-            `The message is: [object Array].`
+          "Failed to receive message on 'WebSocket': Only String, Blob or ArrayBuffer are allowed. " +
+          'The message is: [object Array].',
         ));
 
         expect(onMessageListener).not.toHaveBeenCalled();
@@ -473,7 +470,7 @@ describe('FakeWebSocketTracker', () => {
         ws.addEventListener('message', onMessageListener);
 
         expect(() => proxy.emitMessage(data)).toThrow(new Error(
-            'Failed to receive message on \'WebSocket\': The message is null.'
+          "Failed to receive message on 'WebSocket': The message is null.",
         ));
 
         expect(onmessage).not.toHaveBeenCalled();
@@ -488,7 +485,7 @@ describe('FakeWebSocketTracker', () => {
         ws.addEventListener('message', onMessageListener);
 
         expect(() => proxy.emitMessage()).toThrow(new Error(
-            'Failed to receive message on \'WebSocket\': The message is undefined.'
+          "Failed to receive message on 'WebSocket': The message is undefined.",
         ));
 
         expect(onmessage).not.toHaveBeenCalled();
@@ -625,9 +622,6 @@ describe('FakeWebSocketTracker', () => {
     });
 
     describe('once closing', () => {
-      let ws;
-      let proxy;
-
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
         proxy = new FakeWebSocketProxy(ws);
@@ -649,15 +643,12 @@ describe('FakeWebSocketTracker', () => {
 
       it('should failt to emit a close event', () => {
         expect(() => proxy.emitClose()).toThrow(new Error(
-            'Cannot emit a close event, WebSocket is already closing.'
+          'Cannot emit a close event, WebSocket is already closing.',
         ));
       });
     });
 
     describe('once closed', () => {
-      let ws;
-      let proxy;
-
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
         proxy = new FakeWebSocketProxy(ws);
@@ -681,7 +672,7 @@ describe('FakeWebSocketTracker', () => {
 
       it('should failt to emit a close event', () => {
         expect(() => proxy.emitClose()).toThrow(new Error(
-            'Cannot emit a close event, WebSocket is already closed.'
+          'Cannot emit a close event, WebSocket is already closed.',
         ));
       });
     });

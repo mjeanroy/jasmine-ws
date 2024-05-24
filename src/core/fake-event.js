@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {factory} from './common/factory.js';
+import { factory } from './common/factory';
 
 export const fakeEventFactory = factory(() => {
   /**
@@ -210,6 +210,7 @@ export const fakeEventFactory = factory(() => {
      *
      * @return {void}
      */
+    // eslint-disable-next-line class-methods-use-this
     initEvent() {
     }
 

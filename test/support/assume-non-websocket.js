@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {skip} from './skip.js';
+import { skip } from './skip';
 
 /**
  * Check if given environment supports `WebSocket` and skip test

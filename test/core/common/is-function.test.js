@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {isFunction} from '../../../src/core/common/is-function.js';
+import { isFunction } from '../../../src/core/common/is-function';
 
 describe('isFunction', () => {
   it('should return true with a function', () => {
@@ -36,4 +36,3 @@ describe('isFunction', () => {
     expect(isFunction([])).toBe(false);
   });
 });
-

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {has} from './has.js';
+import { has } from './has';
 
 /**
  * Check that a given predicate returns a truthy value for each elements in the

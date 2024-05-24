@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {isArrayBuffer} from '../../../src/core/common/is-array-buffer.js';
-import {assumeArrayBuffer} from '../../support/assume-array-buffer.js';
+import { isArrayBuffer } from '../../../src/core/common/is-array-buffer';
+import { assumeArrayBuffer } from '../../support/assume-array-buffer';
 
 describe('isArrayBuffer', () => {
   it('should return true with an ArrayBuffer', () => {
@@ -39,4 +39,3 @@ describe('isArrayBuffer', () => {
     expect(isArrayBuffer([])).toBe(false);
   });
 });
-

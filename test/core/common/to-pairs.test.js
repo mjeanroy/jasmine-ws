@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-import {toPairs} from '../../../src/core/common/to-pairs.js';
+import { toPairs } from '../../../src/core/common/to-pairs';
 
 describe('toPairs', () => {
   it('should get all pairs of object', () => {
-    const object = {id: 1, name: 'John Doe'};
+    const object = { id: 1, name: 'John Doe' };
     const pairs = toPairs(object);
     expect(pairs).toEqual([
       ['id', 1],

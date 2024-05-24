@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
-import {fakeMessageEventFactory} from '../../src/core/fake-message-event.js';
+import { fakeWebSocketFactory } from '../../src/core/fake-web-socket';
+import { fakeMessageEventFactory } from '../../src/core/fake-message-event';
 
 describe('FakeMessageEvent', () => {
   let FakeWebSocket;
@@ -72,7 +72,7 @@ describe('FakeMessageEvent', () => {
 
     beforeEach(() => {
       event = new FakeMessageEvent(
-          new FakeWebSocket('ws://localhosot')
+        new FakeWebSocket('ws://localhosot'),
       );
     });
 

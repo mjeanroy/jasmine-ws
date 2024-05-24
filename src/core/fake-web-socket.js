@@ -22,27 +22,27 @@
  * THE SOFTWARE.
  */
 
-import {countBy} from './common/count-by.js';
-import {includes} from './common/includes.js';
-import {indexOf} from './common/index-of.js';
-import {factory} from './common/factory.js';
-import {filter} from './common/filter.js';
-import {find} from './common/find.js';
-import {forEach} from './common/for-each.js';
-import {has} from './common/has.js';
-import {isFunction} from './common/is-function.js';
-import {isString} from './common/is-string.js';
-import {isUndefined} from './common/is-undefined.js';
-import {parseUrl} from './common/parse-url.js';
-import {toPairs} from './common/to-pairs.js';
+import { countBy } from './common/count-by';
+import { includes } from './common/includes';
+import { indexOf } from './common/index-of';
+import { factory } from './common/factory';
+import { filter } from './common/filter';
+import { find } from './common/find';
+import { forEach } from './common/for-each';
+import { has } from './common/has';
+import { isFunction } from './common/is-function';
+import { isString } from './common/is-string';
+import { isUndefined } from './common/is-undefined';
+import { parseUrl } from './common/parse-url';
+import { toPairs } from './common/to-pairs';
 
-import {fakeOpenHandshakeFactory} from './fake-open-handshake.js';
-import {fakeCloseHandshakeFactory} from './fake-close-handshake.js';
-import {fakeEventFactory} from './fake-event.js';
-import {fakeCloseEventFactory} from './fake-close-event.js';
-import {CONNECTING, OPEN, CLOSING, CLOSED} from './web-socket-state.js';
+import { fakeOpenHandshakeFactory } from './fake-open-handshake';
+import { fakeCloseHandshakeFactory } from './fake-close-handshake';
+import { fakeEventFactory } from './fake-event';
+import { fakeCloseEventFactory } from './fake-close-event';
+import { CONNECTING, OPEN, CLOSING, CLOSED } from './web-socket-state';
 
-import {track} from './ws-tracker.js';
+import { track } from './ws-tracker';
 
 export const fakeWebSocketFactory = factory(() => {
   const FakeOpenHandshake = fakeOpenHandshakeFactory();
@@ -84,12 +84,12 @@ export const fakeWebSocketFactory = factory(() => {
       }
 
       // 3- If urlRecord's scheme is not "ws" or "wss", then throw a "SyntaxError" DOMException.
-      const protocol = urlRecord.protocol;
+      const { protocol } = urlRecord;
       const scheme = protocol.slice(0, protocol.length - 1);
       if (scheme !== 'ws' && scheme !== 'wss') {
         throw new SyntaxError(
-            `Failed to construct 'WebSocket': The URL's scheme must be either 'ws' or 'wss'. ` +
-            `'${scheme}' is not allowed.`
+          "Failed to construct 'WebSocket': The URL's scheme must be either 'ws' or 'wss'. " +
+          `'${scheme}' is not allowed.`,
         );
       }
 
@@ -97,26 +97,27 @@ export const fakeWebSocketFactory = factory(() => {
       const fragment = urlRecord.hash;
       if (fragment) {
         throw new SyntaxError(
-            `Failed to construct 'WebSocket': The URL contains a fragment identifier ('${fragment}'). ` +
-            `Fragment identifiers are not allowed in WebSocket URLs.`
+          `Failed to construct 'WebSocket': The URL contains a fragment identifier ('${fragment}'). ` +
+          'Fragment identifiers are not allowed in WebSocket URLs.',
         );
       }
 
       // 5- If protocols is a string, set protocols to a sequence consisting of just that string.
       if (isString(protocols)) {
+        // eslint-disable-next-line no-param-reassign
         protocols = [protocols];
       }
 
       // 6- If any of the values in protocols occur more than once or otherwise fail to match the requirements fo
       // elements that comprise the value of `Sec-WebSocket-Protocol` fields as defined by the WebSocket protocol
       // specification, then throw a "SyntaxError" DOMException.
-      const subProtocols = filter(protocols, (protocol) => isString(protocol));
+      const subProtocols = filter(protocols, (p) => isString(p));
       const counters = countBy(subProtocols, (subProtocol) => subProtocol);
       const pairs = toPairs(counters);
       const firstDuplicate = find(pairs, (pair) => pair[1] > 1);
       if (firstDuplicate) {
         throw new SyntaxError(
-            `Failed to construct 'WebSocket': The subprotocol '${firstDuplicate[0]}' is duplicated.`
+          `Failed to construct 'WebSocket': The subprotocol '${firstDuplicate[0]}' is duplicated.`,
         );
       }
 
@@ -228,8 +229,8 @@ export const fakeWebSocketFactory = factory(() => {
 
       if (nbArguments !== 2) {
         throw new TypeError(
-            `Failed to execute 'addEventListener' on 'EventTarget': 2 arguments required, ` +
-            `but only ${nbArguments} present.`
+          "Failed to execute 'addEventListener' on 'EventTarget': 2 arguments required, " +
+          `but only ${nbArguments} present.`,
         );
       }
 
@@ -256,8 +257,8 @@ export const fakeWebSocketFactory = factory(() => {
 
       if (nbArguments !== 2) {
         throw new TypeError(
-            `Failed to execute 'removeEventListener' on 'EventTarget': 2 arguments required, ` +
-            `but only ${nbArguments} present.`
+          "Failed to execute 'removeEventListener' on 'EventTarget': 2 arguments required, " +
+          `but only ${nbArguments} present.`,
         );
       }
 
@@ -280,10 +281,11 @@ export const fakeWebSocketFactory = factory(() => {
      * @return {void}
      */
     dispatchEvent(event) {
-      const type = event.type;
+      const { type } = event;
       const listeners = has(this._listeners, type) ? this._listeners[type] : [];
 
       // Ensure the event phase is correct.
+      // eslint-disable-next-line no-param-reassign
       event._eventPhase = FakeEvent.AT_TARGET;
 
       const methodName = `on${type}`;
@@ -301,6 +303,7 @@ export const fakeWebSocketFactory = factory(() => {
       }
 
       // Ensure the event phase is correct.
+      // eslint-disable-next-line no-param-reassign
       event._eventPhase = FakeEvent.NONE;
 
       return !!event.cancelable && !!event.defaultPrevented;
@@ -349,12 +352,13 @@ export const fakeWebSocketFactory = factory(() => {
       // 1- If code is present, but is neither an integer equal to 1000 nor an integer in the range 3000 to 4999,
       // inclusive, throw an "InvalidAccessError" DOMException.
       if (!isUndefined(code)) {
+        // eslint-disable-next-line no-param-reassign
         code = Number(code) || 0;
 
-        if (code != 1000 && (code < 3000 || code > 4999)) {
+        if (code !== 1000 && (code < 3000 || code > 4999)) {
           throw new Error(
-              `Failed to execute 'close' on 'WebSocket': The code must be either 1000, or between 3000 and 4999. ` +
-              `${code} is neither.`
+            "Failed to execute 'close' on 'WebSocket': The code must be either 1000, or between 3000 and 4999. " +
+            `${code} is neither.`,
           );
         }
       }
@@ -362,12 +366,14 @@ export const fakeWebSocketFactory = factory(() => {
       // 2- If reason is present, then run these substeps:
       //  2-1 Let reasonBytes be the result of encoding reason.
       //  2-2 If reasonBytes is longer than 123 bytes, then throw a "SyntaxError" DOMException.
+      // eslint-disable-next-line no-param-reassign
       code = isUndefined(code) ? 1005 : code;
+      // eslint-disable-next-line no-param-reassign
       reason = isUndefined(reason) ? '' : String(reason);
 
       if (reason.length > 123) {
         throw new Error(
-            `Failed to execute 'close' on 'WebSocket': The message must not be greater than 123 bytes.`
+          "Failed to execute 'close' on 'WebSocket': The message must not be greater than 123 bytes.",
         );
       }
 
@@ -416,7 +422,7 @@ export const fakeWebSocketFactory = factory(() => {
     _openConnection(response) {
       this._readyState = OPEN;
 
-      const headers = response.headers;
+      const { headers } = response;
       if (headers) {
         this._protocol = has(headers, 'Sec-WebSocket-Protocol') ? headers['Sec-WebSocket-Protocol'] : null;
         this._extensions = has(headers, 'Sec-WebSocket-Extensions') ? headers['Sec-WebSocket-Extensions'] : null;
@@ -424,7 +430,6 @@ export const fakeWebSocketFactory = factory(() => {
 
       this.dispatchEvent(new FakeEvent('open', this));
     }
-
 
     /**
      * Execute the listener function (it it is a real `function`).
@@ -470,7 +475,7 @@ export const fakeWebSocketFactory = factory(() => {
      */
     _failConnection(code = 1006, reason = '', wasClean = false) {
       this._readyState = CLOSING;
-      this._closeHandshake = new FakeCloseHandshake(this, code, reason, false);
+      this._closeHandshake = new FakeCloseHandshake(this, code, reason, wasClean);
       this.dispatchEvent(new FakeEvent('error', this));
     }
   }

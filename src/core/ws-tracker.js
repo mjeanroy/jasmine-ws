@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import {fakeWebSocketProxyFactory} from './fake-web-socket-proxy.js';
+import { fakeWebSocketProxyFactory } from './fake-web-socket-proxy';
 
 /**
  * The queue of opened WebSocket.
@@ -54,7 +54,7 @@ export const wsTracker = {
   /**
    * Get the most recent tracked `WebSocket`.
    *
-   * @return {void}
+   * @return {FakeWebSocketProxy|undefined} The most recent tracked entry.
    */
   mostRecent() {
     return queue[queue.length - 1];
@@ -63,7 +63,7 @@ export const wsTracker = {
   /**
    * Get the first tracked `WebSocket`.
    *
-   * @return {void}
+   * @return {FakeWebSocketProxy|undefined} The first tracked entry.
    */
   first() {
     return queue[0];
@@ -73,7 +73,7 @@ export const wsTracker = {
    * Get the tracked `WebSocket` at given index.
    *
    * @param {number} idx The tracked index.
-   * @return {void}
+   * @return {FakeWebSocketProxy|undefined} The tracked entry.
    */
   at(idx) {
     return queue[idx];

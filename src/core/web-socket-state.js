@@ -30,7 +30,7 @@ export const CONNECTING = 0;
 
 /**
  * The WebSocket connection is established and communication is possible.
- * @type {string}
+ * @type {number}
  */
 export const OPEN = 1;
 

@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-import './common/index.js';
-import './fake-close-event.test.js';
-import './fake-close-handshake.test.js';
-import './fake-event.test.js';
-import './fake-message-event.test.js';
-import './fake-open-handshake.test.js';
-import './fake-web-socket.test.js';
-import './fake-web-socket-proxy.test.js';
-import './ws-tracker.test.js';
+import './common/index';
+import './fake-close-event.test';
+import './fake-close-handshake.test';
+import './fake-event.test';
+import './fake-message-event.test';
+import './fake-open-handshake.test';
+import './fake-web-socket.test';
+import './fake-web-socket-proxy.test';
+import './ws-tracker.test';

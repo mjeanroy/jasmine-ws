@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import {fakeEventFactory} from '../../src/core/fake-event.js';
-import {fakeWebSocketFactory} from '../../src/core/fake-web-socket.js';
+import { fakeEventFactory } from '../../src/core/fake-event';
+import { fakeWebSocketFactory } from '../../src/core/fake-web-socket';
 
 describe('FakeWebSocket', () => {
   let FakeWebSocket;
@@ -43,27 +43,27 @@ describe('FakeWebSocket', () => {
 
   it('should fail to create WebSocket with empty URL', () => {
     expect(() => new FakeWebSocket('')).toThrow(new SyntaxError(
-        'Failed to construct \'WebSocket\': The URL \'\' is invalid.'
+      "Failed to construct 'WebSocket': The URL '' is invalid.",
     ));
   });
 
   it('should fail to create WebSocket if connection URL scheme is not ws nor wss', () => {
     expect(() => new FakeWebSocket('http://localhost')).toThrow(new SyntaxError(
-        'Failed to construct \'WebSocket\': The URL\'s scheme must be either \'ws\' or \'wss\'. ' +
-        '\'http\' is not allowed.'
+      "Failed to construct 'WebSocket': The URL's scheme must be either 'ws' or 'wss'. " +
+      "'http' is not allowed.",
     ));
   });
 
   it('should fail to create WebSocket if connection URL contains a fragment', () => {
     expect(() => new FakeWebSocket('wss://localhost#test')).toThrow(new SyntaxError(
-        'Failed to construct \'WebSocket\': The URL contains a fragment identifier (\'#test\'). ' +
-        'Fragment identifiers are not allowed in WebSocket URLs.'
+      "Failed to construct 'WebSocket': The URL contains a fragment identifier ('#test'). " +
+      'Fragment identifiers are not allowed in WebSocket URLs.',
     ));
   });
 
   it('should fail to create WebSocket with duplicated protocols', () => {
     expect(() => new FakeWebSocket('ws://localhost', ['foo', 'foo'])).toThrow(new SyntaxError(
-        'Failed to construct \'WebSocket\': The subprotocol \'foo\' is duplicated.'
+      "Failed to construct 'WebSocket': The subprotocol 'foo' is duplicated.",
     ));
   });
 
@@ -177,7 +177,7 @@ describe('FakeWebSocket', () => {
 
     it('should not add duplicated event listener', () => {
       const listener = jasmine.createSpy('listener');
-      const event = {type: 'open'};
+      const event = { type: 'open' };
 
       ws.addEventListener('open', listener);
       ws.dispatchEvent(event);
@@ -187,7 +187,7 @@ describe('FakeWebSocket', () => {
 
     it('should not try to remove unregistered event listener', () => {
       const listener = jasmine.createSpy('listener');
-      const event = {type: 'open'};
+      const event = { type: 'open' };
 
       ws.removeEventListener('open', listener);
       ws.dispatchEvent(event);
@@ -335,7 +335,7 @@ describe('FakeWebSocket', () => {
       ws.addEventListener('error', onErrorListener);
 
       expect(() => ws.send('test')).toThrow(new Error(
-          'Failed to execute \'send\' on \'WebSocket\': Still in CONNECTING state.'
+        "Failed to execute 'send' on 'WebSocket': Still in CONNECTING state.",
       ));
 
       expect(onerror).not.toHaveBeenCalled();
@@ -363,8 +363,6 @@ describe('FakeWebSocket', () => {
     });
 
     describe('once opened', () => {
-      let ws;
-
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
         ws._openHandshake.respond();
@@ -372,7 +370,7 @@ describe('FakeWebSocket', () => {
 
       it('should fail to send data without argument', () => {
         expect(() => ws.send()).toThrow(new Error(
-            'Failed to execute \'send\' on \'WebSocket\': 1 argument required, but only 0 present.'
+          "Failed to execute 'send' on 'WebSocket': 1 argument required, but only 0 present.",
         ));
       });
 
@@ -459,7 +457,7 @@ describe('FakeWebSocket', () => {
         ws.addEventListener('close', onCloseListener);
         ws.onclose = onClose;
         expect(() => ws.close(code, reason)).toThrow(new Error(
-            'Failed to execute \'close\' on \'WebSocket\': The message must not be greater than 123 bytes.'
+          'Failed to execute \'close\' on \'WebSocket\': The message must not be greater than 123 bytes.',
         ));
 
         expect(onCloseListener).not.toHaveBeenCalled();
@@ -509,8 +507,8 @@ describe('FakeWebSocket', () => {
 
         const verify = (i) => (
           expect(() => ws.close(i)).toThrow(new Error(
-              `Failed to execute 'close' on 'WebSocket': The code must be either 1000, or between 3000 and 4999. ` +
-              `${i} is neither.`
+            "Failed to execute 'close' on 'WebSocket': The code must be either 1000, or between 3000 and 4999. " +
+            `${i} is neither.`,
           ))
         );
 
@@ -532,8 +530,6 @@ describe('FakeWebSocket', () => {
     });
 
     describe('once closing', () => {
-      let ws;
-
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
         ws._openHandshake.respond();
@@ -542,7 +538,7 @@ describe('FakeWebSocket', () => {
 
       it('should faile to send data', () => {
         expect(() => ws.send('test')).toThrow(new Error(
-            'WebSocket is already in CLOSING or CLOSED state.'
+          'WebSocket is already in CLOSING or CLOSED state.',
         ));
       });
 
@@ -560,8 +556,6 @@ describe('FakeWebSocket', () => {
     });
 
     describe('once closed', () => {
-      let ws;
-
       beforeEach(() => {
         ws = new FakeWebSocket('ws://localhost');
         ws._openHandshake.respond();
@@ -571,7 +565,7 @@ describe('FakeWebSocket', () => {
 
       it('should fail to send data', () => {
         expect(() => ws.send('test')).toThrow(new Error(
-            'WebSocket is already in CLOSING or CLOSED state.'
+          'WebSocket is already in CLOSING or CLOSED state.',
         ));
       });
 

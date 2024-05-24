@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-import {filter} from '../../../src/core/common/filter.js';
+import { filter } from '../../../src/core/common/filter';
 
 describe('filter', () => {
   it('should filter elements of array', () => {
     const array = [1, 2, 3, 4, 5, 6];
-    const iteratee = jasmine.createSpy().and.callFake((x) =>
+    const iteratee = jasmine.createSpy().and.callFake((x) => (
       x % 2 === 0
-    );
+    ));
 
     const results = filter(array, iteratee);
 
