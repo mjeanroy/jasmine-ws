@@ -38,7 +38,7 @@
     "fancy-log": "2.0.0",
     "gulp": "5.0.0",
     "jasmine-core": "2.99.1",
-    "karma": "6.4.3",
+    "karma": "6.4.4",
     "karma-babel-preprocessor": "8.0.2",
     "karma-chrome-launcher": "3.2.0",
     "karma-firefox-launcher": "2.1.3",
