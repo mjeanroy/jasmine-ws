@@ -44,6 +44,7 @@ jobs:
       - name: Install
         run: pnpm install
       - uses: saucelabs/sauce-connect-action@98f61ece0eaf9d5f39c162c746839f955315708a # v2.3.6
+        name: Setup saucelabs
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
