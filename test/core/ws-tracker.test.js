@@ -25,6 +25,11 @@
 import { track, reset, wsTracker } from '../../src/core/ws-tracker';
 
 describe('wsTracker', () => {
+  // The global `afterEach` hook (test/after-each.js) is not bundled when this file is run alone with `--file`.
+  beforeEach(() => {
+    reset();
+  });
+
   it('should get mostRecent connection', () => {
     const ws = jasmine.createSpyObj('FakeWebSocket', ['send', 'close']);
 
