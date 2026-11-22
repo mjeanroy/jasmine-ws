@@ -1,12 +1,11 @@
-
 ## Jasmine-WS
 
-A simple addon for [](Jasmine) to test a WebSocket application easily!
+A simple addon for [Jasmine](https://jasmine.github.io/) to test a WebSocket application easily!
 
 ### Installation
 
-- Install the latest version: `npm run install --save-dev jasmine-ws`.
-- Add the `main` (i.e `dist/jasmine-ws.js`) file to your test suite.
+- Install the latest version: `npm install --save-dev jasmine-ws`.
+- Add the `main` file (i.e `node_modules/jasmine-ws/dist/jasmine-ws.js`) to your test suite, after Jasmine itself.
 
 ### Example
 
@@ -16,7 +15,7 @@ Suppose this (very) simple WebSocket chat application:
 let ws;
 let messages = [];
 
-function onNewMessage(e) {
+function displayMessage(e) {
   messages.push(e.data);
 }
 
@@ -73,12 +72,12 @@ describe('app', () => {
 
     // Send message
     sendMessage('Hi dude');
-    expect(ws.sentMessages()).toEqual(['Hi dude']);
+    expect(conn.sentMessages()).toEqual(['Hi dude']);
 
     // Trigger close event and trigger close handshake response.
     disconnect();
-    ws.closeHandshake().respond();
-    expect(ws.getEventListeners()).toEqual([]);
+    conn.closeHandshake().respond();
+    expect(conn.getEventListeners()).toEqual([]);
   });
 });
 ```
@@ -91,30 +90,30 @@ describe('app', () => {
 
 Install the fake `WebSocket` implementation, typically called in a `beforeEach` method.
 Note that:
-  - The fake implementation if, and only if, a native `WebSocket` implementaton is available (i.e if browser supports `WebSocket`), otherwise
-this method do nothing (and do not fail).
+  - The fake implementation is installed if, and only if, a native `WebSocket` implementation is available (i.e if browser supports `WebSocket`), otherwise
+this method does nothing (and does not fail).
   - This method will fail if `jasmine-ws` has already been installed.
 
 `jasmine.ws().uninstall()` (@since 0.1.0)
 
-Install the fake `WebSocket` implementation, typically called in a `beforeEach` method.
+Uninstall the fake `WebSocket` implementation (i.e restore the native one), typically called in an `afterEach` method.
 Note that:
-  - Like the `jasmine.ws().install()` method, if browser does not support native `WebSocket` this method do nothing (and do not fail).
+  - Like the `jasmine.ws().install()` method, if browser does not support native `WebSocket` this method does nothing (and does not fail).
   - This method will fail if `jasmine-ws` has not been previously installed.
 
 `jasmine.ws().connections()` (@since 0.1.0)
 
-Returns an object containing method to get tracked connection:
+Returns an object containing methods to get tracked connections:
   - `count(): number` Get the number of tracked connections.
   - `all(): Array<FakeWebSocket>` Get an array of all tracked connections.
-  - `first(): FakeWebSocket` Get the first tracked connections or `undefined`.
-  - `last(): FakeWebSoFakeWebSocketcketProxy` Get the last tracked connections or `undefined`.
+  - `first(): FakeWebSocket` Get the first tracked connection or `undefined`.
+  - `mostRecent(): FakeWebSocket` Get the most recent tracked connection or `undefined`.
   - `at(idx: number): FakeWebSocket` Get the tracked connection at given index or `undefined`.
 
 `jasmine.ws().withMock(testFn)` (@since 0.2.0)
 
-Install the fake `WebSocket` implementation, execute the test function `testFn`, then reset the fake implementation. This method can be used
-to install/uninstall fake `WebSocket` API in a single test, for example:
+Install the fake `WebSocket` implementation, execute the test function `testFn`, then uninstall the fake implementation (even if `testFn` throws).
+It returns the value returned by `testFn`. This method can be used to install/uninstall fake `WebSocket` API in a single test, for example:
 
 ```javascript
 it('should run test with fake WebSocket', () => {
@@ -127,12 +126,12 @@ it('should run test with fake WebSocket', () => {
 
 #### `FakeWebSocket`
 
-A tracked connection is kke a `WebSocket` (so contains all methods of `WebSocket` object as documented [here](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)) with additional methods:
+A tracked connection is like a `WebSocket` (so contains all methods of `WebSocket` object as documented [here](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)) with additional methods:
 
 - `openHandshake(): FakeOpenHandshake` Get the "open" handshake request, that can be used to trigger handshake response.
 - `closeHandshake(): FakeCloseHandshake` Get the "close" handshake request, that can be used to trigger handshake response.
-- `emitMessage(message: string): void` Emit a message from the server.
-- `emitClose(): void` Emit a close event triggered from server.
+- `emitMessage(message: string|Blob|ArrayBuffer): void` Emit a message from the server (the connection must be open).
+- `emitClose(code = 1006, reason = '', wasClean = false): void` Emit a close event triggered from server (fails if the connection is already closing or closed).
 - `sentMessages(): Array<string>` Get all sent messages (i.e parameters passed to the `WebSocket#send` method).
 - `getEventListeners(eventType?: string): Array<function>` Get registered listeners (passing string parameter will return registered event listeners for given event type).
 
@@ -141,11 +140,15 @@ A tracked connection is kke a `WebSocket` (so contains all methods of `WebSocket
 A fake handshake request that can simulate the open handshake with given properties and methods:
 
 - `url: string` The request URL.
+- `method: string` The request method (always `'GET'`).
 - `headers: object` The request headers, can be used to check for requested `WebSocket` subprotocols.
 - `getRequest(): object` Get the original sent request.
+- `getResponse(): object` Get the triggered handshake response, or `null` if it has not been triggered yet.
 - `respond(): void` Trigger the handshake response with a success status code (i.e 101) (will trigger the listeners for the `WebSocket` `open` event).
-- `fail(status = 500): void` Trigger handshake with a non-success status code (will trigger the listeners for the `WebSocket` `error` event).
-- `respondWith(response: object): void` Trigger custom handshake response (will trigger appropriate listeners).
+- `fail(status = 500): void` Trigger handshake with a non-success status code (will trigger the listeners for the `WebSocket` `error` event). Status `101` is not allowed, use `respond()` instead.
+- `respondWith(response: object): void` Trigger custom handshake response, e.g `respondWith({ status: 401 })` (will trigger appropriate listeners; status defaults to `101`).
+
+Note that a handshake response can only be triggered once.
 
 #### `FakeCloseHandshake`
 
@@ -156,7 +159,7 @@ A fake handshake request that can simulate the close handshake with given proper
 - `wasClean: boolean` Indicates whether or not the connection was cleanly closed.
 - `respond(): void` Trigger the handshake response (will trigger the listeners for the `WebSocket` `close` event).
 
-### Licence
+### License
 
 MIT License (MIT)
 
