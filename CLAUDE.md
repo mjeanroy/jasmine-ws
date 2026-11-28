@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Package manager is pnpm (see CI: Node 26, pnpm 11.28.12). `pnpm-workspace.yaml` disables the lockfile and enforces `saveExact` and `minimumReleaseAge`, so dependencies in `package.json` are pinned to exact versions.
+Package manager is pnpm (see CI: Node 26, pnpm 12.23.0). `pnpm-workspace.yaml` disables the lockfile and enforces `saveExact` and `minimumReleaseAge`, so dependencies in `package.json` are pinned to exact versions.
 
 All tasks go through gulp (`gulpfile.js` → `scripts/<task>/index.js`):
 
